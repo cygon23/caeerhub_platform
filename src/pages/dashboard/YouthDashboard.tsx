@@ -383,12 +383,14 @@ export default function YouthDashboard() {
         <Sidebar className='border-r border-border'>
           <div className='p-4 border-b border-border'>
             <div className='flex items-center space-x-2'>
-              <div className='w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center'>
-                <span className='text-white font-bold text-sm'>C</span>
-              </div>
-              <span className='font-bold bg-gradient-hero bg-clip-text text-transparent'>
-                Career na Mimi
-              </span>
+              {/* Replace the span below with your logo */}
+              <img
+                src='/logo.png'
+                alt='Career na Mimi Logo'
+                className='h-8 w-8'
+                style={{ maxWidth: 120 }}
+              />
+              <span className='text-black font-bold '>careerHub</span>
             </div>
           </div>
 
