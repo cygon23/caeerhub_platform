@@ -35,29 +35,29 @@ export default function About() {
 
   const team = [
     {
-      name: "Dr. Amina Mwalimu",
+      name: "Rahman mabahe",
       role: "CEO & Founder",
-      bio: "Former Education Minister with 20+ years experience in youth development and policy-making.",
-      image: "👩🏿‍💼"
+      bio: "AI , innovator and comminity lead .",
+      image: "👩🏿‍💼",
     },
     {
-      name: "James Kimaro",
+      name: "Abdulswad azihar",
       role: "CTO",
       bio: "Tech entrepreneur and AI specialist, previously at Google and Microsoft, passionate about using technology for social impact.",
-      image: "👨🏿‍💻"
+      image: "👨🏿‍💻",
     },
     {
-      name: "Sarah Moshi",
-      role: "Head of Programs", 
+      name: "Godfrey gozberty",
+      role: "Head of Programs",
       bio: "Career counselor and mentor with expertise in youth psychology and workforce development.",
-      image: "👩🏿‍🏫"
+      image: "👩🏿‍🏫",
     },
     {
-      name: "David Ng'wana",
+      name: "Karen kamene",
       role: "Head of Partnerships",
-      bio: "Former UN official specializing in public-private partnerships and organizational development.",
-      image: "👨🏿‍💼"
-    }
+      bio: "official specializing in public-private partnerships and organizational development.",
+      image: "👨🏿‍💼",
+    },
   ];
 
   const values = [
