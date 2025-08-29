@@ -29,7 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const [initialized, setInitialized] = useState(false);
 
   // Monitor online/offline status
   useEffect(() => {
@@ -46,39 +45,167 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Fetch user profile data and check onboarding status
+  // const fetchUserData = async (sessionUser: SupabaseUser): Promise<User> => {
+  //   try {
+  //     console.log("Fetching user data for:", sessionUser.id);
+
+  //     // Fetch user profile, role, and onboarding status in parallel
+  //     const [profileResponse, roleResponse, onboardingResponse] =
+  //       await Promise.all([
+  //         supabase
+  //           .from("profiles")
+  //           .select("display_name, avatar_url")
+  //           .eq("user_id", sessionUser.id)
+  //           .maybeSingle(), // Use maybeSingle to handle no rows gracefully
+  //         supabase
+  //           .from("user_roles")
+  //           .select("role")
+  //           .eq("user_id", sessionUser.id)
+  //           .maybeSingle(), // Use maybeSingle to handle no rows gracefully
+  //         supabase
+  //           .from("onboarding_responses")
+  //           .select("id, completed_at")
+  //           .eq("user_id", sessionUser.id)
+  //           .maybeSingle(), // Use maybeSingle to handle no rows gracefully
+  //       ]);
+
+  //     console.log("Profile response:", profileResponse);
+  //     console.log("Role response:", roleResponse);
+  //     console.log("Onboarding response:", onboardingResponse);
+
+  //     // Handle profile data
+  //     const profileData = profileResponse.error ? null : profileResponse.data;
+
+  //     // Handle role data
+  //     const roleData = roleResponse.error ? null : roleResponse.data;
+
+  //     // Handle onboarding data
+  //     const onboardingData = onboardingResponse.error
+  //       ? null
+  //       : onboardingResponse.data;
+
+  //     // Determine user role with email-based fallback
+  //     let userRole: "youth" | "mentor" | "admin" = "youth";
+
+  //     if (roleData?.role) {
+  //       userRole = roleData.role;
+  //     } else {
+  //       // Fallback: determine role based on email if no role in database
+  //       const email = sessionUser.email || "";
+  //       if (email.startsWith("admin") || email === "admin@test.com") {
+  //         userRole = "admin";
+  //       } else if (email.startsWith("mentor") || email === "mentor@test.com") {
+  //         userRole = "mentor";
+  //       }
+  //     }
+
+  //     // Check if onboarding is completed
+  //     const hasCompletedOnboarding =
+  //       onboardingData && onboardingData.completed_at;
+
+  //     // Admin and mentor users should skip onboarding
+  //     const shouldSkipOnboarding =
+  //       userRole === "admin" || userRole === "mentor";
+
+  //     const userData: User = {
+  //       id: sessionUser.id,
+  //       email: sessionUser.email || "",
+  //       name:
+  //         profileData?.display_name ||
+  //         sessionUser.user_metadata?.full_name ||
+  //         "User",
+  //       role: userRole,
+  //       isFirstLogin: !hasCompletedOnboarding && !shouldSkipOnboarding,
+  //     };
+
+  //     console.log("Constructed user data:", userData);
+  //     return userData;
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+
+  //     // Fallback: create user object with email-based role detection
+  //     const email = sessionUser.email || "";
+  //     let fallbackRole: "youth" | "mentor" | "admin" = "youth";
+
+  //     if (email.startsWith("admin") || email === "admin@test.com") {
+  //       fallbackRole = "admin";
+  //     } else if (email.startsWith("mentor") || email === "mentor@test.com") {
+  //       fallbackRole = "mentor";
+  //     }
+
+  //     return {
+  //       id: sessionUser.id,
+  //       email: sessionUser.email || "",
+  //       name: sessionUser.user_metadata?.full_name || "User",
+  //       role: fallbackRole,
+  //       isFirstLogin: fallbackRole === "youth", // Only youth users need onboarding
+  //     };
+  //   }
+  // };
+
   const fetchUserData = async (sessionUser: SupabaseUser): Promise<User> => {
+    // Helper to add a timeout to any promise
+    function timeoutPromise<T>(promise: Promise<T>, ms: number): Promise<T> {
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("Timeout")), ms);
+        promise
+          .then((value) => {
+            clearTimeout(timer);
+            resolve(value);
+          })
+          .catch((err) => {
+            clearTimeout(timer);
+            reject(err);
+          });
+      });
+    }
+
     try {
       console.log("Fetching user data for:", sessionUser.id);
 
-      // Fetch user profile, role, and onboarding status in parallel
+      // Fetch user profile, role, and onboarding status in parallel, with timeout
       const [profileResponse, roleResponse, onboardingResponse] =
-        await Promise.all([
-          supabase
-            .from("profiles")
-            .select("display_name, avatar_url")
-            .eq("user_id", sessionUser.id)
-            .single(),
-          supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", sessionUser.id)
-            .single(),
-          supabase
-            .from("onboarding_responses")
-            .select("id, completed_at")
-            .eq("user_id", sessionUser.id)
-            .single(),
-        ]);
+        await timeoutPromise(
+          Promise.all([
+            supabase
+              .from("profiles")
+              .select("display_name, avatar_url")
+              .eq("user_id", sessionUser.id)
+              .maybeSingle(),
+            supabase
+              .from("user_roles")
+              .select("role")
+              .eq("user_id", sessionUser.id)
+              .maybeSingle(),
+            supabase
+              .from("onboarding_responses")
+              .select("id, completed_at")
+              .eq("user_id", sessionUser.id)
+              .maybeSingle(),
+          ]),
+          7000 // 7 seconds timeout
+        );
 
       console.log("Profile response:", profileResponse);
       console.log("Role response:", roleResponse);
       console.log("Onboarding response:", onboardingResponse);
 
+      // Handle profile data
+      const profileData = profileResponse.error ? null : profileResponse.data;
+
+      // Handle role data
+      const roleData = roleResponse.error ? null : roleResponse.data;
+
+      // Handle onboarding data
+      const onboardingData = onboardingResponse.error
+        ? null
+        : onboardingResponse.data;
+
       // Determine user role with email-based fallback
       let userRole: "youth" | "mentor" | "admin" = "youth";
 
-      if (roleResponse.data?.role) {
-        userRole = roleResponse.data.role;
+      if (roleData?.role) {
+        userRole = roleData.role;
       } else {
         // Fallback: determine role based on email if no role in database
         const email = sessionUser.email || "";
@@ -91,7 +218,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Check if onboarding is completed
       const hasCompletedOnboarding =
-        onboardingResponse.data && onboardingResponse.data.completed_at;
+        onboardingData && onboardingData.completed_at;
 
       // Admin and mentor users should skip onboarding
       const shouldSkipOnboarding =
@@ -101,7 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: sessionUser.id,
         email: sessionUser.email || "",
         name:
-          profileResponse.data?.display_name ||
+          profileData?.display_name ||
           sessionUser.user_metadata?.full_name ||
           "User",
         role: userRole,
@@ -112,24 +239,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return userData;
     } catch (error) {
       console.error("Error fetching user data:", error);
-
-      // Fallback: create user object with email-based role detection
-      const email = sessionUser.email || "";
-      let fallbackRole: "youth" | "mentor" | "admin" = "youth";
-
-      if (email.startsWith("admin") || email === "admin@test.com") {
-        fallbackRole = "admin";
-      } else if (email.startsWith("mentor") || email === "mentor@test.com") {
-        fallbackRole = "mentor";
-      }
-
-      return {
-        id: sessionUser.id,
-        email: sessionUser.email || "",
-        name: sessionUser.user_metadata?.full_name || "User",
-        role: fallbackRole,
-        isFirstLogin: fallbackRole === "youth", // Only youth users need onboarding
-      };
     }
   };
 
@@ -166,81 +275,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // ...existing code...
   useEffect(() => {
     let mounted = true;
 
-    // Initialize auth state
-    const initializeAuth = async () => {
-      try {
-        console.log("Initializing auth...");
-
-        // Get current session first
-        const {
-          data: { session: currentSession },
-          error,
-        } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error("Error getting session:", error);
-          if (mounted) {
-            setSession(null);
-            setUser(null);
-            setIsLoading(false);
-            setInitialized(true);
-          }
-          return;
-        }
-
-        if (currentSession?.user && mounted) {
-          console.log(
-            "Found existing session for user:",
-            currentSession.user.id
-          );
-          const userData = await fetchUserData(currentSession.user);
-          if (mounted) {
-            setSession(currentSession);
-            setUser(userData);
-          }
-        } else if (mounted) {
-          console.log("No existing session found");
-          setSession(null);
-          setUser(null);
-        }
-
-        if (mounted) {
-          setIsLoading(false);
-          setInitialized(true);
-        }
-      } catch (error) {
-        console.error("Error initializing auth:", error);
-        if (mounted) {
-          setSession(null);
-          setUser(null);
-          setIsLoading(false);
-          setInitialized(true);
-        }
-      }
-    };
-
-    // Set up auth state listener
+    // Set up auth state listener ONCE
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session?.user?.id);
-
       if (!mounted) return;
+
+      // Only set loading for explicit sign in/out
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        setIsLoading(true);
+      }
 
       setSession(session);
 
       if (session?.user) {
         try {
           const userData = await fetchUserData(session.user);
-          if (mounted) {
-            setUser(userData);
-          }
+          if (mounted) setUser(userData);
         } catch (error) {
-          console.error("Error in auth state change:", error);
-          if (mounted) {
+          if (mounted)
             setUser({
               id: session.user.id,
               email: session.user.email || "",
@@ -248,28 +305,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               role: "youth",
               isFirstLogin: true,
             });
-          }
         }
       } else {
-        if (mounted) {
-          setUser(null);
-        }
+        if (mounted) setUser(null);
       }
 
-      // Only set loading to false after initialization is complete
-      if (initialized && mounted) {
-        setIsLoading(false);
+      // Only set loading to false for sign in/out, not for INITIAL_SESSION
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        if (mounted) setIsLoading(false);
       }
     });
 
-    // Initialize auth
-    initializeAuth();
+    // Initial session check
+    (async () => {
+      try {
+        const {
+          data: { session: currentSession },
+          error,
+        } = await supabase.auth.getSession();
+        if (error || !currentSession?.user) {
+          if (mounted) {
+            setSession(null);
+            setUser(null);
+          }
+        } else {
+          if (mounted) {
+            setSession(currentSession);
+            const userData = await fetchUserData(currentSession.user);
+            setUser(userData);
+          }
+        }
+      } catch (error) {
+        if (mounted) {
+          setSession(null);
+          setUser(null);
+        }
+      } finally {
+        if (mounted) setIsLoading(false); // Always set loading to false after initial check
+      }
+    })();
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [initialized]);
+  }, []);
+  // ...existing code...
 
   const login = async (email: string, password: string) => {
     if (isOffline) {
@@ -288,17 +369,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         throw error;
       }
-      // Login successful - auth state change will handle user data
+      // Login successful - auth state change will handle user data and stop loading
     } catch (error: any) {
+      // Set loading to false on error since auth state won't change
+      setIsLoading(false);
+
       if (error.message?.includes("fetch")) {
         throw new Error(
           "Network error. Please check your connection and try again."
         );
       }
       throw error;
-    } finally {
-      // Don't set loading to false here - let auth state change handle it
-      // setIsLoading(false);
     }
   };
 
