@@ -50,13 +50,13 @@ export default function About() {
       name: "Godfrey gozberty",
       role: "Head of Programs",
       bio: "Career counselor and mentor with expertise in youth psychology and workforce development.",
-      image: "👩🏿‍🏫",
+      image: " 👨🏿‍💼",
     },
     {
       name: "Karen kamene",
       role: "Head of Partnerships",
       bio: "official specializing in public-private partnerships and organizational development.",
-      image: "👨🏿‍💼",
+      image: "👩🏿‍🏫",
     },
   ];
 
