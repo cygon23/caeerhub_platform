@@ -7,30 +7,35 @@ import { Target, Eye, Heart, Calendar, Users, Award } from "lucide-react";
 export default function About() {
   const timeline = [
     {
-      year: "2017",
+      year: "2025",
       title: "Foundation Launch",
-      description: "Career na Mimi was founded with a mission to empower Tanzanian youth through career guidance and skills development."
+      description:
+        "Career na Mimi was founded with a mission to empower Tanzanian youth through career guidance and skills development.",
     },
     {
-      year: "2019", 
-      title: "First 10,000 Youth",
-      description: "Reached our first major milestone of supporting 10,000 young people across Tanzania."
+      year: "2026",
+      title: "First 1,000 Youth",
+      description:
+        "EXpected to Reached our first major milestone of supporting 10,000 young people across Tanzania.",
     },
     {
-      year: "2021",
+      year: "2027",
       title: "Digital Transformation",
-      description: "Launched our digital platform to reach youth in remote areas and scale our impact nationwide."
+      description:
+        "Expecting to Launched our digital platform to reach youth in remote areas and scale our impact nationwide.",
     },
     {
-      year: "2023",
+      year: "2027",
       title: "AI-Powered Platform",
-      description: "Integrated advanced AI technology to provide personalized career recommendations and smart mentorship matching."
+      description:
+        "Expected to fully Integrated advanced AI technology to provide personalized career recommendations and smart mentorship matching.",
     },
     {
-      year: "2024",
+      year: "2030",
       title: "42,000+ Youth Impacted",
-      description: "Celebrating our continued growth and the success stories of thousands of young Tanzanians."
-    }
+      description:
+        "expecting our continued growth and the success stories of thousands of young Tanzanians.",
+    },
   ];
 
   const team = [
