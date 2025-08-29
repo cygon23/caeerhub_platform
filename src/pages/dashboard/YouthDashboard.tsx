@@ -18,6 +18,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import {
   Brain,
+  BadgeCheck,
   Target,
   BookOpen,
   Users,
@@ -64,6 +65,7 @@ export default function YouthDashboard() {
           id: "opportunities",
         },
         { title: "Custom Career Suggestions", icon: Star, id: "suggestions" },
+        { title: "Get hired", icon: BadgeCheck, id: "platfom" },
       ],
     },
     {
@@ -118,7 +120,7 @@ export default function YouthDashboard() {
       title: "My Profile",
       items: [
         { title: "Profile Settings", icon: User, id: "profile" },
-        { title: "Account Settings", icon: Settings, id: "system_settings" },
+        { title: "Account Settings", icon: Settings, id: "settings" },
         { title: "Onboarding Results", icon: Brain, id: "onboarding-results" },
       ],
     },
