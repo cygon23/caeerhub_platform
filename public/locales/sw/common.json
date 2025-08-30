@@ -1,0 +1,24 @@
+export const swCommonTranslations = {
+  "navigation": {
+    "home": "Nyumbani",
+    "about": "Kuhusu Sisi",
+    "features": "Vipengele",
+    "services": "Huduma",
+    "partners": "Washirika",
+    "contact": "Mawasiliano"
+  },
+  "buttons": {
+    "login": "Ingia",
+    "getStarted": "Anza Sasa",
+    "startFree": "Anza Bure Leo",
+    "watchDemo": "Ona Onyesho",
+    "exploreFeatures": "Chunguza Vipengele Vyote",
+    "contactSupport": "Wasiliana na Msaada"
+  },
+  "common": {
+    "loading": "Inapakia...",
+    "error": "Kuna tatizo",
+    "retry": "Jaribu Tena",
+    "stillHaveQuestions": "Bado una maswali?"
+  }
+};
