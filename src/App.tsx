@@ -25,8 +25,11 @@ import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
 // Onboarding
 import OnboardingWizard from "./pages/onboarding/OnboardingWizard";
-
+//404
 import NotFound from "./pages/NotFound";
+
+//localization 
+import "./i18n"; 
 
 const queryClient = new QueryClient();
 

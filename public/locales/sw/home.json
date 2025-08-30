@@ -1,0 +1,96 @@
+export const swHomeTranslations = {
+  "hero": {
+    "title": "Gundua",
+    "titleHighlight": "Kazi ya Ndoto Yako",
+    "subtitle": "Jukwaa la maendeleo ya kazi linaloongozwa na AI ambalo linawezesha vijana wa Tanzania kujenga kazi za mafanikio kupitia mwongozo wa kibinafsi na ushauri.",
+    "startJourney": "Anza Safari Yako"
+  },
+  "howItWorks": {
+    "title": "Jinsi Inavyofanya Kazi",
+    "subtitle": "Anza kwa hatua 3 tu rahisi na uanze safari yako ya mafanikio ya kazi",
+    "steps": {
+      "signUp": {
+        "title": "Jisajili",
+        "description": "Fungua akaunti yako ya bure na ukamilishe tathmini yetu ya kina ya kazi ili kuelewa nguvu na mapendeleo yako."
+      },
+      "getInsights": {
+        "title": "Pata Maarifa ya AI",
+        "description": "AI yetu inachanganua wasifu wako na kutoa mapendekezo ya kibinafsi ya kazi pamoja na ramani za kina zilizobadilishwa kwa soko la kazi la Tanzania."
+      },
+      "connect": {
+        "title": "Unganisha na Ukue",
+        "description": "Patana na washauri, pata rasilimali za kujifunza, na unganisha na fursa halisi za kuwasha kazi ya ndoto yako."
+      }
+    }
+  },
+  "stats": {
+    "youthImpacted": "Vijana Walioathiriwa",
+    "successRate": "Kiwango cha Mafanikio ya Kazi",
+    "partnerOrganizations": "Mashirika ya Ushirikiano",
+    "aiSupport": "Msaada wa AI Unapatikana"
+  },
+  "features": {
+    "title": "Inaongozwa na AI, Inaendeshwa na",
+    "titleHighlight": "Kusudi",
+    "subtitle": "Jukwaa letu la akili linachanganya AI ya kisasa na utaalamu wa ndani ili kuunda njia za kibinafsi za kazi kwa kila kijana wa Tanzania.",
+    "aiAssessment": {
+      "title": "Tathmini ya Kazi ya AI",
+      "description": "Gundua nguvu zako, mapendeleo, na mechi kamili za kazi kupitia uchanganuzi wetu wa hali ya juu wa utu."
+    },
+    "smartRoadmap": {
+      "title": "Kizalishaji cha Ramani Mahiri",
+      "description": "Pata njia za hatua kwa hatua za kazi zilizobadilishwa kwa malengo yako, ujuzi, na fursa za ndani."
+    },
+    "mentorship": {
+      "title": "Ushauri wa Kitaalamu",
+      "description": "Unganisha na wataalamu mafanikio ambao wanakuongoza kupitia changamoto za kazi za ulimwengu halisi."
+    }
+  },
+  "testimonials": {
+    "title": "Hadithi za Mafanikio",
+    "subtitle": "Hadithi za kweli kutoka kwa vijana ambao walibadilisha kazi zao na Career na Mimi"
+  },
+  "faq": {
+    "title": "Maswali Yanayoulizwa Mara Nyingi",
+    "subtitle": "Kila kitu unachohitaji kujua kuhusu Career na Mimi",
+    "questions": {
+      "free": {
+        "q": "Je, Career na Mimi ni ya bure kutumia?",
+        "a": "Ndio! Vipengele vyetu vya msingi vikiwa ni pamoja na tathmini ya kazi ya AI, ramani za kibinafsi, na kuunganishwa kwa ushauri wa kimsingi ni za kabisa bure. Pia tunatoa vipengele vya bei ya juu kwa mafunzo ya hali ya juu na fursa za kipekee."
+      },
+      "ai": {
+        "q": "AI yenu ya kuunganisha kazi inafanyaje kazi?",
+        "a": "AI yetu inachanganua ujuzi wako, mapendeleo, utu, na data ya soko la ndani ili kupendekeza kazi zenye uwezekano mkubwa wa mafanikio. Inazingatia fursa za Tanzania na kuunda njia za hatua kwa hatua za kufikia malengo yako."
+      },
+      "privacy": {
+        "q": "Je, data yangu ya kibinafsi ni salama na ya faragha?",
+        "a": "Kabisa. Tunatumia usimbaji fiche wa kiwango cha benki kulinda data yako na hatushiriki habari zako za kibinafsi na wahusika wa tatu bila idhini yako. Wewe unadhibiti habari gani unashiriki na washauri na waajiri."
+      },
+      "mentors": {
+        "q": "Ni aina gani ya washauri ninaweza kuunganika nao?",
+        "a": "Washauri wetu ni wataalamu mafanikio katika tasnia mbalimbali Tanzania na ulimwenguni. Ni wataalamu waliohakikiwa ambao wanajitolea wakati wao kuongoza vijana kupitia maendeleo ya kazi na changamoto za ulimwengu halisi."
+      },
+      "results": {
+        "q": "Inachukua muda gani kuona matokeo?",
+        "a": "Watumiaji wengi wanaripoti ufuatanaji wa mwelekeo wa kazi zao ndani ya wiki ya kwanza. Maendeleo halisi ya kazi yanatofautiana, lakini mtumiaji wetu wa kiwango cha wastani anaona maendeleo muhimu ya kazi ndani ya miezi 6-8 ya matumizi makubwa ya jukwaa."
+      },
+      "jobPlacement": {
+        "q": "Je, mnasaidia katika kupata kazi?",
+        "a": "Ingawa hatuhakikishi kupata kazi, tunakuunganisha na mashirika ya ushirikiano, tunatoa maandalizi ya mahojiano, na tunakutaarifu kuhusu fursa zinazofaa. Watumiaji wengi wanapata ajira kupitia mtandao wetu."
+      }
+    }
+  },
+  "partners": {
+    "title": "Waaminiwa na Mashirika Makubwa"
+  },
+  "cta": {
+    "title": "Uko Tayari Kuunda Mustakabali Wako?",
+    "subtitle": "Jiunge na maelfu ya vijana wa Tanzania ambao tayari wanajenga kazi za ndoto zao.",
+    "getStarted": "Anza Bure Leo",
+    "trustBadges": {
+      "secure": "Salama",
+      "instantSetup": "Mpangilio wa Haraka",
+      "support": "Msaada wa Masaa 24/7"
+    }
+  }
+};

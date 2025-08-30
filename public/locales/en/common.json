@@ -1,0 +1,74 @@
+{
+  "en_common.json": {
+    "navigation": {
+      "home": "Home",
+      "about": "About Us",
+      "features": "Features",
+      "services": "Services",
+      "partners": "Partners",
+      "contact": "Contact"
+    },
+    "buttons": {
+      "login": "Login",
+      "getStarted": "Get Started",
+      "startFree": "Start Free Today",
+      "watchDemo": "Watch Demo",
+      "exploreFeatures": "Explore All Features",
+      "contactSupport": "Contact Support"
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "Something went wrong",
+      "retry": "Retry",
+      "stillHaveQuestions": "Still have questions?"
+    }
+  },
+  "sw_common.json": {
+    "navigation": {
+      "home": "Nyumbani",
+      "about": "Kuhusu Sisi",
+      "features": "Vipengele",
+      "services": "Huduma",
+      "partners": "Washirika",
+      "contact": "Wasiliana"
+    },
+    "buttons": {
+      "login": "Ingia",
+      "getStarted": "Anza",
+      "startFree": "Anza Bure Leo",
+      "watchDemo": "Tazama Onyesho",
+      "exploreFeatures": "Chunguza Vipengele Vyote",
+      "contactSupport": "Wasiliana na Msaada"
+    },
+    "common": {
+      "loading": "Inapakia...",
+      "error": "Kuna tatizo",
+      "retry": "Jaribu Tena",
+      "stillHaveQuestions": "Bado una maswali?"
+    }
+  },
+  "fr_common.json": {
+    "navigation": {
+      "home": "Accueil",
+      "about": "À Propos",
+      "features": "Fonctionnalités",
+      "services": "Services",
+      "partners": "Partenaires",
+      "contact": "Contact"
+    },
+    "buttons": {
+      "login": "Connexion",
+      "getStarted": "Commencer",
+      "startFree": "Commencez Gratuitement Aujourd'hui",
+      "watchDemo": "Regarder la Démo",
+      "exploreFeatures": "Explorer Toutes les Fonctionnalités",
+      "contactSupport": "Contacter le Support"
+    },
+    "common": {
+      "loading": "Chargement...",
+      "error": "Quelque chose s'est mal passé",
+      "retry": "Réessayer",
+      "stillHaveQuestions": "Vous avez encore des questions?"
+    }
+  }
+}

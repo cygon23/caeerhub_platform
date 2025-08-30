@@ -198,7 +198,7 @@ export default function ModernFooter() {
               {/* Quick Stats */}
               <div className='flex items-center space-x-8 text-sm text-muted-foreground'>
                 <div className='text-center'>
-                  <div className='font-bold text-primary text-lg'>42K+</div>
+                  <div className='font-bold text-primary text-lg'>200+</div>
                   <div>Youth Helped</div>
                 </div>
                 <div className='text-center'>
