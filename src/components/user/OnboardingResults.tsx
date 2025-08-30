@@ -65,8 +65,15 @@ export default function OnboardingResults() {
         } else {
           throw error;
         }
-      } else {
-        setOnboardingData(data);
+      } else if (data) {
+        // Transform the data to match our interface
+        const transformedData = {
+          ...data,
+          habits: typeof data.habits === 'object' && data.habits !== null ? 
+            data.habits as { focusLevel: number; timeManagement: number; } :
+            { focusLevel: 5, timeManagement: 5 }
+        };
+        setOnboardingData(transformedData);
       }
     } catch (error) {
       console.error("Error fetching onboarding data:", error);

@@ -16,8 +16,14 @@ import {
   ArrowRight,
   CheckCircle
 } from "lucide-react";
+import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPMagnetic } from "@/hooks/useGSAP";
 
 export default function Services() {
+  const heroRef = useGSAPTextReveal();
+  const tabsRef = useGSAPScale();
+  const additionalRef = useGSAPStagger(0.2);
+  const ctaRef = useGSAPMagnetic();
+
   const services = {
     youth: {
       icon: GraduationCap,

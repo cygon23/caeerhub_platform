@@ -12,8 +12,15 @@ import {
   ArrowRight,
   ExternalLink
 } from "lucide-react";
+import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip } from "@/hooks/useGSAP";
 
 export default function Partners() {
+  const heroRef = useGSAPTextReveal();
+  const statsRef = useGSAPStagger(0.1);
+  const partnersRef = useGSAPStagger(0.08);
+  const typesRef = useGSAPFlip();
+  const storiesRef = useGSAPScale();
+
   const partners = [
     {
       name: "TechnoServe",
