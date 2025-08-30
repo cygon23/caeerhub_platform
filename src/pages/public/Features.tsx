@@ -16,8 +16,15 @@ import {
   Sparkles,
   CheckCircle
 } from "lucide-react";
+import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip, useGSAPMagnetic } from "@/hooks/useGSAP";
 
 export default function Features() {
+  const heroRef = useGSAPTextReveal();
+  const featuresRef = useGSAPStagger(0.05);
+  const processRef = useGSAPStagger(0.2);
+  const statsRef = useGSAPFlip();
+  const ctaRef = useGSAPMagnetic();
+
   const features = [
     {
       icon: Brain,
@@ -134,11 +141,29 @@ export default function Features() {
   return (
     <PublicLayout>
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-fade-in">
+      <section className="py-20 bg-gradient-card relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          {[...Array(25)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-primary/10 animate-float"
+              style={{
+                width: `${20 + Math.random() * 60}px`,
+                height: `${20 + Math.random() * 60}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${4 + Math.random() * 4}s`
+              }}
+            ></div>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div ref={heroRef}>
             <div className="flex items-center justify-center mb-6">
-              <Sparkles className="h-8 w-8 text-primary mr-3" />
+              <Sparkles className="h-8 w-8 text-primary mr-3 animate-pulse-scale" />
               <h1 className="text-4xl md:text-6xl font-bold text-foreground">
                 AI-Powered 
                 <span className="bg-gradient-hero bg-clip-text text-transparent"> Features</span>
@@ -148,12 +173,14 @@ export default function Features() {
               Discover how our cutting-edge technology and expert guidance work together 
               to accelerate your career development and unlock your full potential.
             </p>
-            <Link to="/signup">
-              <Button size="lg" className="bg-gradient-hero text-white shadow-primary">
-                Try All Features Free
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            <div ref={ctaRef}>
+              <Link to="/signup">
+                <Button size="lg" className="bg-gradient-hero text-white shadow-primary transform hover:scale-110 transition-all duration-300">
+                  Try All Features Free
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -161,16 +188,15 @@ export default function Features() {
       {/* Features Grid */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div ref={featuresRef} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card 
                 key={feature.title}
-                className="hover:shadow-primary transition-all duration-500 animate-slide-up border-0 bg-gradient-card hover:scale-105"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="hover:shadow-primary transition-all duration-500 border-0 bg-gradient-card hover-lift group"
               >
                 <CardHeader>
                   <div className="flex items-start justify-between mb-4">
-                    <div className="p-3 bg-primary/10 rounded-lg">
+                    <div className="p-3 bg-primary/10 rounded-lg group-hover:scale-110 transition-transform duration-300">
                       <feature.icon className="h-8 w-8 text-primary" />
                     </div>
                     <span className="text-xs bg-secondary/20 text-secondary px-2 py-1 rounded-full font-medium">
@@ -185,7 +211,7 @@ export default function Features() {
                   <div className="space-y-2">
                     <h4 className="font-semibold text-foreground text-sm mb-3">Key Benefits:</h4>
                     {feature.benefits.map((benefit, idx) => (
-                      <div key={idx} className="flex items-center text-sm">
+                      <div key={idx} className="flex items-center text-sm transform hover:translate-x-2 transition-transform duration-200">
                         <CheckCircle className="h-4 w-4 text-secondary mr-2 flex-shrink-0" />
                         <span className="text-muted-foreground">{benefit}</span>
                       </div>
@@ -208,7 +234,7 @@ export default function Features() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div ref={processRef} className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
               {
                 step: "01",
@@ -233,11 +259,10 @@ export default function Features() {
             ].map((item, index) => (
               <Card 
                 key={item.step}
-                className="text-center hover:shadow-secondary transition-all duration-300 animate-bounce-in border-0 bg-background/50 backdrop-blur-sm"
-                style={{ animationDelay: `${index * 0.15}s` }}
+                className="text-center hover:shadow-secondary transition-all duration-500 border-0 bg-background/50 backdrop-blur-sm hover-tilt group"
               >
                 <CardContent className="p-6">
-                  <div className="text-4xl font-bold text-primary mb-4">{item.step}</div>
+                  <div className="text-4xl font-bold text-primary mb-4 group-hover:scale-125 transition-transform duration-300">{item.step}</div>
                   <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
                   <p className="text-muted-foreground">{item.description}</p>
                 </CardContent>
@@ -254,7 +279,7 @@ export default function Features() {
             Proven Results
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
               { number: "94%", label: "Career Match Accuracy" },
               { number: "87%", label: "Job Placement Rate" },  
@@ -263,10 +288,9 @@ export default function Features() {
             ].map((stat, index) => (
               <div 
                 key={stat.label}
-                className="animate-pulse-scale"
-                style={{ animationDelay: `${index * 0.2}s` }}
+                className="text-center hover-lift cursor-pointer"
               >
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{stat.number}</div>
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2 animate-pulse-scale">{stat.number}</div>
                 <div className="text-muted-foreground font-medium">{stat.label}</div>
               </div>
             ))}

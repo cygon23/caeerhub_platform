@@ -16,8 +16,14 @@ import {
   HeadphonesIcon
 } from "lucide-react";
 import { useState } from "react";
+import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPMagnetic } from "@/hooks/useGSAP";
 
 export default function Contact() {
+  const heroRef = useGSAPTextReveal();
+  const contactInfoRef = useGSAPStagger(0.1);
+  const formRef = useGSAPScale();
+  const specializedRef = useGSAPStagger(0.15);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',

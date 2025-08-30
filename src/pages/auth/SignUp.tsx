@@ -35,7 +35,7 @@ export default function SignUp() {
   const [success, setSuccess] = useState(false);
   const [resendDelay, setResendDelay] = useState(0);
 
-  const { signup, isOffline, resendVerificationEmail } = useAuth();
+  const { signup, isOffline } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -107,14 +107,9 @@ export default function SignUp() {
     setIsLoading(true);
     setError("");
     try {
-      // You may need to implement resendVerificationEmail in your AuthContext
-      if (typeof resendVerificationEmail === "function") {
-        await resendVerificationEmail(formData.email);
-      } else {
-        // fallback: call signup again (Supabase will resend if user exists and is unconfirmed)
-        const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-        await signup(formData.email, formData.password, fullName);
-      }
+      // Fallback: call signup again (Supabase will resend if user exists and is unconfirmed)
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      await signup(formData.email, formData.password, fullName);
       toast({
         title: "Verification Email Sent",
         description: "Please check your inbox (and spam folder).",
