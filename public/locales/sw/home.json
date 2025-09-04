@@ -1,4 +1,4 @@
-export const swHomeTranslations = {
+{
   "hero": {
     "title": "Gundua",
     "titleHighlight": "Kazi ya Ndoto Yako",
@@ -93,4 +93,4 @@ export const swHomeTranslations = {
       "support": "Msaada wa Masaa 24/7"
     }
   }
-};
+}

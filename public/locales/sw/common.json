@@ -1,4 +1,4 @@
-export const swCommonTranslations = {
+{
   "navigation": {
     "home": "Nyumbani",
     "about": "Kuhusu Sisi",
@@ -21,4 +21,4 @@ export const swCommonTranslations = {
     "retry": "Jaribu Tena",
     "stillHaveQuestions": "Bado una maswali?"
   }
-};
+}
