@@ -1,24 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>career-na-mimi-hub</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Career Na Mimi Hub - Empowering Tanzanian Youth Careers</title>
 
-    <meta property="og:title" content="career-na-mimi-hub" />
-    <meta property="og:description" content="" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="" />
+<!-- SEO Meta Tags -->
+<meta name="description" content="Democratizing access to quality career guidance and mentorship for Tanzanian youth. Unlock your potential with AI-powered career matching, local mentors, and skill development pathways." />
+<meta name="keywords" content="Tanzania careers, youth mentorship, career guidance, job skills, professional development, East Africa" />
+<meta name="author" content="Career Na Mimi Hub" />
+<meta name="robots" content="index, follow" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@careernamimi" />
-    <meta name="twitter:image" content="" />
-  </head>
+<!-- Favicon Links -->
+ <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="Career Na Mimi Hub - Empowering Tanzanian Youth Careers" />
+<meta property="og:description" content="Democratizing access to quality career guidance and mentorship for all Tanzanian youth. Connect with local mentors, discover career pathways, and unlock your potential." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://careernamimi.org" />
+<meta property="og:image" content="/og-image.png" />
+<meta property="og:image:alt" content="Career Na Mimi Hub - Tanzanian Youth Career Platform" />
+<meta property="og:locale" content="en_TZ" />
+<meta property="og:site_name" content="Career Na Mimi Hub" />
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@careernamimi" />
+<meta name="twitter:creator" content="@careernamimi" />
+<meta name="twitter:title" content="Career Na Mimi Hub - Empowering Tanzanian Youth" />
+<meta name="twitter:description" content="AI-powered career guidance platform connecting Tanzanian youth with mentors and opportunities" />
+<meta name="twitter:image" content="/twitter-card.png" />
+
+<!-- Performance & Accessibility -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="//api.careernamimi.org">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#FB067F">
+<meta name="msapplication-TileColor" content="#006708">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Career Hub">
+
+<!-- Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Career Na Mimi Hub",
+  "description": "Democratizing access to quality career guidance and mentorship for Tanzanian youth",
+  "url": "https://careernamimi.co.tz",
+  "logo": "/logo.png",
+  "sameAs": [
+    "https://twitter.com/careernamimi",
+    "https://linkedin.com/company/career-na-mimi-hub"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Customer Service",
+    "areaServed": "TZ",
+    "availableLanguage": ["English", "Swahili"]
+  },
+  "foundingLocation": {
+    "@type": "Place",
+    "name": "Tanzania"
+  },
+  "mission": "To democratize access to quality career guidance and mentorship for all Tanzanian youth, regardless of their background or location, using innovative technology and local expertise to unlock their full potential and create pathways to economic prosperity."
+}
+</script>
+
+<!-- Security Headers -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+
+</head>
+<body>
+<!-- Loading State -->
+<div id="loading" class="loading-spinner" style="display: none;"></div>
+
+<!-- Main App Container -->
+<div id="root">
+  <!-- Fallback content for non-JS users -->
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: Arial, sans-serif;">
+      <h1>Career Na Mimi Hub</h1>
+      <p>Empowering Tanzanian Youth Through Career Guidance</p>
+      <p>Please enable JavaScript to use this application.</p>
+    </div>
+  </noscript>
+</div>
+<!-- Main Application Script -->
+<script type="module" src="/src/main.tsx"></script>
+</body>
 </html>

@@ -41,6 +41,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import OnboardingResults from "@/components/user/OnboardingResults";
 import Profile from "@/components/user/Profile";
 import SystemSettings from "@/components/user/SystemSettings";
+import CareerAssessment from "@/components/dashboard/CareerAssessment";
+import LearningModules from "@/components/dashboard/LearningModules";
+import JobOpportunities from "@/components/dashboard/JobOpportunities";
+import CVBuilder from "@/components/dashboard/CVBuilder";
+import Mentorship from "@/components/dashboard/Mentorship";
+import PerformanceTracker from "@/components/dashboard/PerformanceTracker";
+import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
 
 export default function YouthDashboard() {
   const { user, logout } = useAuth();
@@ -341,12 +348,35 @@ export default function YouthDashboard() {
   const renderContent = () => {
     if (activeSection === "overview") return renderOverview();
 
-    //custom pages from database
+    // Profile and settings
     if (activeSection === "onboarding-results") return <OnboardingResults />;
     if (activeSection === "profile") return <Profile />;
     if (activeSection === "settings") return <SystemSettings />;
 
-    // Placeholder content for other sections
+    // Career Assessment
+    if (activeSection === "personality") return <CareerAssessment />;
+    
+    // Learning
+    if (activeSection === "modules") return <LearningModules />;
+    
+    // Job Opportunities
+    if (activeSection === "platfom") return <JobOpportunities />;
+    
+    // CV Builder
+    if (activeSection === "cv-builder") return <CVBuilder />;
+
+    // Mentorship
+    if (activeSection === "academic-mentor" || activeSection === "career-mentor" || activeSection === "parental") {
+      return <Mentorship />;
+    }
+
+    // Performance Tracker
+    if (activeSection === "performance") return <PerformanceTracker />;
+
+    // Roadmap Generator (already exists)
+    if (activeSection === "roadmap") return <RoadmapGenerator />;
+
+    // Placeholder content for remaining sections
     return (
       <Card>
         <CardHeader>
