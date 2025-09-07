@@ -1,5 +1,5 @@
 
-# CareerHub Youth Dashboard
+# CareerHub Platform
 
 A modern career development dashboard built with **React**, **Tailwind**, **lucide-react icons**, and a modular architecture.
 The platform empowers **youth, mentors, and admins** with career tools, learning resources, and mentorship opportunities.
