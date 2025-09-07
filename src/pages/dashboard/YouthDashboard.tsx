@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Link } from "react-router-dom";
 import {
   SidebarProvider,
@@ -48,6 +48,21 @@ import CVBuilder from "@/components/dashboard/CVBuilder";
 import Mentorship from "@/components/dashboard/Mentorship";
 import PerformanceTracker from "@/components/dashboard/PerformanceTracker";
 import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
+
+// Lazy load dashboard components with proper named exports
+const InterviewAICoach = React.lazy(() => import("@/components/dashboard/InterviewAICoach"));
+const CareerDashboard = React.lazy(() => import("@/components/dashboard/CareerDashboard"));
+const EmploymentPath = React.lazy(() => import("@/components/dashboard/EmploymentPath"));
+const SelfEmploymentPath = React.lazy(() => import("@/components/dashboard/SelfEmploymentPath"));
+const InvestorPath = React.lazy(() => import("@/components/dashboard/InvestorPath"));
+const BehavioralInsight = React.lazy(() => import("@/components/dashboard/BehavioralInsight").then(m => ({ default: m.BehavioralInsight })));
+const Badges = React.lazy(() => import("@/components/dashboard/Badges").then(m => ({ default: m.Badges })));
+const AcademicSupport = React.lazy(() => import("@/components/dashboard/AcademicSupport").then(m => ({ default: m.AcademicSupport })));
+const SelfLearning = React.lazy(() => import("@/components/dashboard/SelfLearning").then(m => ({ default: m.SelfLearning })));
+const DreamPlanner = React.lazy(() => import("@/components/dashboard/DreamPlanner").then(m => ({ default: m.DreamPlanner })));
+const CareerSuggestion = React.lazy(() => import("@/components/dashboard/CareerSuggestion").then(m => ({ default: m.CareerSuggestion })));
+const UbongInsight = React.lazy(() => import("@/components/dashboard/UbongInsight").then(m => ({ default: m.UbongInsight })));
+const StrengthWeakness = React.lazy(() => import("@/components/dashboard/StrengthWeakness").then(m => ({ default: m.StrengthWeakness })));
 
 export default function YouthDashboard() {
   const { user, logout } = useAuth();
@@ -365,6 +380,31 @@ export default function YouthDashboard() {
     // CV Builder
     if (activeSection === "cv-builder") return <CVBuilder />;
 
+    // Interview AI Coach
+    if (activeSection === "interview") {
+      return <InterviewAICoach />;
+    }
+
+    // Career Dashboard
+    if (activeSection === "career-dashboard") {
+      return <CareerDashboard />;
+    }
+
+    // Employment Path
+    if (activeSection === "employment") {
+      return <EmploymentPath />;
+    }
+
+    // Self-Employment Path
+    if (activeSection === "self-employment") {
+      return <SelfEmploymentPath />;
+    }
+
+    // Investor Path
+    if (activeSection === "investor-path") {
+      return <InvestorPath />;
+    }
+
     // Mentorship
     if (activeSection === "academic-mentor" || activeSection === "career-mentor" || activeSection === "parental") {
       return <Mentorship />;
@@ -376,7 +416,23 @@ export default function YouthDashboard() {
     // Roadmap Generator (already exists)
     if (activeSection === "roadmap") return <RoadmapGenerator />;
 
-    // Placeholder content for remaining sections
+    // Investor Tools
+    if (activeSection === "investor") {
+      const InvestorTools = React.lazy(() => import("@/components/dashboard/InvestorTools"));
+      return <InvestorTools />;
+    }
+
+    // New dashboard components
+    if (activeSection === "behavioral") return <BehavioralInsight />;
+    if (activeSection === "badges") return <Badges />;
+    if (activeSection === "academic") return <AcademicSupport />;
+    if (activeSection === "challenges") return <SelfLearning />;
+    if (activeSection === "planner") return <DreamPlanner />;
+    if (activeSection === "suggestions") return <CareerSuggestion />;
+    if (activeSection === "insights") return <UbongInsight />;
+    if (activeSection === "strengths") return <StrengthWeakness />;
+
+    // Placeholder for remaining sections
     return (
       <Card>
         <CardHeader>
@@ -490,7 +546,11 @@ export default function YouthDashboard() {
             </div>
           </header>
 
-          <div className='p-6'>{renderContent()}</div>
+          <div className='p-6'>
+            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              {renderContent()}
+            </Suspense>
+          </div>
         </main>
       </div>
     </SidebarProvider>
