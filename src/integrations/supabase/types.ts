@@ -53,6 +53,45 @@ export type Database = {
         }
         Relationships: []
       }
+      interview_sessions: {
+        Row: {
+          created_at: string
+          difficulty: string
+          id: string
+          industry: string
+          overall_score: number | null
+          position: string
+          questions: Json
+          responses: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          difficulty: string
+          id?: string
+          industry: string
+          overall_score?: number | null
+          position: string
+          questions: Json
+          responses?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          difficulty?: string
+          id?: string
+          industry?: string
+          overall_score?: number | null
+          position?: string
+          questions?: Json
+          responses?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       job_opportunities: {
         Row: {
           application_url: string | null
@@ -295,6 +334,7 @@ export type Database = {
           reminder_frequency: string | null
           strongest_subjects: string[] | null
           support_preferences: string[] | null
+          updated_at: string | null
           user_id: string
         }
         Insert: {
@@ -311,6 +351,7 @@ export type Database = {
           reminder_frequency?: string | null
           strongest_subjects?: string[] | null
           support_preferences?: string[] | null
+          updated_at?: string | null
           user_id: string
         }
         Update: {
@@ -327,6 +368,7 @@ export type Database = {
           reminder_frequency?: string | null
           strongest_subjects?: string[] | null
           support_preferences?: string[] | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -536,21 +578,21 @@ export type Database = {
           assigned_at: string | null
           assigned_by: string | null
           id: string
-          role: Database["public"]["Enums"]["app_role"]
+          role: string
           user_id: string
         }
         Insert: {
           assigned_at?: string | null
           assigned_by?: string | null
           id?: string
-          role: Database["public"]["Enums"]["app_role"]
+          role: string
           user_id: string
         }
         Update: {
           assigned_at?: string | null
           assigned_by?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          role?: string
           user_id?: string
         }
         Relationships: []
@@ -560,6 +602,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_test_user: {
+        Args: {
+          user_email: string
+          user_full_name: string
+          user_password: string
+        }
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]

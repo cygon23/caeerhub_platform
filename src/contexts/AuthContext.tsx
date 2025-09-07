@@ -144,24 +144,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // };
 
   const fetchUserData = async (sessionUser: SupabaseUser): Promise<User> => {
-    // Helper to add a timeout to any promise
-    function timeoutPromise<T>(promise: Promise<T>, ms: number): Promise<T> {
-      return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("Timeout")), ms);
-        promise
-          .then((value) => {
-            clearTimeout(timer);
-            resolve(value);
-          })
-          .catch((err) => {
-            clearTimeout(timer);
-            reject(err);
-          });
-      });
-    }
-
     try {
       console.log("Fetching user data for:", sessionUser.id);
+
+      // Helper to add a timeout to any promise
+      function timeoutPromise<T>(promise: Promise<T>, ms: number): Promise<T> {
+        return new Promise((resolve, reject) => {
+          const timer = setTimeout(() => reject(new Error("Database timeout")), ms);
+          promise
+            .then((value) => {
+              clearTimeout(timer);
+              resolve(value);
+            })
+            .catch((err) => {
+              clearTimeout(timer);
+              reject(err);
+            });
+        });
+      }
 
       // Fetch user profile, role, and onboarding status in parallel, with timeout
       const [profileResponse, roleResponse, onboardingResponse] =
@@ -183,7 +183,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .eq("user_id", sessionUser.id)
               .maybeSingle(),
           ]),
-          7000 // 7 seconds timeout
+          5000 // 5 seconds timeout
         );
 
       console.log("Profile response:", profileResponse);
@@ -204,8 +204,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Determine user role with email-based fallback
       let userRole: "youth" | "mentor" | "admin" = "youth";
 
-      if (roleData?.role) {
-        userRole = roleData.role;
+      if (roleData?.role && ['youth', 'mentor', 'admin'].includes(roleData.role)) {
+        userRole = roleData.role as "youth" | "mentor" | "admin";
       } else {
         // Fallback: determine role based on email if no role in database
         const email = sessionUser.email || "";
@@ -239,6 +239,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return userData;
     } catch (error) {
       console.error("Error fetching user data:", error);
+      
+      // Return fallback user data
+      const email = sessionUser.email || "";
+      let fallbackRole: "youth" | "mentor" | "admin" = "youth";
+
+      if (email.startsWith("admin") || email === "admin@test.com") {
+        fallbackRole = "admin";
+      } else if (email.startsWith("mentor") || email === "mentor@test.com") {
+        fallbackRole = "mentor";
+      }
+
+      return {
+        id: sessionUser.id,
+        email: sessionUser.email || "",
+        name: sessionUser.user_metadata?.full_name || "User",
+        role: fallbackRole,
+        isFirstLogin: fallbackRole === "youth",
+      };
     }
   };
 
