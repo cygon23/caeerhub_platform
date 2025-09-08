@@ -25,6 +25,14 @@ import {
   Settings
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import UserManagement from "@/components/admin/UserManagement";
+import MentorManagement from "@/components/admin/MentorManagement";
+import PartnerManagement from "@/components/admin/PartnerManagement";
+import JobBoardManagement from "@/components/admin/JobBoardManagement";
+import LearningModulesManagement from "@/components/admin/LearningModulesManagement";
+import NotificationManagement from "@/components/admin/NotificationManagement";
+import AdminProfile from "@/components/admin/AdminProfile";
+import AuditLog from "@/components/admin/AuditLog";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -41,6 +49,13 @@ export default function AdminDashboard() {
         { title: "Learning Modules", icon: BookOpen, id: "modules" },
         { title: "Notifications", icon: Bell, id: "notifications" },
         { title: "Analytics", icon: BarChart3, id: "analytics" }
+      ]
+    },
+    {
+      title: "System",
+      items: [
+        { title: "Profile Settings", icon: Settings, id: "profile" },
+        { title: "Audit Log", icon: Settings, id: "audit" }
       ]
     }
   ];
@@ -153,51 +168,35 @@ export default function AdminDashboard() {
     }
 
     if (activeSection === "users") {
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center'>
-              <Users className='h-5 w-5 mr-2' />
-              User Management
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='space-y-4'>
-              <div className='flex justify-between items-center'>
-                <h3 className='text-lg font-semibold'>Recent Registrations</h3>
-                <Button size="sm">Export Users</Button>
-              </div>
-              <div className='space-y-3'>
-                {[
-                  { name: "Alice Wanjiku", email: "alice@example.com", role: "Youth", status: "Active", joinDate: "2024-01-15" },
-                  { name: "Peter Otieno", email: "peter@example.com", role: "Youth", status: "Pending", joinDate: "2024-01-14" },
-                  { name: "Dr. Sarah Kimani", email: "sarah@example.com", role: "Mentor", status: "Active", joinDate: "2024-01-13" }
-                ].map((user, index) => (
-                  <div key={index} className='flex items-center justify-between p-4 bg-gradient-accent rounded-lg'>
-                    <div className='flex-1'>
-                      <div className='flex items-center space-x-3'>
-                        <div className='w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center'>
-                          <Users className='h-5 w-5 text-primary' />
-                        </div>
-                        <div>
-                          <p className='font-medium text-foreground'>{user.name}</p>
-                          <p className='text-sm text-muted-foreground'>{user.email}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='text-right'>
-                      <Badge variant={user.status === 'Active' ? 'default' : 'secondary'}>
-                        {user.status}
-                      </Badge>
-                      <p className='text-xs text-muted-foreground mt-1'>{user.role} • {user.joinDate}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      );
+      return <UserManagement />;
+    }
+
+    if (activeSection === "mentors") {
+      return <MentorManagement />;
+    }
+
+    if (activeSection === "partners") {
+      return <PartnerManagement />;
+    }
+
+    if (activeSection === "jobs") {
+      return <JobBoardManagement />;
+    }
+
+    if (activeSection === "modules") {
+      return <LearningModulesManagement />;
+    }
+
+    if (activeSection === "notifications") {
+      return <NotificationManagement />;
+    }
+
+    if (activeSection === "profile") {
+      return <AdminProfile />;
+    }
+
+    if (activeSection === "audit") {
+      return <AuditLog />;
     }
 
     if (activeSection === "analytics") {
