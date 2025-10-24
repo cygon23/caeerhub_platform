@@ -73,7 +73,7 @@ export default function AdminDashboard() {
             </p>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6'>
             <Card>
               <CardContent className='p-6 text-center'>
                 <Users className='h-8 w-8 text-primary mx-auto mb-2' />
@@ -260,7 +260,7 @@ export default function AdminDashboard() {
   return (
     <SidebarProvider>
       <div className='min-h-screen flex w-full bg-background'>
-        <Sidebar className='border-r border-border'>
+        <Sidebar className='border-r border-border hidden md:flex'>
           <div className='p-4 border-b border-border'>
             <div className='flex items-center space-x-2'>
               <img
@@ -326,17 +326,17 @@ export default function AdminDashboard() {
           </div>
         </Sidebar>
 
-        <main className='flex-1'>
-          <header className='h-16 border-b border-border bg-background/95 backdrop-blur-sm flex items-center px-6'>
-            <SidebarTrigger />
+        <main className='flex-1 w-full min-w-0'>
+          <header className='h-16 border-b border-border bg-background/95 backdrop-blur-sm flex items-center px-4 md:px-6'>
+            <SidebarTrigger className='md:hidden' />
             <div className='ml-4'>
-              <h1 className='text-xl font-semibold text-foreground'>
+              <h1 className='text-lg md:text-xl font-semibold text-foreground'>
                 Admin Dashboard
               </h1>
             </div>
           </header>
 
-          <div className='p-6'>{renderContent()}</div>
+          <div className='p-4 md:p-6'>{renderContent()}</div>
         </main>
       </div>
     </SidebarProvider>
