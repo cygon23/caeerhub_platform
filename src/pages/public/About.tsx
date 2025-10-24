@@ -41,7 +41,7 @@ export default function About() {
     },
     {
       year: "2030",
-      title: "42,000+ Youth Impacted",
+      title: "200+ Youth Impacted",
       description:
         "expecting our continued growth and the success stories of thousands of young Tanzanians.",
     },
@@ -78,30 +78,54 @@ export default function About() {
     {
       icon: Target,
       title: "Purpose-Driven",
-      description: "Everything we do is focused on empowering young Tanzanians to achieve their career dreams."
+      description:
+        "Everything we do is focused on empowering young Tanzanians to achieve their career dreams.",
     },
     {
       icon: Heart,
       title: "Locally Rooted",
-      description: "We understand the unique challenges and opportunities within the Tanzanian context."
+      description:
+        "We understand the unique challenges and opportunities within the Tanzanian context.",
     },
     {
       icon: Users,
       title: "Community-Centered",
-      description: "We believe in the power of mentorship, collaboration, and peer-to-peer learning."
+      description:
+        "We believe in the power of mentorship, collaboration, and peer-to-peer learning.",
     },
     {
       icon: Award,
       title: "Excellence-Focused",
-      description: "We strive for the highest quality in everything we deliver to our youth community."
-    }
+      description:
+        "We strive for the highest quality in everything we deliver to our youth community.",
+    },
   ];
 
   const impactStats = [
-    { number: "42,000+", label: "Youth Empowered", icon: Users, color: "text-primary" },
-    { number: "26", label: "Regions Covered", icon: MapPin, color: "text-secondary" },
-    { number: "89%", label: "Success Rate", icon: TrendingUp, color: "text-primary" },
-    { number: "150+", label: "Corporate Partners", icon: Award, color: "text-secondary" }
+    {
+      number: "200+",
+      label: "Youth Empowered",
+      icon: Users,
+      color: "text-primary",
+    },
+    {
+      number: "2",
+      label: "Regions Covered",
+      icon: MapPin,
+      color: "text-secondary",
+    },
+    {
+      number: "89%",
+      label: "Success Rate",
+      icon: TrendingUp,
+      color: "text-primary",
+    },
+    {
+      number: "10+",
+      label: "Corporate Partners",
+      icon: Award,
+      color: "text-secondary",
+    },
   ];
 
   const innovations = [
