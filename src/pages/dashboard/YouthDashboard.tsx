@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   SidebarProvider,
@@ -65,29 +65,83 @@ import Mentorship from "@/components/dashboard/Mentorship";
 import PerformanceTracker from "@/components/dashboard/PerformanceTracker";
 import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
 import UploadMaterials from "@/components/dashboard/UploadMaterials";
+import { supabase } from "@/integrations/supabase/client";
 
 // Lazy load dashboard components with proper named exports
-const InterviewAICoach = React.lazy(() => import("@/components/dashboard/InterviewAICoach"));
-const CareerDashboard = React.lazy(() => import("@/components/dashboard/CareerDashboard"));
-const EmploymentPath = React.lazy(() => import("@/components/dashboard/EmploymentPath"));
-const SelfEmploymentPath = React.lazy(() => import("@/components/dashboard/SelfEmploymentPath"));
-const InvestorPath = React.lazy(() => import("@/components/dashboard/InvestorPath"));
-const BehavioralInsight = React.lazy(() => import("@/components/dashboard/BehavioralInsight").then(m => ({ default: m.BehavioralInsight })));
-const Badges = React.lazy(() => import("@/components/dashboard/Badges").then(m => ({ default: m.Badges })));
-const AcademicSupport = React.lazy(() => import("@/components/dashboard/AcademicSupport").then(m => ({ default: m.AcademicSupport })));
-const SelfLearning = React.lazy(() => import("@/components/dashboard/SelfLearning").then(m => ({ default: m.SelfLearning })));
+const InterviewAICoach = React.lazy(
+  () => import("@/components/dashboard/InterviewAICoach")
+);
+const CareerDashboard = React.lazy(
+  () => import("@/components/dashboard/CareerDashboard")
+);
+const EmploymentPath = React.lazy(
+  () => import("@/components/dashboard/EmploymentPath")
+);
+const SelfEmploymentPath = React.lazy(
+  () => import("@/components/dashboard/SelfEmploymentPath")
+);
+const InvestorPath = React.lazy(
+  () => import("@/components/dashboard/InvestorPath")
+);
+const BehavioralInsight = React.lazy(() =>
+  import("@/components/dashboard/BehavioralInsight").then((m) => ({
+    default: m.BehavioralInsight,
+  }))
+);
+const Badges = React.lazy(() =>
+  import("@/components/dashboard/Badges").then((m) => ({ default: m.Badges }))
+);
+const AcademicSupport = React.lazy(() =>
+  import("@/components/dashboard/AcademicSupport").then((m) => ({
+    default: m.AcademicSupport,
+  }))
+);
+const SelfLearning = React.lazy(() =>
+  import("@/components/dashboard/SelfLearning").then((m) => ({
+    default: m.SelfLearning,
+  }))
+);
 const DreamPlanner = React.lazy(
   () => import("@/components/dashboard/DreamPlanner")
 );
-const CareerSuggestion = React.lazy(() => import("@/components/dashboard/CareerSuggestion").then(m => ({ default: m.CareerSuggestion })));
-const UbongInsight = React.lazy(() => import("@/components/dashboard/UbongInsight").then(m => ({ default: m.UbongInsight })));
-const StrengthWeakness = React.lazy(() => import("@/components/dashboard/StrengthWeakness").then(m => ({ default: m.StrengthWeakness })));
+const CareerSuggestion = React.lazy(() =>
+  import("@/components/dashboard/CareerSuggestion").then((m) => ({
+    default: m.CareerSuggestion,
+  }))
+);
+const UbongInsight = React.lazy(() =>
+  import("@/components/dashboard/UbongInsight").then((m) => ({
+    default: m.UbongInsight,
+  }))
+);
+const StrengthWeakness = React.lazy(() =>
+  import("@/components/dashboard/StrengthWeakness").then((m) => ({
+    default: m.StrengthWeakness,
+  }))
+);
 const InvestorTools = React.lazy(
   () => import("@/components/dashboard/InvestorTools")
 );
+
 export default function YouthDashboard() {
   const { user, logout } = useAuth();
+  const [userCareerPath, setUserCareerPath] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState("overview");
+
+  useEffect(() => {
+    fetchUserCareerPath();
+  }, [user]);
+
+  const fetchUserCareerPath = async () => {
+    const { data } = await supabase
+      .from("onboarding_responses")
+      .select("preferred_path, ai_recommended_path")
+      .eq("user_id", user.id)
+      .single();
+
+    // Use AI recommended path if available, otherwise use preferred_path
+    setUserCareerPath(data?.ai_recommended_path || data?.preferred_path);
+  };
 
   const sidebarItems = [
     {
@@ -155,9 +209,17 @@ export default function YouthDashboard() {
       title: "Examination Preparation",
       items: [
         { title: "Upload Materials", icon: Upload, id: "upload-materials" },
-        { title: "Practice Questions", icon: FileQuestion, id: "practice-questions" },
+        {
+          title: "Practice Questions",
+          icon: FileQuestion,
+          id: "practice-questions",
+        },
         { title: "Study Guides", icon: BookMarked, id: "study-guides" },
-        { title: "Performance Insights", icon: TrendingUp, id: "exam-insights" },
+        {
+          title: "Performance Insights",
+          icon: TrendingUp,
+          id: "exam-insights",
+        },
       ],
     },
     {
@@ -178,217 +240,238 @@ export default function YouthDashboard() {
     },
   ];
 
-  const quickStats = [
-    {
-      label: "Career Readiness",
-      value: 72,
-      icon: Target,
-      color: "text-primary",
-    },
-    {
-      label: "Skills Developed",
-      value: 12,
-      icon: BookOpen,
-      color: "text-secondary",
-    },
-    { label: "Days Active", value: 34, icon: Calendar, color: "text-primary" },
-    { label: "Badges Earned", value: 8, icon: Award, color: "text-secondary" },
-  ];
+  const pathMapping = {
+    employment: "employment",
+    self_employment: "self-employment",
+    investor: "investor-path",
+  };
 
-  const recentActivities = [
-    {
-      title: "Completed Career Personality Test",
-      description: "Discovered you're a 'Logical Thinker' personality type",
-      time: "2 hours ago",
-      icon: Brain,
-      color: "bg-primary/10 text-primary",
-    },
-    {
-      title: "Started ICT Fundamentals Module",
-      description: "Progress: 3/12 lessons completed",
-      time: "1 day ago",
-      icon: BookOpen,
-      color: "bg-secondary/10 text-secondary",
-    },
-    {
-      title: "Mentorship Session Scheduled",
-      description: "Meeting with Dr. James Mwangi tomorrow at 2 PM",
-      time: "2 days ago",
-      icon: Users,
-      color: "bg-primary/10 text-primary",
-    },
-  ];
+  const filteredSidebarItems = sidebarItems.map((group) => {
+    if (group.title === "Career Paths") {
+      return {
+        ...group,
+        items: group.items.filter(
+          (item) => item.id === pathMapping[userCareerPath]
+        ),
+      };
+    }
+    return group;
+  });
 
-  const upcomingTasks = [
-    { title: "Complete CV Builder Setup", priority: "High", due: "Today" },
-    {
-      title: "Take Mathematics Assessment",
-      priority: "Medium",
-      due: "Tomorrow",
-    },
-    { title: "Review Roadmap Progress", priority: "Low", due: "This Week" },
-  ];
+   const quickStats = [
+     {
+       label: "Career Readiness",
+       value: 72,
+       icon: Target,
+       color: "text-primary",
+     },
+     {
+       label: "Skills Developed",
+       value: 12,
+       icon: BookOpen,
+       color: "text-secondary",
+     },
+     { label: "Days Active", value: 34, icon: Calendar, color: "text-primary" },
+     { label: "Badges Earned", value: 8, icon: Award, color: "text-secondary" },
+   ];
 
-  const renderOverview = () => (
-    <div className='space-y-8'>
-      {/* Welcome Section */}
-      <div className='bg-gradient-hero text-white rounded-lg p-4 md:p-8'>
-        <div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
-          <div>
-            <h1 className='text-2xl md:text-3xl font-bold mb-2'>
-              Habari {user?.name?.split(" ")[0] || "Amina"}! 👋
-            </h1>
-            <p className='text-white/90 text-base md:text-lg'>
-              Ready to continue building your career journey today?
-            </p>
-          </div>
-          <div className='text-left md:text-right'>
-            <div className='text-2xl font-bold'>72%</div>
-            <div className='text-white/80 text-sm'>Career Readiness</div>
-          </div>
-        </div>
-      </div>
+   const recentActivities = [
+     {
+       title: "Completed Career Personality Test",
+       description: "Discovered you're a 'Logical Thinker' personality type",
+       time: "2 hours ago",
+       icon: Brain,
+       color: "bg-primary/10 text-primary",
+     },
+     {
+       title: "Started ICT Fundamentals Module",
+       description: "Progress: 3/12 lessons completed",
+       time: "1 day ago",
+       icon: BookOpen,
+       color: "bg-secondary/10 text-secondary",
+     },
+     {
+       title: "Mentorship Session Scheduled",
+       description: "Meeting with Dr. James Mwangi tomorrow at 2 PM",
+       time: "2 days ago",
+       icon: Users,
+       color: "bg-primary/10 text-primary",
+     },
+   ];
 
-      {/* Quick Stats */}
-      <div className='grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6'>
-        {quickStats.map((stat, index) => (
-          <Card
-            key={stat.label}
-            className='hover:shadow-primary transition-all duration-300'>
-            <CardContent className='p-4 md:p-6'>
-              <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-muted-foreground text-xs md:text-sm'>{stat.label}</p>
-                  <p className='text-xl md:text-2xl font-bold text-foreground'>
-                    {stat.value}
-                  </p>
-                </div>
-                <stat.icon className={`h-6 w-6 md:h-8 md:w-8 ${stat.color}`} />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+   const upcomingTasks = [
+     { title: "Complete CV Builder Setup", priority: "High", due: "Today" },
+     {
+       title: "Take Mathematics Assessment",
+       priority: "Medium",
+       due: "Tomorrow",
+     },
+     { title: "Review Roadmap Progress", priority: "Low", due: "This Week" },
+   ];
 
-      {/* Main Content Grid */}
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-        {/* Recent Activities */}
-        <div className='lg:col-span-2'>
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center'>
-                <Clock className='h-5 w-5 mr-2' />
-                Recent Activities
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-              {recentActivities.map((activity, index) => (
-                <div
-                  key={index}
-                  className='flex items-start space-x-4 p-4 bg-gradient-accent rounded-lg'>
-                  <div className={`p-2 rounded-lg ${activity.color}`}>
-                    <activity.icon className='h-4 w-4' />
-                  </div>
-                  <div className='flex-1'>
-                    <h4 className='font-medium text-foreground'>
-                      {activity.title}
-                    </h4>
-                    <p className='text-sm text-muted-foreground'>
-                      {activity.description}
-                    </p>
-                    <p className='text-xs text-muted-foreground mt-1'>
-                      {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+   const renderOverview = () => (
+     <div className='space-y-8'>
+       {/* Welcome Section */}
+       <div className='bg-gradient-hero text-white rounded-lg p-4 md:p-8'>
+         <div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
+           <div>
+             <h1 className='text-2xl md:text-3xl font-bold mb-2'>
+               Habari {user?.name?.split(" ")[0] || "Amina"}! 👋
+             </h1>
+             <p className='text-white/90 text-base md:text-lg'>
+               Ready to continue building your career journey today?
+             </p>
+           </div>
+           <div className='text-left md:text-right'>
+             <div className='text-2xl font-bold'>72%</div>
+             <div className='text-white/80 text-sm'>Career Readiness</div>
+           </div>
+         </div>
+       </div>
 
-        {/* Upcoming Tasks */}
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center'>
-                <CheckCircle className='h-5 w-5 mr-2' />
-                Upcoming Tasks
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-3'>
-              {upcomingTasks.map((task, index) => (
-                <div
-                  key={index}
-                  className='flex items-center justify-between p-3 bg-background border border-border rounded-lg'>
-                  <div className='flex-1'>
-                    <p className='font-medium text-foreground text-sm'>
-                      {task.title}
-                    </p>
-                    <p className='text-xs text-muted-foreground'>{task.due}</p>
-                  </div>
-                  <Badge
-                    variant={
-                      task.priority === "High"
-                        ? "destructive"
-                        : task.priority === "Medium"
-                        ? "default"
-                        : "secondary"
-                    }>
-                    {task.priority}
-                  </Badge>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+       {/* Quick Stats */}
+       <div className='grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6'>
+         {quickStats.map((stat, index) => (
+           <Card
+             key={stat.label}
+             className='hover:shadow-primary transition-all duration-300'>
+             <CardContent className='p-4 md:p-6'>
+               <div className='flex items-center justify-between'>
+                 <div>
+                   <p className='text-muted-foreground text-xs md:text-sm'>
+                     {stat.label}
+                   </p>
+                   <p className='text-xl md:text-2xl font-bold text-foreground'>
+                     {stat.value}
+                   </p>
+                 </div>
+                 <stat.icon className={`h-6 w-6 md:h-8 md:w-8 ${stat.color}`} />
+               </div>
+             </CardContent>
+           </Card>
+         ))}
+       </div>
 
-      {/* AI Recommendations */}
-      <Card className='bg-gradient-card border-0'>
-        <CardHeader>
-          <CardTitle className='flex items-center'>
-            <Brain className='h-5 w-5 mr-2 text-primary' />
-            AI Recommendations for You
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-            <div className='text-center p-4'>
-              <div className='w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
-                <BookOpen className='h-6 w-6 text-primary' />
-              </div>
-              <h4 className='font-semibold text-foreground mb-2'>
-                Continue Learning
-              </h4>
-              <p className='text-sm text-muted-foreground'>
-                Complete your ICT Fundamentals course to unlock advanced modules
-              </p>
-            </div>
-            <div className='text-center p-4'>
-              <div className='w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
-                <Users className='h-6 w-6 text-secondary' />
-              </div>
-              <h4 className='font-semibold text-foreground mb-2'>
-                Book Mentorship
-              </h4>
-              <p className='text-sm text-muted-foreground'>
-                Schedule your next session with a technology industry mentor
-              </p>
-            </div>
-            <div className='text-center p-4'>
-              <div className='w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
-                <FileText className='h-6 w-6 text-primary' />
-              </div>
-              <h4 className='font-semibold text-foreground mb-2'>Update CV</h4>
-              <p className='text-sm text-muted-foreground'>
-                Add your recent skills and achievements to your professional CV
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+       {/* Main Content Grid */}
+       <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+         {/* Recent Activities */}
+         <div className='lg:col-span-2'>
+           <Card>
+             <CardHeader>
+               <CardTitle className='flex items-center'>
+                 <Clock className='h-5 w-5 mr-2' />
+                 Recent Activities
+               </CardTitle>
+             </CardHeader>
+             <CardContent className='space-y-4'>
+               {recentActivities.map((activity, index) => (
+                 <div
+                   key={index}
+                   className='flex items-start space-x-4 p-4 bg-gradient-accent rounded-lg'>
+                   <div className={`p-2 rounded-lg ${activity.color}`}>
+                     <activity.icon className='h-4 w-4' />
+                   </div>
+                   <div className='flex-1'>
+                     <h4 className='font-medium text-foreground'>
+                       {activity.title}
+                     </h4>
+                     <p className='text-sm text-muted-foreground'>
+                       {activity.description}
+                     </p>
+                     <p className='text-xs text-muted-foreground mt-1'>
+                       {activity.time}
+                     </p>
+                   </div>
+                 </div>
+               ))}
+             </CardContent>
+           </Card>
+         </div>
+
+         {/* Upcoming Tasks */}
+         <div>
+           <Card>
+             <CardHeader>
+               <CardTitle className='flex items-center'>
+                 <CheckCircle className='h-5 w-5 mr-2' />
+                 Upcoming Tasks
+               </CardTitle>
+             </CardHeader>
+             <CardContent className='space-y-3'>
+               {upcomingTasks.map((task, index) => (
+                 <div
+                   key={index}
+                   className='flex items-center justify-between p-3 bg-background border border-border rounded-lg'>
+                   <div className='flex-1'>
+                     <p className='font-medium text-foreground text-sm'>
+                       {task.title}
+                     </p>
+                     <p className='text-xs text-muted-foreground'>{task.due}</p>
+                   </div>
+                   <Badge
+                     variant={
+                       task.priority === "High"
+                         ? "destructive"
+                         : task.priority === "Medium"
+                         ? "default"
+                         : "secondary"
+                     }>
+                     {task.priority}
+                   </Badge>
+                 </div>
+               ))}
+             </CardContent>
+           </Card>
+         </div>
+       </div>
+
+       {/* AI Recommendations */}
+       <Card className='bg-gradient-card border-0'>
+         <CardHeader>
+           <CardTitle className='flex items-center'>
+             <Brain className='h-5 w-5 mr-2 text-primary' />
+             AI Recommendations for You
+           </CardTitle>
+         </CardHeader>
+         <CardContent>
+           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+             <div className='text-center p-4'>
+               <div className='w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
+                 <BookOpen className='h-6 w-6 text-primary' />
+               </div>
+               <h4 className='font-semibold text-foreground mb-2'>
+                 Continue Learning
+               </h4>
+               <p className='text-sm text-muted-foreground'>
+                 Complete your ICT Fundamentals course to unlock advanced
+                 modules
+               </p>
+             </div>
+             <div className='text-center p-4'>
+               <div className='w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
+                 <Users className='h-6 w-6 text-secondary' />
+               </div>
+               <h4 className='font-semibold text-foreground mb-2'>
+                 Book Mentorship
+               </h4>
+               <p className='text-sm text-muted-foreground'>
+                 Schedule your next session with a technology industry mentor
+               </p>
+             </div>
+             <div className='text-center p-4'>
+               <div className='w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
+                 <FileText className='h-6 w-6 text-primary' />
+               </div>
+               <h4 className='font-semibold text-foreground mb-2'>Update CV</h4>
+               <p className='text-sm text-muted-foreground'>
+                 Add your recent skills and achievements to your professional CV
+               </p>
+             </div>
+           </div>
+         </CardContent>
+       </Card>
+     </div>
+   );
 
   const renderContent = () => {
     if (activeSection === "overview") return renderOverview();
@@ -400,13 +483,13 @@ export default function YouthDashboard() {
 
     // Career Assessment
     if (activeSection === "personality") return <CareerAssessment />;
-    
+
     // Learning
     if (activeSection === "modules") return <LearningModules />;
-    
+
     // Job Opportunities
     if (activeSection === "platfom") return <JobOpportunities />;
-    
+
     // CV Builder
     if (activeSection === "cv-builder") return <CVBuilder />;
 
@@ -449,7 +532,11 @@ export default function YouthDashboard() {
     }
 
     // Mentorship
-    if (activeSection === "academic-mentor" || activeSection === "career-mentor" || activeSection === "parental") {
+    if (
+      activeSection === "academic-mentor" ||
+      activeSection === "career-mentor" ||
+      activeSection === "parental"
+    ) {
       return <Mentorship />;
     }
 
@@ -461,7 +548,9 @@ export default function YouthDashboard() {
 
     // Investor Tools
     if (activeSection === "investor") {
-      const InvestorTools = React.lazy(() => import("@/components/dashboard/InvestorTools"));
+      const InvestorTools = React.lazy(
+        () => import("@/components/dashboard/InvestorTools")
+      );
       return <InvestorTools />;
     }
 
@@ -474,7 +563,7 @@ export default function YouthDashboard() {
     if (activeSection === "suggestions") return <CareerSuggestion />;
     if (activeSection === "insights") return <UbongInsight />;
     if (activeSection === "strengths") return <StrengthWeakness />;
-    
+
     // Examination Preparation
     if (activeSection === "upload-materials") return <UploadMaterials />;
 
@@ -537,7 +626,7 @@ export default function YouthDashboard() {
               </Button>
             </div>
 
-            {sidebarItems.map((group, index) => (
+            {filteredSidebarItems.map((group, index) => (
               <SidebarGroup key={index}>
                 <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
                 <SidebarGroupContent>
@@ -597,43 +686,47 @@ export default function YouthDashboard() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
-                  className="relative h-10 w-10 rounded-full p-0 hover:bg-accent"
-                >
-                  <Avatar className="h-10 w-10 border-2 border-primary/20">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
+                  variant='ghost'
+                  className='relative h-10 w-10 rounded-full p-0 hover:bg-accent'>
+                  <Avatar className='h-10 w-10 border-2 border-primary/20'>
+                    <AvatarFallback className='bg-primary text-primary-foreground'>
                       {user?.name?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary border-2 border-background" />
+                  <div className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary border-2 border-background' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
+              <DropdownMenuContent align='end' className='w-56'>
+                <DropdownMenuLabel className='font-normal'>
+                  <div className='flex flex-col space-y-1'>
+                    <p className='text-sm font-medium leading-none'>
+                      {user?.name}
+                    </p>
+                    <p className='text-xs leading-none text-muted-foreground'>
                       {user?.email}
                     </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setActiveSection("notifications")}>
-                  <Bell className="mr-2 h-4 w-4" />
+                <DropdownMenuItem
+                  onClick={() => setActiveSection("notifications")}>
+                  <Bell className='mr-2 h-4 w-4' />
                   <span>Notifications</span>
-                  <Badge variant="secondary" className="ml-auto">3</Badge>
+                  <Badge variant='secondary' className='ml-auto'>
+                    3
+                  </Badge>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setActiveSection("profile")}>
-                  <User className="mr-2 h-4 w-4" />
+                  <User className='mr-2 h-4 w-4' />
                   <span>Profile</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setActiveSection("settings")}>
-                  <Settings className="mr-2 h-4 w-4" />
+                  <Settings className='mr-2 h-4 w-4' />
                   <span>Preferences</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="text-destructive">
-                  <LogOut className="mr-2 h-4 w-4" />
+                <DropdownMenuItem onClick={logout} className='text-destructive'>
+                  <LogOut className='mr-2 h-4 w-4' />
                   <span>Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -641,7 +734,12 @@ export default function YouthDashboard() {
           </header>
 
           <div className='p-4 md:p-6'>
-            <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+            <Suspense
+              fallback={
+                <div className='flex items-center justify-center py-12'>
+                  <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
+                </div>
+              }>
               {renderContent()}
             </Suspense>
           </div>
