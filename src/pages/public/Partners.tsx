@@ -109,10 +109,10 @@ export default function Partners() {
   ];
 
   const stats = [
-    { number: "50+", label: "Active Partners" },
-    { number: "150,000+", label: "Youth Reached Through Partnerships" },
-    { number: "TZS 15B+", label: "Partnership Investment Value" },
-    { number: "12", label: "Countries Represented" }
+    { number: "10+", label: "Active Partners" },
+    { number: "200+", label: "Youth Reached Through Partnerships" },
+    { number: "TZS 3M+", label: "Partnership Investment Value" },
+    { number: "1+", label: "Countries Represented" },
   ];
 
   return (
