@@ -33,10 +33,14 @@ export default function ModernFooter() {
       { name: "API", href: "/api" },
     ],
     resources: [
-      { name: "Blog", href: "/blog" },
-      { name: "Help Center", href: "/help" },
-      { name: "Community", href: "/community" },
-      { name: "Partners", href: "/partners" },
+      {
+        name: "Blog",
+        href: "https://morden-blog-site.vercel.app/",
+        target: "_blank",
+      },
+      { name: "Help Center", href: "#help" },
+      { name: "Community", href: "#community" },
+      { name: "Partners", href: "#partners" },
     ],
     legal: [
       { name: "Privacy Policy", href: "/privacy" },
@@ -95,11 +99,11 @@ export default function ModernFooter() {
                 </div>
                 <div className='flex items-center text-muted-foreground'>
                   <Mail className='h-4 w-4 mr-3 text-primary' />
-                  <span>info@careernamimi.co.tz</span>
+                  <span>info@careernamimi.org</span>
                 </div>
                 <div className='flex items-center text-muted-foreground'>
                   <Phone className='h-4 w-4 mr-3 text-primary' />
-                  <span>+255 123 456 789</span>
+                  <span>+255 628 055 646/673 045 414</span>
                 </div>
               </div>
             </div>
@@ -202,7 +206,7 @@ export default function ModernFooter() {
                   <div>Youth Helped</div>
                 </div>
                 <div className='text-center'>
-                  <div className='font-bold text-primary text-lg'>150+</div>
+                  <div className='font-bold text-primary text-lg'>10+</div>
                   <div>Partners</div>
                 </div>
                 <div className='text-center'>
