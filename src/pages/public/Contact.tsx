@@ -43,85 +43,106 @@ export default function Contact() {
     {
       icon: MapPin,
       title: "Our Office",
-      details: ["Masaki Area, Plot 123", "Ali Hassan Mwinyi Road", "Dar es Salaam, Tanzania"]
+      details: ["Njiro", "Arusha, Tanzania"],
     },
+
     {
       icon: Phone,
       title: "Phone Numbers",
-      details: ["+255 22 123 4567", "+255 784 567 890", "Available 8 AM - 6 PM EAT"]
+      details: [
+        "+255 628 055 646",
+        "+255 673 045 414",
+        "Available 8 AM - 6 PM EAT",
+      ],
     },
     {
       icon: Mail,
       title: "Email Addresses",
-      details: ["info@careernamimi.co.tz", "support@careernamimi.co.tz", "partnerships@careernamimi.co.tz"]
+      details: [
+        "info@careernamimi.org",
+        "support@careernamimi.org",
+      ],
     },
     {
       icon: Clock,
       title: "Business Hours",
-      details: ["Monday - Friday: 8:00 AM - 6:00 PM", "Saturday: 9:00 AM - 2:00 PM", "Sunday: Closed"]
-    }
+      details: [
+        "Monday - Friday: 8:00 AM - 6:00 PM",
+        "Saturday: 9:00 AM - 2:00 PM",
+        "Sunday: Closed",
+      ],
+    },
   ];
 
   const inquiryTypes = [
     {
       icon: Users,
       title: "For Youth & Students",
-      description: "Questions about our career development programs, assessments, and mentorship opportunities.",
-      email: "youth@careernamimi.co.tz"
+      description:
+        "Questions about our career development programs, assessments, and mentorship opportunities.",
+      email: "info@careernamimi.org",
     },
     {
       icon: Building,
       title: "For Organizations",
-      description: "Partnership inquiries, corporate programs, and bulk assessment services.",
-      email: "partnerships@careernamimi.co.tz"
+      description:
+        "Partnership inquiries, corporate programs, and bulk assessment services.",
+      email: "info@careernamimi.org",
     },
     {
       icon: HeadphonesIcon,
       title: "Technical Support",
-      description: "Platform issues, account problems, and technical assistance.",
-      email: "support@careernamimi.co.tz"
-    }
+      description:
+        "Platform issues, account problems, and technical assistance.",
+      email: "support@careernamimi.org",
+    },
   ];
 
   return (
     <PublicLayout>
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-fade-in">
-            <div className="flex items-center justify-center mb-6">
-              <MessageCircle className="h-8 w-8 text-primary mr-3" />
-              <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-                Contact 
-                <span className="bg-gradient-hero bg-clip-text text-transparent"> Us</span>
+      <section className='py-20 bg-gradient-card'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+          <div className='animate-fade-in'>
+            <div className='flex items-center justify-center mb-6'>
+              <MessageCircle className='h-8 w-8 text-primary mr-3' />
+              <h1 className='text-4xl md:text-6xl font-bold text-foreground'>
+                Contact
+                <span className='bg-gradient-hero bg-clip-text text-transparent'>
+                  {" "}
+                  Us
+                </span>
               </h1>
             </div>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Have questions about our platform? Want to explore partnership opportunities? 
-              We're here to help and would love to hear from you.
+            <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
+              Have questions about our platform? Want to explore partnership
+              opportunities? We're here to help and would love to hear from you.
             </p>
           </div>
         </div>
       </section>
 
       {/* Contact Information */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      <section className='py-20'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16'>
             {contactInfo.map((info, index) => (
-              <Card 
+              <Card
                 key={info.title}
-                className="text-center hover:shadow-primary transition-all duration-300 animate-bounce-in border-0 bg-gradient-card"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardContent className="p-6">
-                  <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto mb-4">
-                    <info.icon className="h-8 w-8 text-primary" />
+                className='text-center hover:shadow-primary transition-all duration-300 animate-bounce-in border-0 bg-gradient-card'
+                style={{ animationDelay: `${index * 0.1}s` }}>
+                <CardContent className='p-6'>
+                  <div className='p-3 bg-primary/10 rounded-lg w-fit mx-auto mb-4'>
+                    <info.icon className='h-8 w-8 text-primary' />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-3">{info.title}</h3>
-                  <div className="space-y-1">
+                  <h3 className='text-lg font-semibold text-foreground mb-3'>
+                    {info.title}
+                  </h3>
+                  <div className='space-y-1'>
                     {info.details.map((detail, idx) => (
-                      <p key={idx} className="text-muted-foreground text-sm">{detail}</p>
+                      <p key={idx} className='text-muted-foreground text-sm'>
+                        {detail}
+                      </p>
                     ))}
                   </div>
                 </CardContent>
@@ -132,95 +153,106 @@ export default function Contact() {
       </section>
 
       {/* Contact Form & Map */}
-      <section className="py-20 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <section className='py-20 bg-muted/30'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
             {/* Contact Form */}
-            <div className="animate-slide-up">
-              <Card className="border-0 bg-background/50 backdrop-blur-sm shadow-elegant">
+            <div className='animate-slide-up'>
+              <Card className='border-0 bg-background/50 backdrop-blur-sm shadow-elegant'>
                 <CardHeader>
-                  <CardTitle className="text-2xl text-foreground">Send us a Message</CardTitle>
-                  <p className="text-muted-foreground">
-                    Fill out the form below and we'll get back to you within 24 hours.
+                  <CardTitle className='text-2xl text-foreground'>
+                    Send us a Message
+                  </CardTitle>
+                  <p className='text-muted-foreground'>
+                    Fill out the form below and we'll get back to you within 24
+                    hours.
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <form onSubmit={handleSubmit} className='space-y-6'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       <div>
-                        <Label htmlFor="name">Full Name *</Label>
+                        <Label htmlFor='name'>Full Name *</Label>
                         <Input
-                          id="name"
-                          type="text"
-                          placeholder="Your full name"
+                          id='name'
+                          type='text'
+                          placeholder='Your full name'
                           value={formData.name}
-                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
                           required
-                          className="mt-1"
+                          className='mt-1'
                         />
                       </div>
                       <div>
-                        <Label htmlFor="email">Email Address *</Label>
+                        <Label htmlFor='email'>Email Address *</Label>
                         <Input
-                          id="email"
-                          type="email"
-                          placeholder="your.email@example.com"
+                          id='email'
+                          type='email'
+                          placeholder='your.email@example.com'
                           value={formData.email}
-                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                           required
-                          className="mt-1"
+                          className='mt-1'
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="type">Inquiry Type</Label>
+                      <Label htmlFor='type'>Inquiry Type</Label>
                       <select
-                        id="type"
+                        id='type'
                         value={formData.type}
-                        onChange={(e) => setFormData({...formData, type: e.target.value})}
-                        className="w-full mt-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                      >
-                        <option value="general">General Inquiry</option>
-                        <option value="youth">Youth Programs</option>
-                        <option value="partnership">Partnership</option>
-                        <option value="support">Technical Support</option>
-                        <option value="media">Media & Press</option>
+                        onChange={(e) =>
+                          setFormData({ ...formData, type: e.target.value })
+                        }
+                        className='w-full mt-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary'>
+                        <option value='general'>General Inquiry</option>
+                        <option value='youth'>Youth Programs</option>
+                        <option value='partnership'>Partnership</option>
+                        <option value='support'>Technical Support</option>
+                        <option value='media'>Media & Press</option>
                       </select>
                     </div>
 
                     <div>
-                      <Label htmlFor="subject">Subject *</Label>
+                      <Label htmlFor='subject'>Subject *</Label>
                       <Input
-                        id="subject"
-                        type="text"
-                        placeholder="Brief description of your inquiry"
+                        id='subject'
+                        type='text'
+                        placeholder='Brief description of your inquiry'
                         value={formData.subject}
-                        onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                        onChange={(e) =>
+                          setFormData({ ...formData, subject: e.target.value })
+                        }
                         required
-                        className="mt-1"
+                        className='mt-1'
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="message">Message *</Label>
+                      <Label htmlFor='message'>Message *</Label>
                       <Textarea
-                        id="message"
-                        placeholder="Please provide details about your inquiry..."
+                        id='message'
+                        placeholder='Please provide details about your inquiry...'
                         rows={6}
                         value={formData.message}
-                        onChange={(e) => setFormData({...formData, message: e.target.value})}
+                        onChange={(e) =>
+                          setFormData({ ...formData, message: e.target.value })
+                        }
                         required
-                        className="mt-1"
+                        className='mt-1'
                       />
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-hero text-white shadow-primary"
-                      size="lg"
-                    >
-                      <Send className="mr-2 h-5 w-5" />
+                    <Button
+                      type='submit'
+                      className='w-full bg-gradient-hero text-white shadow-primary'
+                      size='lg'>
+                      <Send className='mr-2 h-5 w-5' />
                       Send Message
                     </Button>
                   </form>
@@ -229,57 +261,69 @@ export default function Contact() {
             </div>
 
             {/* Map & Quick Contact */}
-            <div className="space-y-8 animate-fade-in">
+            <div className='space-y-8 animate-fade-in'>
               {/* Map Placeholder */}
-              <Card className="border-0 bg-background/50 backdrop-blur-sm shadow-elegant">
-                <CardContent className="p-0">
-                  <div className="bg-gradient-hero rounded-lg p-8 text-center text-white relative overflow-hidden">
-                    <div className="relative z-10">
-                      <MapPin className="h-12 w-12 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">Visit Our Office</h3>
-                      <p className="text-white/90">
-                        Masaki Area, Ali Hassan Mwinyi Road<br />
-                        Dar es Salaam, Tanzania
+              <Card className='border-0 bg-background/50 backdrop-blur-sm shadow-elegant'>
+                <CardContent className='p-0'>
+                  <div className='bg-gradient-hero rounded-lg p-8 text-center text-white relative overflow-hidden'>
+                    <div className='relative z-10'>
+                      <MapPin className='h-12 w-12 mx-auto mb-4' />
+                      <h3 className='text-xl font-semibold mb-2'>
+                        Visit Our Office
+                      </h3>
+                      <p className='text-white/90'>
+                        Njiro, Tanesco
+                        <br />
+                        Arusha, Tanzania
                       </p>
-                      <Button 
-                        variant="outline" 
-                        className="mt-4 border-white text-white hover:bg-white/10"
-                      >
+                      <Button
+                        variant='outline'
+                        className='mt-4 border-white text-white hover:bg-white/10'>
                         Get Directions
                       </Button>
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20"></div>
+                    <div className='absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20'></div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Quick Contact Options */}
-              <Card className="border-0 bg-background/50 backdrop-blur-sm shadow-elegant">
+              <Card className='border-0 bg-background/50 backdrop-blur-sm shadow-elegant'>
                 <CardHeader>
-                  <CardTitle className="text-xl text-foreground">Quick Contact</CardTitle>
+                  <CardTitle className='text-xl text-foreground'>
+                    Quick Contact
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center p-3 bg-gradient-accent rounded-lg">
-                    <Phone className="h-5 w-5 text-primary mr-3" />
+                <CardContent className='space-y-4'>
+                  <div className='flex items-center p-3 bg-gradient-accent rounded-lg'>
+                    <Phone className='h-5 w-5 text-primary mr-3' />
                     <div>
-                      <p className="font-medium text-foreground">Call Us Now</p>
-                      <p className="text-sm text-muted-foreground">+255 22 123 4567</p>
+                      <p className='font-medium text-foreground'>Call Us Now</p>
+                      <p className='text-sm text-muted-foreground'>
+                        +255 628 055 646/673 045 414
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center p-3 bg-gradient-accent rounded-lg">
-                    <Mail className="h-5 w-5 text-primary mr-3" />
+
+                  <div className='flex items-center p-3 bg-gradient-accent rounded-lg'>
+                    <Mail className='h-5 w-5 text-primary mr-3' />
                     <div>
-                      <p className="font-medium text-foreground">Email Support</p>
-                      <p className="text-sm text-muted-foreground">info@careernamimi.co.tz</p>
+                      <p className='font-medium text-foreground'>
+                        Email Support
+                      </p>
+                      <p className='text-sm text-muted-foreground'>
+                        info@careernamimi.org
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center p-3 bg-gradient-accent rounded-lg">
-                    <MessageCircle className="h-5 w-5 text-primary mr-3" />
+
+                  <div className='flex items-center p-3 bg-gradient-accent rounded-lg'>
+                    <MessageCircle className='h-5 w-5 text-primary mr-3' />
                     <div>
-                      <p className="font-medium text-foreground">WhatsApp</p>
-                      <p className="text-sm text-muted-foreground">+255 784 567 890</p>
+                      <p className='font-medium text-foreground'>WhatsApp</p>
+                      <p className='text-sm text-muted-foreground'>
+                        +255 628 055 646/673 045 414
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -290,30 +334,37 @@ export default function Contact() {
       </section>
 
       {/* Specialized Contact */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Specialized Support</h2>
-            <p className="text-xl text-muted-foreground">
+      <section className='py-20'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-16'>
+            <h2 className='text-4xl font-bold text-foreground mb-4'>
+              Specialized Support
+            </h2>
+            <p className='text-xl text-muted-foreground'>
               Get the right help for your specific needs
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {inquiryTypes.map((type, index) => (
-              <Card 
+              <Card
                 key={type.title}
-                className="hover:shadow-secondary transition-all duration-300 animate-slide-up border-0 bg-gradient-card"
-                style={{ animationDelay: `${index * 0.15}s` }}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="p-3 bg-secondary/10 rounded-lg w-fit mx-auto mb-4">
-                    <type.icon className="h-8 w-8 text-secondary" />
+                className='hover:shadow-secondary transition-all duration-300 animate-slide-up border-0 bg-gradient-card'
+                style={{ animationDelay: `${index * 0.15}s` }}>
+                <CardContent className='p-6 text-center'>
+                  <div className='p-3 bg-secondary/10 rounded-lg w-fit mx-auto mb-4'>
+                    <type.icon className='h-8 w-8 text-secondary' />
                   </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-3">{type.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-4">{type.description}</p>
-                  <div className="bg-background/50 p-3 rounded-lg">
-                    <p className="text-primary font-medium text-sm">{type.email}</p>
+                  <h3 className='text-xl font-semibold text-foreground mb-3'>
+                    {type.title}
+                  </h3>
+                  <p className='text-muted-foreground text-sm mb-4'>
+                    {type.description}
+                  </p>
+                  <div className='bg-background/50 p-3 rounded-lg'>
+                    <p className='text-primary font-medium text-sm'>
+                      {type.email}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -323,38 +374,50 @@ export default function Contact() {
       </section>
 
       {/* FAQ Preview */}
-      <section className="py-20 bg-gradient-card">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-foreground mb-8">
+      <section className='py-20 bg-gradient-card'>
+        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+          <h2 className='text-4xl font-bold text-foreground mb-8'>
             Frequently Asked Questions
           </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-            <div className="bg-background/50 backdrop-blur-sm p-6 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">How quickly will I hear back?</h3>
-              <p className="text-muted-foreground text-sm">
-                We respond to all inquiries within 24 hours during business days. Urgent technical issues are handled within 4 hours.
+
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-8 text-left'>
+            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
+              <h3 className='font-semibold text-foreground mb-2'>
+                How quickly will I hear back?
+              </h3>
+              <p className='text-muted-foreground text-sm'>
+                We respond to all inquiries within 24 hours during business
+                days. Urgent technical issues are handled within 4 hours.
               </p>
             </div>
-            
-            <div className="bg-background/50 backdrop-blur-sm p-6 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">Do you offer in-person meetings?</h3>
-              <p className="text-muted-foreground text-sm">
-                Yes! We welcome visitors to our Dar es Salaam office. Please schedule in advance to ensure availability.
+
+            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
+              <h3 className='font-semibold text-foreground mb-2'>
+                Do you offer in-person meetings?
+              </h3>
+              <p className='text-muted-foreground text-sm'>
+                Yes! We welcome visitors to our Dar es Salaam office. Please
+                schedule in advance to ensure availability.
               </p>
             </div>
-            
-            <div className="bg-background/50 backdrop-blur-sm p-6 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">Can I get a demo of the platform?</h3>
-              <p className="text-muted-foreground text-sm">
-                Absolutely! We offer personalized demos for organizations and detailed walkthroughs for individual users.
+
+            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
+              <h3 className='font-semibold text-foreground mb-2'>
+                Can I get a demo of the platform?
+              </h3>
+              <p className='text-muted-foreground text-sm'>
+                Absolutely! We offer personalized demos for organizations and
+                detailed walkthroughs for individual users.
               </p>
             </div>
-            
-            <div className="bg-background/50 backdrop-blur-sm p-6 rounded-lg">
-              <h3 className="font-semibold text-foreground mb-2">What languages do you support?</h3>
-              <p className="text-muted-foreground text-sm">
-                Our platform and support are available in both English and Swahili to serve all Tanzanian users effectively.
+
+            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
+              <h3 className='font-semibold text-foreground mb-2'>
+                What languages do you support?
+              </h3>
+              <p className='text-muted-foreground text-sm'>
+                Our platform and support are available in both English and
+                Swahili to serve all Tanzanian users effectively.
               </p>
             </div>
           </div>
