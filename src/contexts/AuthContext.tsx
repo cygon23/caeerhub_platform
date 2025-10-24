@@ -293,7 +293,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // ...existing code...
   useEffect(() => {
     let mounted = true;
 
@@ -302,11 +301,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
-
-      // Only set loading for explicit sign in/out
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-        setIsLoading(true);
-      }
+      
+      console.log("Auth state changed:", event, session?.user?.id);
 
       setSession(session);
 
@@ -315,6 +311,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userData = await fetchUserData(session.user);
           if (mounted) setUser(userData);
         } catch (error) {
+          console.error("Error fetching user data:", error);
           if (mounted)
             setUser({
               id: session.user.id,
@@ -327,11 +324,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         if (mounted) setUser(null);
       }
-
-      // Only set loading to false for sign in/out, not for INITIAL_SESSION
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-        if (mounted) setIsLoading(false);
-      }
     });
 
     // Initial session check
@@ -341,6 +333,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { session: currentSession },
           error,
         } = await supabase.auth.getSession();
+        
+        console.log("Initial session check:", currentSession?.user?.id);
+        
         if (error || !currentSession?.user) {
           if (mounted) {
             setSession(null);
@@ -354,6 +349,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (error) {
+        console.error("Initial session error:", error);
         if (mounted) {
           setSession(null);
           setUser(null);
@@ -368,7 +364,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
-  // ...existing code...
 
   const login = async (email: string, password: string) => {
     if (isOffline) {
