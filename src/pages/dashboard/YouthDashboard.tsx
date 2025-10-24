@@ -16,6 +16,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Brain,
   BadgeCheck,
@@ -36,6 +45,12 @@ import {
   Lightbulb,
   User,
   Settings,
+  Upload,
+  FileQuestion,
+  BookMarked,
+  Bell,
+  LogOut,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import OnboardingResults from "@/components/user/OnboardingResults";
@@ -48,6 +63,7 @@ import CVBuilder from "@/components/dashboard/CVBuilder";
 import Mentorship from "@/components/dashboard/Mentorship";
 import PerformanceTracker from "@/components/dashboard/PerformanceTracker";
 import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
+import UploadMaterials from "@/components/dashboard/UploadMaterials";
 
 // Lazy load dashboard components with proper named exports
 const InterviewAICoach = React.lazy(() => import("@/components/dashboard/InterviewAICoach"));
@@ -131,6 +147,15 @@ export default function YouthDashboard() {
       ],
     },
     {
+      title: "Examination Preparation",
+      items: [
+        { title: "Upload Materials", icon: Upload, id: "upload-materials" },
+        { title: "Practice Questions", icon: FileQuestion, id: "practice-questions" },
+        { title: "Study Guides", icon: BookMarked, id: "study-guides" },
+        { title: "Performance Insights", icon: TrendingUp, id: "exam-insights" },
+      ],
+    },
+    {
       title: "Performance & Support",
       items: [
         { title: "Performance Tracker", icon: BarChart3, id: "performance" },
@@ -202,17 +227,17 @@ export default function YouthDashboard() {
   const renderOverview = () => (
     <div className='space-y-8'>
       {/* Welcome Section */}
-      <div className='bg-gradient-hero text-white rounded-lg p-8'>
-        <div className='flex items-center justify-between'>
+      <div className='bg-gradient-hero text-white rounded-lg p-4 md:p-8'>
+        <div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
           <div>
-            <h1 className='text-3xl font-bold mb-2'>
+            <h1 className='text-2xl md:text-3xl font-bold mb-2'>
               Habari {user?.name?.split(" ")[0] || "Amina"}! 👋
             </h1>
-            <p className='text-white/90 text-lg'>
+            <p className='text-white/90 text-base md:text-lg'>
               Ready to continue building your career journey today?
             </p>
           </div>
-          <div className='text-right'>
+          <div className='text-left md:text-right'>
             <div className='text-2xl font-bold'>72%</div>
             <div className='text-white/80 text-sm'>Career Readiness</div>
           </div>
@@ -220,20 +245,20 @@ export default function YouthDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+      <div className='grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6'>
         {quickStats.map((stat, index) => (
           <Card
             key={stat.label}
             className='hover:shadow-primary transition-all duration-300'>
-            <CardContent className='p-6'>
+            <CardContent className='p-4 md:p-6'>
               <div className='flex items-center justify-between'>
                 <div>
-                  <p className='text-muted-foreground text-sm'>{stat.label}</p>
-                  <p className='text-2xl font-bold text-foreground'>
+                  <p className='text-muted-foreground text-xs md:text-sm'>{stat.label}</p>
+                  <p className='text-xl md:text-2xl font-bold text-foreground'>
                     {stat.value}
                   </p>
                 </div>
-                <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                <stat.icon className={`h-6 w-6 md:h-8 md:w-8 ${stat.color}`} />
               </div>
             </CardContent>
           </Card>
@@ -431,6 +456,9 @@ export default function YouthDashboard() {
     if (activeSection === "suggestions") return <CareerSuggestion />;
     if (activeSection === "insights") return <UbongInsight />;
     if (activeSection === "strengths") return <StrengthWeakness />;
+    
+    // Examination Preparation
+    if (activeSection === "upload-materials") return <UploadMaterials />;
 
     // Placeholder for remaining sections
     return (
@@ -466,7 +494,7 @@ export default function YouthDashboard() {
   return (
     <SidebarProvider>
       <div className='min-h-screen flex w-full bg-background'>
-        <Sidebar className='border-r border-border'>
+        <Sidebar className='border-r border-border hidden md:flex'>
           <div className='p-4 border-b border-border'>
             <div className='flex items-center space-x-2'>
               {/* Replace the span below with your logo */}
@@ -533,20 +561,68 @@ export default function YouthDashboard() {
           </div>
         </Sidebar>
 
-        <main className='flex-1'>
-          <header className='h-16 border-b border-border bg-background/95 backdrop-blur-sm flex items-center px-6'>
-            <SidebarTrigger />
-            <div className='ml-4'>
-              <h1 className='text-xl font-semibold text-foreground'>
-                {activeSection === "overview"
-                  ? "Dashboard Overview"
-                  : activeSection.charAt(0).toUpperCase() +
-                    activeSection.slice(1).replace("-", " ")}
-              </h1>
+        <main className='flex-1 w-full min-w-0'>
+          <header className='h-16 border-b border-border bg-background/95 backdrop-blur-sm flex items-center justify-between px-4 md:px-6'>
+            <div className='flex items-center'>
+              <SidebarTrigger className='md:hidden' />
+              <div className='ml-4'>
+                <h1 className='text-base md:text-xl font-semibold text-foreground'>
+                  {activeSection === "overview"
+                    ? "Dashboard"
+                    : activeSection.charAt(0).toUpperCase() +
+                      activeSection.slice(1).replace("-", " ")}
+                </h1>
+              </div>
             </div>
+
+            {/* User Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="relative h-10 w-10 rounded-full p-0 hover:bg-accent"
+                >
+                  <Avatar className="h-10 w-10 border-2 border-primary/20">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {user?.name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary border-2 border-background" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setActiveSection("notifications")}>
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notifications</span>
+                  <Badge variant="secondary" className="ml-auto">3</Badge>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveSection("profile")}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveSection("settings")}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Preferences</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </header>
 
-          <div className='p-6'>
+          <div className='p-4 md:p-6'>
             <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
               {renderContent()}
             </Suspense>
