@@ -19,8 +19,11 @@ export function ProtectedRoute({
   const [hasNavigated, setHasNavigated] = useState(false);
 
   useEffect(() => {
-    // Don't do anything while loading or if we've already navigated
-    if (isLoading || hasNavigated) return;
+    // Don't do anything while loading
+    if (isLoading) return;
+    
+    // Prevent multiple navigations in the same render cycle
+    if (hasNavigated) return;
 
     console.log("ProtectedRoute - User state:", {
       user: user?.id,
