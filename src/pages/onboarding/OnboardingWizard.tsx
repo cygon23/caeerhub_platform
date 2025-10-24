@@ -19,6 +19,10 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  generateAIRoadmap,
+  generateFallbackRoadmap,
+} from "@/services/aiRoadmapService";
 
 interface OnboardingData {
   educationLevel: string;
@@ -162,6 +166,143 @@ export default function OnboardingWizard() {
     }
   };
 
+  // const completeOnboarding = async () => {
+  //   if (isSubmitting || !user?.id) return;
+
+  //   setIsSubmitting(true);
+
+  //   try {
+  //     console.log("Starting onboarding completion for user:", user.id);
+
+  //     // First, check if a record already exists
+  //     const { data: existingRecord, error: checkError } = await supabase
+  //       .from("onboarding_responses")
+  //       .select("id")
+  //       .eq("user_id", user.id)
+  //       .single();
+
+  //     if (checkError && checkError.code !== "PGRST116") {
+  //       // PGRST116 is "not found" error, which is expected if no record exists
+  //       console.error("Error checking existing record:", checkError);
+  //       throw checkError;
+  //     }
+
+  //     const onboardingData = {
+  //       user_id: user.id,
+  //       education_level: data.educationLevel,
+  //       strongest_subjects: data.strongestSubjects,
+  //       interests: data.industriesOfInterest,
+  //       dream_career: data.dreamCareer,
+  //       preferred_path: data.preferredPath,
+  //       support_preferences: data.studySupport,
+  //       habits: {
+  //         focus_level: data.focusLevel,
+  //         time_management: data.timeManagement,
+  //         reminder_frequency: data.reminderFrequency,
+  //       },
+  //       completed_at: new Date().toISOString(),
+  //       updated_at: new Date().toISOString(),
+  //     };
+
+  //     console.log("Onboarding data to save:", onboardingData);
+
+  //     let result;
+  //     if (existingRecord) {
+  //       // Update existing record
+  //       console.log("Updating existing onboarding record");
+  //       result = await supabase
+  //         .from("onboarding_responses")
+  //         .update(onboardingData)
+  //         .eq("user_id", user.id);
+  //     } else {
+  //       // Insert new record
+  //       console.log("Inserting new onboarding record");
+  //       result = await supabase
+  //         .from("onboarding_responses")
+  //         .insert([onboardingData]);
+  //     }
+
+  //     if (result.error) {
+  //       console.error("Database operation error:", result.error);
+  //       throw result.error;
+  //     }
+
+  //     console.log("Onboarding data saved successfully");
+
+  //     // Update user's onboarding status in AuthContext
+  //     await updateUserOnboardingStatus();
+
+  //     // Show processing toast
+  //     toast({
+  //       title: "Processing Your Profile...",
+  //       description:
+  //         "Our AI is analyzing your responses to create your personalized roadmap.",
+  //     });
+
+  //     // Simulate AI processing
+  //     await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  //     // Show completion toast
+  //     toast({
+  //       title: "Profile Complete! 🎉",
+  //       description: "Welcome to your personalized Career na Mimi dashboard.",
+  //     });
+
+  //     // Role-based navigation
+  //     switch (user?.role) {
+  //       case "admin":
+  //         navigate("/dashboard/admin");
+  //         break;
+  //       case "mentor":
+  //         navigate("/dashboard/mentor");
+  //         break;
+  //       case "youth":
+  //       default:
+  //         navigate("/dashboard/youth");
+  //         break;
+  //     }
+  //   } catch (error: any) {
+  //     console.error("Onboarding completion error:", error);
+
+  //     let errorMessage = "Failed to save onboarding data. Please try again.";
+
+  //     // Provide more specific error messages
+  //     if (error.code === "23505") {
+  //       errorMessage =
+  //         "Your onboarding data has already been submitted. Redirecting to dashboard...";
+  //       // If it's a duplicate key error, the data is actually there, so redirect anyway
+  //       setTimeout(() => {
+  //         switch (user?.role) {
+  //           case "admin":
+  //             navigate("/dashboard/admin");
+  //             break;
+  //           case "mentor":
+  //             navigate("/dashboard/mentor");
+  //             break;
+  //           case "youth":
+  //           default:
+  //             navigate("/dashboard/youth");
+  //             break;
+  //         }
+  //       }, 2000);
+  //     } else if (
+  //       error.message?.includes("network") ||
+  //       error.message?.includes("fetch")
+  //     ) {
+  //       errorMessage =
+  //         "Network error. Please check your internet connection and try again.";
+  //     }
+
+  //     toast({
+  //       title: "Error",
+  //       description: errorMessage,
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const completeOnboarding = async () => {
     if (isSubmitting || !user?.id) return;
 
@@ -170,7 +311,50 @@ export default function OnboardingWizard() {
     try {
       console.log("Starting onboarding completion for user:", user.id);
 
-      // First, check if a record already exists
+      // Step 1: Generate AI Roadmap
+      toast({
+        title: "Analyzing Your Profile...",
+        description: "Our AI is creating your personalized roadmap.",
+      });
+
+      let aiResponse;
+      let aiGenerationStatus = "completed";
+
+      try {
+        aiResponse = await generateAIRoadmap({
+          educationLevel: data.educationLevel,
+          strongestSubjects: data.strongestSubjects,
+          industriesOfInterest: data.industriesOfInterest,
+          dreamCareer: data.dreamCareer,
+          preferredPath: data.preferredPath,
+          focusLevel: data.focusLevel,
+          timeManagement: data.timeManagement,
+          studySupport: data.studySupport,
+        });
+        console.log("AI Roadmap generated successfully:", aiResponse);
+      } catch (aiError) {
+        console.error("AI generation failed, using fallback:", aiError);
+        aiResponse = generateFallbackRoadmap({
+          educationLevel: data.educationLevel,
+          strongestSubjects: data.strongestSubjects,
+          industriesOfInterest: data.industriesOfInterest,
+          dreamCareer: data.dreamCareer,
+          preferredPath: data.preferredPath,
+          focusLevel: data.focusLevel,
+          timeManagement: data.timeManagement,
+          studySupport: data.studySupport,
+        });
+        aiGenerationStatus = "failed";
+
+        toast({
+          title: "Using Fallback Roadmap",
+          description:
+            "AI generation failed, but we've created a generic roadmap for you.",
+          variant: "default",
+        });
+      }
+
+      // Step 2: Check if record exists
       const { data: existingRecord, error: checkError } = await supabase
         .from("onboarding_responses")
         .select("id")
@@ -178,11 +362,11 @@ export default function OnboardingWizard() {
         .single();
 
       if (checkError && checkError.code !== "PGRST116") {
-        // PGRST116 is "not found" error, which is expected if no record exists
         console.error("Error checking existing record:", checkError);
         throw checkError;
       }
 
+      // Step 3: Prepare data for database
       const onboardingData = {
         user_id: user.id,
         education_level: data.educationLevel,
@@ -196,22 +380,30 @@ export default function OnboardingWizard() {
           time_management: data.timeManagement,
           reminder_frequency: data.reminderFrequency,
         },
+        // AI-generated fields
+        ai_personality_summary: aiResponse.personality_summary,
+        ai_learning_style: aiResponse.learning_style,
+        ai_strengths: aiResponse.strengths,
+        ai_challenges: aiResponse.challenges,
+        ai_recommended_path: aiResponse.recommended_path,
+        ai_roadmap: aiResponse.recommendation_reasoning, // Keep text version for backward compatibility
+        ai_roadmap_json: aiResponse.roadmap,
+        ai_generation_status: aiGenerationStatus,
         completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
 
       console.log("Onboarding data to save:", onboardingData);
 
+      // Step 4: Save to database
       let result;
       if (existingRecord) {
-        // Update existing record
         console.log("Updating existing onboarding record");
         result = await supabase
           .from("onboarding_responses")
           .update(onboardingData)
           .eq("user_id", user.id);
       } else {
-        // Insert new record
         console.log("Inserting new onboarding record");
         result = await supabase
           .from("onboarding_responses")
@@ -225,26 +417,19 @@ export default function OnboardingWizard() {
 
       console.log("Onboarding data saved successfully");
 
-      // Update user's onboarding status in AuthContext
+      // Step 5: Update auth context
       await updateUserOnboardingStatus();
 
-      // Show processing toast
-      toast({
-        title: "Processing Your Profile...",
-        description:
-          "Our AI is analyzing your responses to create your personalized roadmap.",
-      });
-
-      // Simulate AI processing
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      // Show completion toast
+      // Step 6: Show success
       toast({
         title: "Profile Complete! 🎉",
-        description: "Welcome to your personalized Career na Mimi dashboard.",
+        description: "Your personalized roadmap is ready!",
       });
 
-      // Role-based navigation
+      // Small delay for better UX
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Step 7: Navigate based on role
       switch (user?.role) {
         case "admin":
           navigate("/dashboard/admin");
@@ -262,11 +447,9 @@ export default function OnboardingWizard() {
 
       let errorMessage = "Failed to save onboarding data. Please try again.";
 
-      // Provide more specific error messages
       if (error.code === "23505") {
         errorMessage =
           "Your onboarding data has already been submitted. Redirecting to dashboard...";
-        // If it's a duplicate key error, the data is actually there, so redirect anyway
         setTimeout(() => {
           switch (user?.role) {
             case "admin":
@@ -707,31 +890,16 @@ export default function OnboardingWizard() {
           <Card className='mt-6 border-0 bg-gradient-accent'>
             <CardContent className='p-6 text-center'>
               <div className='flex items-center justify-center mb-3'>
-                <Brain className='h-6 w-6 text-primary mr-2 animate-pulse-scale' />
+                <Brain className='h-6 w-6 text-primary mr-2 animate-pulse' />
                 <span className='font-medium text-foreground'>
-                  AI Analysis Preview
+                  Ready to Generate Your Roadmap
                 </span>
               </div>
-              <div className='text-sm text-muted-foreground space-y-1'>
-                <p>
-                  ✨ Personality Type:{" "}
-                  <span className='text-primary font-medium'>
-                    Logical Thinker
-                  </span>
-                </p>
-                <p>
-                  🎯 Top Career Match:{" "}
-                  <span className='text-primary font-medium'>
-                    Software Engineer
-                  </span>
-                </p>
-                <p>
-                  📈 Recommended Path:{" "}
-                  <span className='text-primary font-medium'>
-                    ICT Diploma → Coding Bootcamp → Junior Developer
-                  </span>
-                </p>
-              </div>
+              <p className='text-sm text-muted-foreground'>
+                Click "Complete Setup" to get your AI-powered career roadmap
+                with personalized recommendations based on Tanzania's job
+                market.
+              </p>
             </CardContent>
           </Card>
         )}
