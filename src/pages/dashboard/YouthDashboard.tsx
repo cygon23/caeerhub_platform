@@ -51,6 +51,7 @@ import {
   Bell,
   LogOut,
   ChevronDown,
+  RefreshCw,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import OnboardingResults from "@/components/user/OnboardingResults";
@@ -75,11 +76,15 @@ const BehavioralInsight = React.lazy(() => import("@/components/dashboard/Behavi
 const Badges = React.lazy(() => import("@/components/dashboard/Badges").then(m => ({ default: m.Badges })));
 const AcademicSupport = React.lazy(() => import("@/components/dashboard/AcademicSupport").then(m => ({ default: m.AcademicSupport })));
 const SelfLearning = React.lazy(() => import("@/components/dashboard/SelfLearning").then(m => ({ default: m.SelfLearning })));
-const DreamPlanner = React.lazy(() => import("@/components/dashboard/DreamPlanner").then(m => ({ default: m.DreamPlanner })));
+const DreamPlanner = React.lazy(
+  () => import("@/components/dashboard/DreamPlanner")
+);
 const CareerSuggestion = React.lazy(() => import("@/components/dashboard/CareerSuggestion").then(m => ({ default: m.CareerSuggestion })));
 const UbongInsight = React.lazy(() => import("@/components/dashboard/UbongInsight").then(m => ({ default: m.UbongInsight })));
 const StrengthWeakness = React.lazy(() => import("@/components/dashboard/StrengthWeakness").then(m => ({ default: m.StrengthWeakness })));
-
+const InvestorTools = React.lazy(
+  () => import("@/components/dashboard/InvestorTools")
+);
 export default function YouthDashboard() {
   const { user, logout } = useAuth();
   const [activeSection, setActiveSection] = useState("overview");
@@ -428,6 +433,19 @@ export default function YouthDashboard() {
     // Investor Path
     if (activeSection === "investor-path") {
       return <InvestorPath />;
+    }
+
+    if (activeSection === "investor") {
+      return (
+        <Suspense
+          fallback={
+            <div className='flex items-center justify-center py-12'>
+              <RefreshCw className='h-8 w-8 animate-spin text-primary' />
+            </div>
+          }>
+          <InvestorTools />
+        </Suspense>
+      );
     }
 
     // Mentorship
