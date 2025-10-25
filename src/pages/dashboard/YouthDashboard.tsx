@@ -653,69 +653,81 @@ export default function YouthDashboard() {
                 Dashboard Overview
               </Button>
             </div>
-            {filteredSidebarItems.map((group, index) => (
-              <SidebarGroup key={index}>
-                <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {group.items.map((item, i) => {
-                      // Skip invalid items
-                      if (
-                        !item ||
-                        typeof item.id !== "string" ||
-                        typeof item.title !== "string"
-                      ) {
-                        console.warn(
-                          "⚠️ Invalid sidebar item:",
-                          item,
-                          "in group:",
-                          group.title,
-                          "index:",
-                          i
+            {filteredSidebarItems.map((group, index) => {
+              // Skip groups with no items
+              if (!group || !Array.isArray(group.items) || group.items.length === 0) {
+                return null;
+              }
+
+              return (
+                <SidebarGroup key={`${index}-${group.title}`}>
+                  <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {group.items.map((item, i) => {
+                        // Skip invalid items
+                        if (
+                          !item ||
+                          typeof item !== "object" ||
+                          !item.id ||
+                          !item.title
+                        ) {
+                          console.warn(
+                            "⚠️ Invalid sidebar item:",
+                            item,
+                            "in group:",
+                            group.title,
+                            "index:",
+                            i
+                          );
+                          return null;
+                        }
+
+                        // Ensure id and title are strings
+                        const itemId = String(item.id);
+                        const itemTitle = String(item.title);
+
+                        return (
+                          <SidebarMenuItem key={`${itemId}-${i}`}>
+                            <SidebarMenuButton
+                              onClick={() => setActiveSection(itemId)}
+                              className={
+                                activeSection === itemId
+                                  ? "bg-primary text-primary-foreground"
+                                  : ""
+                              }>
+                              {/* Safely render the icon */}
+                              {item.icon ? (
+                                (() => {
+                                  try {
+                                    return React.createElement(item.icon, {
+                                      className: "h-4 w-4 mr-2",
+                                    });
+                                  } catch (err) {
+                                    console.warn(
+                                      "⚠️ Failed to render icon for item:",
+                                      itemTitle,
+                                      err
+                                    );
+                                    return (
+                                      <span className='h-4 w-4 inline-block mr-2' />
+                                    );
+                                  }
+                                })()
+                              ) : (
+                                <span className='h-4 w-4 inline-block mr-2' />
+                              )}
+
+                              <span>{itemTitle}</span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
                         );
-                        return null;
-                      }
-
-                      return (
-                        <SidebarMenuItem key={item.id}>
-                          <SidebarMenuButton
-                            onClick={() => setActiveSection(item.id)}
-                            className={
-                              activeSection === item.id
-                                ? "bg-primary text-primary-foreground"
-                                : ""
-                            }>
-                            {/* Safely render the icon */}
-                            {item.icon ? (
-                              (() => {
-                                try {
-                                  return React.createElement(item.icon, {
-                                    className: "h-4 w-4 mr-2",
-                                  });
-                                } catch (err) {
-                                  console.warn(
-                                    "⚠️ Failed to render icon for item:",
-                                    item,
-                                    err
-                                  );
-                                  return (
-                                    <span className='h-4 w-4 inline-block mr-2' />
-                                  );
-                                }
-                              })()
-                            ) : (
-                              <span className='h-4 w-4 inline-block mr-2' />
-                            )}
-
-                            <span>{item.title}</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      );
-                    })}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            ))}
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              );
+            })}
           </SidebarContent>
 
           <div className='p-4 border-t border-border'>
