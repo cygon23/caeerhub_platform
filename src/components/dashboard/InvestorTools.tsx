@@ -139,10 +139,28 @@ export default function InvestorTools() {
     return "Conservative";
   };
 
+  // Helper function to safely get interests as strings
+  const getInterests = (): string[] => {
+    if (!onboardingData?.interests) return [];
+
+    // Handle if interests is already a string array
+    if (Array.isArray(onboardingData.interests)) {
+      return onboardingData.interests.map(item => {
+        // If it's an object, try to extract a string value
+        if (typeof item === 'object' && item !== null) {
+          return (item as any).name || (item as any).value || String(item);
+        }
+        return String(item);
+      });
+    }
+
+    return [];
+  };
+
   const getPersonalizedRecommendations = (): InvestmentRecommendation[] => {
     if (!onboardingData) return [];
 
-    const interests = onboardingData.interests || [];
+    const interests = getInterests();
     const recommendations: InvestmentRecommendation[] = [];
     const riskProfile = getRiskProfile();
 
@@ -496,7 +514,7 @@ export default function InvestorTools() {
             <CardContent>
               <p className='text-sm text-muted-foreground mb-6'>
                 Based on your career goals, interests in{" "}
-                <strong>{onboardingData.interests.join(", ")}</strong>, and{" "}
+                <strong>{getInterests().join(", ") || "various fields"}</strong>, and{" "}
                 <strong>{riskProfile}</strong> risk profile.
               </p>
 
