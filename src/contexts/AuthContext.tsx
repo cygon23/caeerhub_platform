@@ -29,6 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isFetchingUserData, setIsFetchingUserData] = useState(false);
 
   // Monitor online/offline status
   useEffect(() => {
@@ -43,6 +44,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
+
+  // Handle page visibility changes (when user switches back to app)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        // User returned to the app - validate session but don't force re-fetch
+        console.log("Page became visible, user already loaded:", user.id);
+
+        // Only refresh if we detect the session might be stale (optional)
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user && session.user.id !== user.id) {
+            console.log("Session user mismatch, refreshing user data");
+            fetchUserData(session.user).then(setUser);
+          }
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [user]);
 
   // Fetch user profile data and check onboarding status
   // const fetchUserData = async (sessionUser: SupabaseUser): Promise<User> => {
@@ -144,6 +169,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // };
 
   const fetchUserData = async (sessionUser: SupabaseUser): Promise<User> => {
+    // Prevent concurrent fetches for the same user
+    if (isFetchingUserData) {
+      console.log("Already fetching user data, using cache if available");
+      const cached = getCachedUserData(sessionUser.id);
+      if (cached) return cached;
+    }
+
+    setIsFetchingUserData(true);
+
     try {
       console.log("Fetching user data for:", sessionUser.id);
 
@@ -183,7 +217,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .eq("user_id", sessionUser.id)
               .maybeSingle(),
           ]),
-          5000 // 5 seconds timeout
+          10000 // 10 seconds timeout (increased from 5s)
         );
 
       console.log("Profile response:", profileResponse);
@@ -236,11 +270,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
 
       console.log("Constructed user data:", userData);
+
+      // Cache successful user data
+      cacheUserData(userData);
+
       return userData;
     } catch (error) {
       console.error("Error fetching user data:", error);
-      
-      // Return fallback user data
+
+      // Try to get cached data first (CRITICAL FIX)
+      const cachedUser = getCachedUserData(sessionUser.id);
+      if (cachedUser) {
+        console.log("Using cached user data due to fetch error:", cachedUser);
+        return cachedUser;
+      }
+
+      // Only use email-based fallback if no cache exists
       const email = sessionUser.email || "";
       let fallbackRole: "youth" | "mentor" | "admin" = "youth";
 
@@ -250,13 +295,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         fallbackRole = "mentor";
       }
 
-      return {
+      // For youth, we don't know if they completed onboarding, so assume they haven't
+      // This is safer than assuming they have, as it won't skip onboarding incorrectly
+      const fallbackData: User = {
         id: sessionUser.id,
         email: sessionUser.email || "",
         name: sessionUser.user_metadata?.full_name || "User",
         role: fallbackRole,
-        isFirstLogin: fallbackRole === "youth",
+        isFirstLogin: fallbackRole === "youth", // Default for youth without cache
       };
+
+      console.log("Using fallback user data (no cache):", fallbackData);
+      return fallbackData;
+    } finally {
+      setIsFetchingUserData(false);
+    }
+  };
+
+  // Cache helpers
+  const cacheUserData = (userData: User) => {
+    try {
+      localStorage.setItem(`user_cache_${userData.id}`, JSON.stringify(userData));
+      localStorage.setItem(`user_cache_timestamp_${userData.id}`, Date.now().toString());
+    } catch (e) {
+      console.warn("Failed to cache user data:", e);
+    }
+  };
+
+  const getCachedUserData = (userId: string): User | null => {
+    try {
+      const cached = localStorage.getItem(`user_cache_${userId}`);
+      const timestamp = localStorage.getItem(`user_cache_timestamp_${userId}`);
+
+      if (!cached || !timestamp) return null;
+
+      // Cache expires after 24 hours
+      const age = Date.now() - parseInt(timestamp);
+      if (age > 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(`user_cache_${userId}`);
+        localStorage.removeItem(`user_cache_timestamp_${userId}`);
+        return null;
+      }
+
+      return JSON.parse(cached) as User;
+    } catch (e) {
+      console.warn("Failed to get cached user data:", e);
+      return null;
     }
   };
 
@@ -278,14 +362,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         onboardingResponse && onboardingResponse.completed_at;
 
       // Update user state
-      setUser((prev) =>
-        prev
-          ? {
-              ...prev,
-              isFirstLogin: !hasCompletedOnboarding,
-            }
-          : null
-      );
+      const updatedUser = {
+        ...user,
+        isFirstLogin: !hasCompletedOnboarding,
+      };
+
+      setUser(updatedUser);
+
+      // Update cache with new onboarding status
+      cacheUserData(updatedUser);
 
       console.log("Updated user onboarding status:", !hasCompletedOnboarding);
     } catch (error) {
@@ -295,15 +380,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    let debounceTimer: NodeJS.Timeout | null = null;
+    let lastFetchTime = 0;
 
     // Set up auth state listener ONCE
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
-      
+
       console.log("Auth state changed:", event, session?.user?.id);
 
+      // Debounce rapid auth state changes (e.g., when user returns to app)
+      const now = Date.now();
+      const timeSinceLastFetch = now - lastFetchTime;
+
+      // If less than 2 seconds since last fetch, debounce
+      if (timeSinceLastFetch < 2000 && event !== 'SIGNED_OUT') {
+        console.log("Debouncing auth state change, too soon after last fetch");
+
+        if (debounceTimer) clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(async () => {
+          if (!mounted) return;
+          await handleAuthStateChange(event, session);
+        }, 1000);
+
+        return;
+      }
+
+      await handleAuthStateChange(event, session);
+    });
+
+    const handleAuthStateChange = async (event: string, session: Session | null) => {
+      lastFetchTime = Date.now();
       setSession(session);
 
       if (session?.user) {
@@ -311,20 +421,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userData = await fetchUserData(session.user);
           if (mounted) setUser(userData);
         } catch (error) {
-          console.error("Error fetching user data:", error);
-          if (mounted)
-            setUser({
-              id: session.user.id,
-              email: session.user.email || "",
-              name: session.user.user_metadata?.full_name || "User",
-              role: "youth",
-              isFirstLogin: true,
-            });
+          console.error("Error fetching user data in auth state change:", error);
+          // The fetchUserData function already handles cache fallback
         }
       } else {
         if (mounted) setUser(null);
       }
-    });
+    };
 
     // Initial session check
     (async () => {
@@ -361,6 +464,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false;
+      if (debounceTimer) clearTimeout(debounceTimer);
       subscription.unsubscribe();
     };
   }, []);
