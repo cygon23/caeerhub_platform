@@ -1,96 +1,119 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { employmentPathService } from "@/services/useEmploymentPath";
+import React, { useState } from "react";
+import { useEmploymentPathLogic } from "@/hooks/useEmploymentPathLogic";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { RefreshCw, ArrowRight } from "lucide-react";
 import { CareerSkills } from "./CareerSkills";
 
 export const EmploymentPath: React.FC = () => {
-  const { user } = useAuth();
+  const { roadmap, loading, error } = useEmploymentPathLogic();
   const [activeTab, setActiveTab] = useState("roadmap");
-  const [roadmap, setRoadmap] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
-  // Load roadmap data
-  const loadEmploymentData = async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const onboardingData = await employmentPathService.getOnboardingData(
-        user.id
+  const renderRoadmap = () => {
+    if (loading)
+      return (
+        <div className='flex justify-center items-center py-16'>
+          <RefreshCw className='animate-spin mr-2 h-6 w-6' />
+          <span>Loading your career roadmap...</span>
+        </div>
       );
-      if (onboardingData) {
-        const roadmapData = await employmentPathService.generateRoadmap(
-          onboardingData.dream_career,
-          onboardingData.skills
-        );
-        setRoadmap(roadmapData);
-      }
-    } catch (error) {
-      console.error("Error loading employment data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    loadEmploymentData();
-  }, [user]);
+    if (error)
+      return (
+        <Card>
+          <CardContent className='py-12 text-center text-red-500'>
+            {error}
+          </CardContent>
+        </Card>
+      );
 
-  // -------------------
-  //  Render Roadmap Tab
-  // -------------------
-  const renderRoadmap = () => (
-    <div className='space-y-6'>
-      {loading ? (
-        <p>Loading your career roadmap...</p>
-      ) : roadmap ? (
-        roadmap.steps.map((step: any, i: number) => (
-          <Card key={i}>
+    if (!roadmap?.steps?.length)
+      return (
+        <Card>
+          <CardContent className='py-12 text-center'>
+            <p className='text-muted-foreground'>
+              No roadmap available yet. Please check your onboarding
+              information.
+            </p>
+          </CardContent>
+        </Card>
+      );
+
+    return (
+      <div className='space-y-6'>
+        {roadmap.steps.map((step, i) => (
+          <Card key={step.id || i} className='border-l-4 border-l-primary'>
             <CardHeader>
-              <CardTitle>{step.title}</CardTitle>
+              <div className='flex justify-between items-start'>
+                <CardTitle className='text-lg'>{step.title}</CardTitle>
+                <Badge
+                  variant={
+                    step.priority === "high"
+                      ? "destructive"
+                      : step.priority === "medium"
+                      ? "default"
+                      : "secondary"
+                  }>
+                  {step.priority}
+                </Badge>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className='text-sm text-muted-foreground mb-3'>
+            <CardContent className='space-y-4'>
+              <p className='text-sm text-muted-foreground'>
                 {step.description}
               </p>
-              <Progress value={step.progress || 0} className='h-2' />
-              <div className='flex flex-wrap gap-2 mt-3'>
-                {Array.isArray(step.tags) &&
-                  step.tags.map((tag: any, j: number) => (
-                    <Badge key={j} variant='secondary'>
-                      {typeof tag === "string" ? tag : tag.name || String(tag)}
-                    </Badge>
-                  ))}
+              <div className='flex items-center gap-4 text-sm'>
+                <Badge variant='outline'>{step.level || "Beginner"}</Badge>
+                <span className='text-muted-foreground'>
+                  Duration: {step.duration}
+                </span>
+                <Badge
+                  variant={
+                    step.status === "completed"
+                      ? "default"
+                      : step.status === "in-progress"
+                      ? "secondary"
+                      : "outline"
+                  }>
+                  {step.status}
+                </Badge>
               </div>
+
+              {step.resources?.length > 0 && (
+                <div className='mt-4'>
+                  <h4 className='text-sm font-semibold mb-2'>Resources:</h4>
+                  <div className='space-y-2'>
+                    {step.resources.map((resource, idx) => (
+                      <a
+                        key={idx}
+                        href={resource.url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='flex items-center text-sm text-primary hover:underline'>
+                        <ArrowRight className='h-3 w-3 mr-1' />
+                        {resource.name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
-        ))
-      ) : (
-        <p>No roadmap data available yet.</p>
-      )}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  };
 
-  // -------------------
-  //  Render Jobs Tab
-  // -------------------
   const renderJobs = () => (
     <div className='flex flex-col items-center justify-center min-h-[300px]'>
       <h2 className='text-lg font-semibold mb-2'>Coming Soon...</h2>
       <p className='text-sm text-muted-foreground text-center max-w-sm'>
-        The personalized job recommendations feature is currently under
-        development. Soon you’ll be able to see job openings that match your
-        career path and skills.
+        Personalized job recommendations will be available soon.
       </p>
     </div>
   );
 
-  // -------------------
-  //  Main Render
-  // -------------------
   return (
     <div className='space-y-8'>
       <Card>

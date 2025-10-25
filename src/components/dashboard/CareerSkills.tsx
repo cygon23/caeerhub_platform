@@ -11,45 +11,72 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, CheckCircle, Lightbulb } from "lucide-react";
+import { useEmploymentPathLogic } from "@/hooks/useEmploymentPathLogic";
 
 export const CareerSkills: React.FC = () => {
   const { user } = useAuth();
+  const { onboardingData } = useEmploymentPathLogic();
   const [skills, setSkills] = useState<SkillData[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [analysis, setAnalysis] = useState<SkillsAnalysis | null>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
 
-  // 1️⃣ Load skills automatically based on the user's dream career
+  // ✅ Helper to make sure anything printed is always a string
+  const safeString = (value: any): string => {
+    if (value == null) return "";
+    if (typeof value === "string") return value;
+    if (typeof value === "number" || typeof value === "boolean")
+      return String(value);
+    if (Array.isArray(value)) return value.join(", ");
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  };
+
   useEffect(() => {
-    const load = async () => {
+    const loadSkills = async () => {
       if (!user) return;
       setLoading(true);
       try {
         const onboarding = await employmentPathService.getOnboardingData(
           user.id
         );
+        if (!onboarding?.dream_career) {
+          console.warn("No dream career found for user");
+          setLoading(false);
+          return;
+        }
+
         const loadedSkills = await employmentPathService.loadCareerSkills(
           onboarding.dream_career
         );
-        setSkills(loadedSkills);
+        const cleanSkills = loadedSkills.map((s, i) => ({
+          id: safeString(s.id || `skill-${i}`),
+          name: safeString(s.name),
+          category: safeString(s.category),
+          importance: safeString(s.importance),
+        }));
+
+        setSkills(cleanSkills);
       } catch (err) {
         console.error("Error loading skills:", err);
       } finally {
         setLoading(false);
       }
     };
-    load();
+
+    loadSkills();
   }, [user]);
 
-  // 2️⃣ Handle user selecting/deselecting skills
   const toggleSkill = (id: string) => {
     setSelectedSkills((prev) =>
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
   };
 
-  // 3️⃣ Analyze selected skills
   const analyzeSkills = async () => {
     if (!user || selectedSkills.length === 0) return;
     setAnalyzing(true);
@@ -58,7 +85,23 @@ export const CareerSkills: React.FC = () => {
         user.id,
         selectedSkills
       );
-      setAnalysis(result);
+      // Sanitize analysis data too (AI can return nested objects)
+      const safeAnalysis: SkillsAnalysis = {
+        skillsToLearn: result.skillsToLearn.map((s) => ({
+          name: safeString(s.name),
+          category: safeString(s.category),
+          importance: safeString(s.importance),
+          reason: safeString(s.reason),
+        })),
+        learningPath: result.learningPath.map((s) => ({
+          step: s.step,
+          skill: safeString(s.skill),
+          duration: safeString(s.duration),
+          priority: safeString(s.priority),
+          description: safeString(s.description),
+        })),
+      };
+      setAnalysis(safeAnalysis);
     } catch (err) {
       console.error("Error analyzing skills:", err);
     } finally {
@@ -66,7 +109,6 @@ export const CareerSkills: React.FC = () => {
     }
   };
 
-  // 4️⃣ Loading state
   if (loading) {
     return (
       <div className='flex justify-center items-center py-16'>
@@ -75,9 +117,9 @@ export const CareerSkills: React.FC = () => {
     );
   }
 
-  // 5️⃣ Main UI
   return (
     <div className='space-y-6'>
+      {/* Skills Selection */}
       <Card className='border border-border/60 shadow-sm'>
         <CardHeader>
           <CardTitle className='text-xl font-semibold'>
@@ -85,30 +127,37 @@ export const CareerSkills: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className='grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-          {skills.map((skill) => (
-            <div
-              key={skill.id}
-              className={`flex items-center space-x-2 rounded-lg border p-2 cursor-pointer transition ${
-                selectedSkills.includes(skill.id)
-                  ? "bg-primary/10 border-primary"
-                  : "hover:bg-muted/40"
-              }`}
-              onClick={() => toggleSkill(skill.id)}>
-              <Checkbox
-                checked={selectedSkills.includes(skill.id)}
-                onCheckedChange={() => toggleSkill(skill.id)}
-              />
-              <div className='flex flex-col'>
-                <span className='font-medium'>{String(skill.name)}</span>
-                <Badge variant='outline' className='text-xs capitalize w-fit'>
-                  {String(skill.category)}
-                </Badge>
+          {skills.length > 0 ? (
+            skills.map((skill) => (
+              <div
+                key={skill.id}
+                className={`flex items-center space-x-2 rounded-lg border p-2 cursor-pointer transition ${
+                  selectedSkills.includes(skill.id)
+                    ? "bg-primary/10 border-primary"
+                    : "hover:bg-muted/40"
+                }`}
+                onClick={() => toggleSkill(skill.id)}>
+                <Checkbox
+                  checked={selectedSkills.includes(skill.id)}
+                  onCheckedChange={() => toggleSkill(skill.id)}
+                />
+                <div className='flex flex-col'>
+                  <span className='font-medium'>{safeString(skill.name)}</span>
+                  <Badge variant='outline' className='text-xs capitalize w-fit'>
+                    {safeString(skill.category)}
+                  </Badge>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className='col-span-full text-muted-foreground text-sm'>
+              No skills available for your selected career.
+            </p>
+          )}
         </CardContent>
       </Card>
 
+      {/* Analyze Button */}
       <div className='flex justify-end'>
         <Button
           onClick={analyzeSkills}
@@ -123,12 +172,12 @@ export const CareerSkills: React.FC = () => {
         </Button>
       </div>
 
-      {/* 🧠 AI Analysis Results */}
+      {/* AI Analysis Results */}
       {analysis && (
         <>
           <Separator className='my-6' />
           <div className='space-y-8'>
-            {/* Missing Skills */}
+            {/* Skills to Learn */}
             <div>
               <h2 className='text-lg font-semibold flex items-center mb-3'>
                 <Lightbulb className='mr-2 text-yellow-500' /> Skills You Should
@@ -137,21 +186,21 @@ export const CareerSkills: React.FC = () => {
               <div className='grid gap-3 sm:grid-cols-2 md:grid-cols-3'>
                 {analysis.skillsToLearn.map((s, i) => (
                   <Card key={i} className='p-3'>
-                    <div className='font-medium'>{s.name}</div>
+                    <div className='font-medium'>{safeString(s.name)}</div>
                     <Badge
                       variant='outline'
                       className='capitalize my-1 text-xs w-fit'>
-                      {s.category}
+                      {safeString(s.category)}
                     </Badge>
                     <p className='text-sm text-muted-foreground mt-1'>
-                      {s.reason}
+                      {safeString(s.reason)}
                     </p>
                   </Card>
                 ))}
               </div>
             </div>
 
-            {/* Learning Path Timeline */}
+            {/* Learning Path */}
             <div>
               <h2 className='text-lg font-semibold flex items-center mb-3'>
                 <CheckCircle className='mr-2 text-green-500' /> Your Learning
@@ -162,7 +211,7 @@ export const CareerSkills: React.FC = () => {
                   <Card key={i} className='p-4'>
                     <div className='flex justify-between items-center'>
                       <h3 className='font-semibold'>
-                        Step {step.step}: {step.skill}
+                        Step {step.step}: {safeString(step.skill)}
                       </h3>
                       <Badge
                         variant='outline'
@@ -173,13 +222,15 @@ export const CareerSkills: React.FC = () => {
                             ? "border-yellow-500 text-yellow-500"
                             : "border-green-500 text-green-500"
                         }`}>
-                        {step.priority}
+                        {safeString(step.priority)}
                       </Badge>
                     </div>
                     <p className='text-sm text-muted-foreground mt-1'>
-                      Duration: {step.duration}
+                      Duration: {safeString(step.duration)}
                     </p>
-                    <p className='text-sm mt-2'>{step.description}</p>
+                    <p className='text-sm mt-2'>
+                      {safeString(step.description)}
+                    </p>
                   </Card>
                 ))}
               </div>
