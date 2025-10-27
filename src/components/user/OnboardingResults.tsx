@@ -21,6 +21,8 @@ import {
   CheckCircle2,
   DollarSign,
   BookMarked,
+  Sparkles,
+  Rocket,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -235,6 +237,82 @@ export default function OnboardingResults() {
     }).format(amount);
   };
 
+  if (!onboardingData?.ai_roadmap_json?.phases) {
+    return (
+      <div className='flex items-center justify-center min-h-[600px] p-6'>
+        <Card className='max-w-3xl w-full border-2 border-dashed'>
+          <CardContent className='p-12 text-center space-y-8'>
+            {/* Animated Icon */}
+            <div className='relative mx-auto w-32 h-32'>
+              <div className='absolute inset-0 bg-gradient-to-r from-primary/20 via-purple-500/20 to-blue-500/20 rounded-full animate-pulse' />
+              <div className='absolute inset-4 bg-background rounded-full flex items-center justify-center'>
+                <Brain className='w-16 h-16 text-primary animate-bounce' />
+              </div>
+            </div>
+
+            {/* Title */}
+            <div className='space-y-3'>
+              <h3 className='text-3xl font-bold bg-gradient-to-r from-primary via-purple-600 to-blue-600 bg-clip-text text-transparent'>
+                No Onboarding Results Yet
+              </h3>
+              <p className='text-muted-foreground text-lg max-w-md mx-auto'>
+                Complete the onboarding process to unlock your personalized
+                career roadmap and insights
+              </p>
+            </div>
+
+            {/* Feature Grid */}
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-6'>
+              <div className='p-6 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 space-y-3'>
+                <div className='w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto'>
+                  <Target className='w-6 h-6 text-primary' />
+                </div>
+                <p className='text-sm font-semibold'>Career Roadmap</p>
+                <p className='text-xs text-muted-foreground'>
+                  Personalized path to success
+                </p>
+              </div>
+
+              <div className='p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 space-y-3'>
+                <div className='w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto'>
+                  <TrendingUp className='w-6 h-6 text-purple-600' />
+                </div>
+                <p className='text-sm font-semibold'>Skills Analysis</p>
+                <p className='text-xs text-muted-foreground'>
+                  Identify growth areas
+                </p>
+              </div>
+
+              <div className='p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 space-y-3'>
+                <div className='w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto'>
+                  <Sparkles className='w-6 h-6 text-blue-600' />
+                </div>
+                <p className='text-sm font-semibold'>AI Insights</p>
+                <p className='text-xs text-muted-foreground'>
+                  Smart recommendations
+                </p>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className='pt-4 space-y-3'>
+              <Button
+                size='lg'
+                className='bg-gradient-to-r from-primary via-purple-600 to-blue-600 hover:opacity-90 transition-opacity px-8'
+                onClick={() => (window.location.href = "/onboarding")}>
+                <Rocket className='w-5 h-5 mr-2' />
+                Start Onboarding
+              </Button>
+              <p className='text-xs text-muted-foreground'>
+                Takes 5-10 minutes • Create your personalized career journey
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className='flex items-center justify-center py-12'>
@@ -358,8 +436,8 @@ export default function OnboardingResults() {
               onboardingData.ai_recommended_path && (
               <div className='mt-3 p-2 bg-blue-50 dark:bg-blue-950 rounded border border-blue-200 dark:border-blue-800'>
                 <p className='text-xs text-blue-800 dark:text-blue-200'>
-                  ℹ️ AI suggests a different path than your initial preference
-                  for better outcomes
+                  AI suggest a different path than your initial preference for
+                  better outcomes
                 </p>
               </div>
             )}
@@ -424,80 +502,85 @@ export default function OnboardingResults() {
         </CardHeader>
         <CardContent>
           <div className='space-y-6'>
-            {onboardingData.ai_roadmap_json.phases.map((phase, index) => (
-              <div key={index} className='relative'>
-                {/* Timeline connector */}
-                {index !== onboardingData.ai_roadmap_json.phases.length - 1 && (
-                  <div className='absolute left-6 top-12 bottom-0 w-0.5 bg-gradient-to-b from-primary to-primary/20' />
-                )}
+            {(onboardingData?.ai_roadmap_json?.phases || []).map(
+              (phase, index) => (
+                <div key={index} className='relative'>
+                  {/* Timeline connector */}
+                  {index !==
+                    onboardingData.ai_roadmap_json.phases.length - 1 && (
+                    <div className='absolute left-6 top-12 bottom-0 w-0.5 bg-gradient-to-b from-primary to-primary/20' />
+                  )}
 
-                <div className='flex items-start'>
-                  {/* Timeline dot */}
-                  <div className='flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary z-10'>
-                    <span className='text-primary font-bold'>{index + 1}</span>
-                  </div>
+                  <div className='flex items-start'>
+                    {/* Timeline dot */}
+                    <div className='flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary z-10'>
+                      <span className='text-primary font-bold'>
+                        {index + 1}
+                      </span>
+                    </div>
 
-                  {/* Phase content */}
-                  <div className='ml-6 flex-1'>
-                    <div className='bg-muted/50 rounded-lg p-4 border border-border'>
-                      <div className='flex items-center justify-between mb-3'>
-                        <div>
-                          <Badge variant='outline' className='mb-2'>
-                            {phase.timeline}
-                          </Badge>
-                          <h4 className='text-lg font-semibold'>
-                            {phase.title}
-                          </h4>
-                        </div>
-                        <div className='text-right'>
-                          <div className='text-xs text-muted-foreground'>
-                            Est. Cost
-                          </div>
-                          <div className='font-semibold text-primary'>
-                            {formatCurrency(phase.estimated_cost_tzs)}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Milestones */}
-                      <div className='mb-3'>
-                        <h5 className='text-sm font-medium mb-2 flex items-center'>
-                          <CheckCircle2 className='h-4 w-4 mr-1' />
-                          Milestones:
-                        </h5>
-                        <ul className='space-y-1'>
-                          {phase.milestones.map((milestone, mIndex) => (
-                            <li
-                              key={mIndex}
-                              className='text-sm text-muted-foreground pl-5 relative before:content-["•"] before:absolute before:left-0'>
-                              {milestone}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* Resources */}
-                      <div>
-                        <h5 className='text-sm font-medium mb-2 flex items-center'>
-                          <BookMarked className='h-4 w-4 mr-1' />
-                          Resources:
-                        </h5>
-                        <div className='flex flex-wrap gap-2'>
-                          {phase.resources.map((resource, rIndex) => (
-                            <Badge
-                              key={rIndex}
-                              variant='secondary'
-                              className='text-xs'>
-                              {resource}
+                    {/* Phase content */}
+                    <div className='ml-6 flex-1'>
+                      <div className='bg-muted/50 rounded-lg p-4 border border-border'>
+                        <div className='flex items-center justify-between mb-3'>
+                          <div>
+                            <Badge variant='outline' className='mb-2'>
+                              {phase.timeline}
                             </Badge>
-                          ))}
+                            <h4 className='text-lg font-semibold'>
+                              {phase.title}
+                            </h4>
+                          </div>
+                          <div className='text-right'>
+                            <div className='text-xs text-muted-foreground'>
+                              Est. Cost
+                            </div>
+                            <div className='font-semibold text-primary'>
+                              {formatCurrency(phase.estimated_cost_tzs)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Milestones */}
+                        <div className='mb-3'>
+                          <h5 className='text-sm font-medium mb-2 flex items-center'>
+                            <CheckCircle2 className='h-4 w-4 mr-1' />
+                            Milestones:
+                          </h5>
+                          <ul className='space-y-1'>
+                            {phase.milestones.map((milestone, mIndex) => (
+                              <li
+                                key={mIndex}
+                                className='text-sm text-muted-foreground pl-5 relative before:content-["•"] before:absolute before:left-0'>
+                                {milestone}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Resources */}
+                        <div>
+                          <h5 className='text-sm font-medium mb-2 flex items-center'>
+                            <BookMarked className='h-4 w-4 mr-1' />
+                            Resources:
+                          </h5>
+                          <div className='flex flex-wrap gap-2'>
+                            {phase.resources.map((resource, rIndex) => (
+                              <Badge
+                                key={rIndex}
+                                variant='secondary'
+                                className='text-xs'>
+                                {resource}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
 
           {/* Total Cost Summary */}

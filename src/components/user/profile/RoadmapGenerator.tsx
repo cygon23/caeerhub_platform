@@ -17,6 +17,8 @@ import {
   ArrowRight,
   Star,
   Clock,
+  Sparkles,
+  Brain,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -202,6 +204,56 @@ export default function RoadmapGenerator() {
     );
   }
 
+  if (!roadmapData?.ai_roadmap_json?.phases) {
+    return (
+      <div className='flex items-center justify-center min-h-[600px]'>
+        <Card className='max-w-2xl w-full border-2 border-dashed'>
+          <CardContent className='p-12 text-center space-y-6'>
+            {/* Animated Icon */}
+            <div className='relative mx-auto w-32 h-32'>
+              <div className='absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full animate-pulse' />
+              <div className='absolute inset-4 bg-background rounded-full flex items-center justify-center'>
+                <Brain className='w-16 h-16 text-primary animate-bounce' />
+              </div>
+            </div>
+
+            {/* Title */}
+            <div className='space-y-2'>
+              <h3 className='text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent'>
+                No Career Roadmap Yet
+              </h3>
+              <p className='text-muted-foreground text-lg'>
+                Create your personalized AI-powered career roadmap to unlock
+                your potential
+              </p>
+            </div>
+
+            {/* Features List */}
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-4'>
+              <div className='p-4 rounded-lg bg-primary/5 space-y-2'>
+                <Target className='w-8 h-8 text-primary mx-auto' />
+                <p className='text-sm font-medium'>Personalized Goals</p>
+              </div>
+              <div className='p-4 rounded-lg bg-purple-500/5 space-y-2'>
+                <TrendingUp className='w-8 h-8 text-purple-600 mx-auto' />
+                <p className='text-sm font-medium'>Step-by-Step Plan</p>
+              </div>
+              <div className='p-4 rounded-lg bg-blue-500/5 space-y-2'>
+                <Sparkles className='w-8 h-8 text-blue-600 mx-auto' />
+                <p className='text-sm font-medium'>AI-Powered Insights</p>
+              </div>
+            </div>
+
+            {/* Help Text */}
+            <p className='text-xs text-muted-foreground'>
+              Takes about 30 seconds • Based on your career assessment
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (!roadmapData) {
     return (
       <Card>
@@ -339,7 +391,7 @@ export default function RoadmapGenerator() {
               <div>
                 <p className='text-muted-foreground text-sm'>Roadmap Phases</p>
                 <p className='text-2xl font-bold text-foreground'>
-                  {roadmapData.ai_roadmap_json.phases.length}
+                  {roadmapData?.ai_roadmap_json?.phases?.length || 0}
                 </p>
               </div>
               <TrendingUp className='h-8 w-8 text-primary' />
@@ -358,84 +410,86 @@ export default function RoadmapGenerator() {
         </CardHeader>
         <CardContent>
           <div className='space-y-8'>
-            {roadmapData.ai_roadmap_json.phases.map((phase, index) => (
-              <div key={index} className='relative'>
-                {/* Timeline connector */}
-                {index !== roadmapData.ai_roadmap_json.phases.length - 1 && (
-                  <div className='absolute left-6 top-14 bottom-0 w-0.5 bg-gradient-to-b from-primary to-primary/20' />
-                )}
+            {(roadmapData?.ai_roadmap_json?.phases || []).map(
+              (phase: any, phaseIndex: number) => (
+                <div key={index} className='relative'>
+                  {/* Timeline connector */}
+                  {index !==
+                    (roadmapData?.ai_roadmap_json?.phases?.length || 0) - 1 && (
+                    <div className='absolute left-6 top-14 bottom-0 w-0.5 bg-gradient-to-b from-primary to-primary/20' />
+                  )}
+                  <div className='flex items-start gap-4'>
+                    {/* Phase number badge */}
+                    <div className='flex-shrink-0 w-12 h-12 rounded-full bg-gradient-hero text-white flex items-center justify-center border-2 border-primary z-10 font-bold text-lg'>
+                      {index + 1}
+                    </div>
 
-                <div className='flex items-start gap-4'>
-                  {/* Phase number badge */}
-                  <div className='flex-shrink-0 w-12 h-12 rounded-full bg-gradient-hero text-white flex items-center justify-center border-2 border-primary z-10 font-bold text-lg'>
-                    {index + 1}
-                  </div>
-
-                  {/* Phase content */}
-                  <div className='flex-1'>
-                    <div className='bg-gradient-accent rounded-lg p-6 border border-border hover:border-primary transition-colors'>
-                      <div className='flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4'>
-                        <div>
-                          <Badge variant='outline' className='mb-2'>
-                            <Clock className='h-3 w-3 mr-1' />
-                            {phase.timeline}
-                          </Badge>
-                          <h4 className='text-xl font-semibold text-foreground'>
-                            {phase.title}
-                          </h4>
-                        </div>
-                        <div className='text-left md:text-right'>
-                          <div className='text-xs text-muted-foreground'>
-                            Est. Cost
-                          </div>
-                          <div className='text-lg font-bold text-primary'>
-                            {formatCurrency(phase.estimated_cost_tzs)}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Milestones */}
-                      <div className='mb-4'>
-                        <h5 className='text-sm font-semibold mb-3 flex items-center text-foreground'>
-                          <CheckCircle2 className='h-4 w-4 mr-2 text-primary' />
-                          Key Milestones
-                        </h5>
-                        <div className='space-y-2'>
-                          {phase.milestones.map((milestone, mIndex) => (
-                            <div
-                              key={mIndex}
-                              className='flex items-start gap-2 text-sm'>
-                              <ArrowRight className='h-4 w-4 text-primary mt-0.5 flex-shrink-0' />
-                              <span className='text-muted-foreground'>
-                                {milestone}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Resources */}
-                      <div>
-                        <h5 className='text-sm font-semibold mb-3 flex items-center text-foreground'>
-                          <BookMarked className='h-4 w-4 mr-2 text-primary' />
-                          Recommended Resources
-                        </h5>
-                        <div className='flex flex-wrap gap-2'>
-                          {phase.resources.map((resource, rIndex) => (
-                            <Badge
-                              key={rIndex}
-                              variant='secondary'
-                              className='text-xs'>
-                              {resource}
+                    {/* Phase content */}
+                    <div className='flex-1'>
+                      <div className='bg-gradient-accent rounded-lg p-6 border border-border hover:border-primary transition-colors'>
+                        <div className='flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4'>
+                          <div>
+                            <Badge variant='outline' className='mb-2'>
+                              <Clock className='h-3 w-3 mr-1' />
+                              {phase.timeline}
                             </Badge>
-                          ))}
+                            <h4 className='text-xl font-semibold text-foreground'>
+                              {phase.title}
+                            </h4>
+                          </div>
+                          <div className='text-left md:text-right'>
+                            <div className='text-xs text-muted-foreground'>
+                              Est. Cost
+                            </div>
+                            <div className='text-lg font-bold text-primary'>
+                              {formatCurrency(phase.estimated_cost_tzs)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Milestones */}
+                        <div className='mb-4'>
+                          <h5 className='text-sm font-semibold mb-3 flex items-center text-foreground'>
+                            <CheckCircle2 className='h-4 w-4 mr-2 text-primary' />
+                            Key Milestones
+                          </h5>
+                          <div className='space-y-2'>
+                            {phase.milestones.map((milestone, mIndex) => (
+                              <div
+                                key={mIndex}
+                                className='flex items-start gap-2 text-sm'>
+                                <ArrowRight className='h-4 w-4 text-primary mt-0.5 flex-shrink-0' />
+                                <span className='text-muted-foreground'>
+                                  {milestone}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Resources */}
+                        <div>
+                          <h5 className='text-sm font-semibold mb-3 flex items-center text-foreground'>
+                            <BookMarked className='h-4 w-4 mr-2 text-primary' />
+                            Recommended Resources
+                          </h5>
+                          <div className='flex flex-wrap gap-2'>
+                            {phase.resources.map((resource, rIndex) => (
+                              <Badge
+                                key={rIndex}
+                                variant='secondary'
+                                className='text-xs'>
+                                {resource}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
 
           {/* Total Investment Summary */}

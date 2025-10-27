@@ -21,31 +21,19 @@ export function ProtectedRoute({
   useEffect(() => {
     // Don't do anything while loading
     if (isLoading) return;
-    
+
     // Prevent multiple navigations in the same render cycle
     if (hasNavigated) return;
 
-    console.log("ProtectedRoute - User state:", {
-      user: user?.id,
-      isFirstLogin: user?.isFirstLogin,
-      role: user?.role,
-      currentPath: location.pathname,
-      requireAuth,
-      requiredRole,
-    });
-
-    // Case 1: Auth required but user not logged in
+    // Auth required but user not logged in
     if (requireAuth && !user) {
-      console.log("Redirecting to login - no user");
       setHasNavigated(true);
       navigate("/login");
       return;
     }
 
-    // Case 2: User logged in but accessing auth pages (login/signup)
+    // User logged in but accessing auth pages (login/signup)
     if (user && !requireAuth) {
-      console.log("User logged in, redirecting from auth page");
-
       // Check if user needs onboarding first
       if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
         console.log("Redirecting to onboarding - first login");
@@ -74,13 +62,10 @@ export function ProtectedRoute({
       }
     }
 
-    // Case 3: User logged in, check if they need onboarding
+    //User logged in, check if they need onboarding
     if (user && requireAuth) {
       // Redirect to onboarding if it's their first login and they're not already there
       if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
-        console.log(
-          "Redirecting to onboarding - first login from protected route"
-        );
         setHasNavigated(true);
         navigate("/onboarding");
         return;
@@ -88,7 +73,6 @@ export function ProtectedRoute({
 
       // If they've completed onboarding but are on onboarding page, redirect to dashboard
       if (!user.isFirstLogin && location.pathname.includes("/onboarding")) {
-        console.log("Redirecting to dashboard - onboarding already completed");
         setHasNavigated(true);
         switch (user.role) {
           case "admin":
@@ -106,9 +90,8 @@ export function ProtectedRoute({
       }
     }
 
-    // Case 4: Check role-based access
+    // Check role-based access
     if (user && requiredRole && user.role !== requiredRole) {
-      console.log("Redirecting due to role mismatch");
       setHasNavigated(true);
       // Redirect to appropriate dashboard if wrong role
       switch (user.role) {

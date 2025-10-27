@@ -49,9 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && user) {
-        // User returned to the app - validate session but don't force re-fetch
-        console.log("Page became visible, user already loaded:", user.id);
-
         // Only refresh if we detect the session might be stale (optional)
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (session?.user && session.user.id !== user.id) {
@@ -69,109 +66,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [user]);
 
-  // Fetch user profile data and check onboarding status
-  // const fetchUserData = async (sessionUser: SupabaseUser): Promise<User> => {
-  //   try {
-  //     console.log("Fetching user data for:", sessionUser.id);
-
-  //     // Fetch user profile, role, and onboarding status in parallel
-  //     const [profileResponse, roleResponse, onboardingResponse] =
-  //       await Promise.all([
-  //         supabase
-  //           .from("profiles")
-  //           .select("display_name, avatar_url")
-  //           .eq("user_id", sessionUser.id)
-  //           .maybeSingle(), // Use maybeSingle to handle no rows gracefully
-  //         supabase
-  //           .from("user_roles")
-  //           .select("role")
-  //           .eq("user_id", sessionUser.id)
-  //           .maybeSingle(), // Use maybeSingle to handle no rows gracefully
-  //         supabase
-  //           .from("onboarding_responses")
-  //           .select("id, completed_at")
-  //           .eq("user_id", sessionUser.id)
-  //           .maybeSingle(), // Use maybeSingle to handle no rows gracefully
-  //       ]);
-
-  //     console.log("Profile response:", profileResponse);
-  //     console.log("Role response:", roleResponse);
-  //     console.log("Onboarding response:", onboardingResponse);
-
-  //     // Handle profile data
-  //     const profileData = profileResponse.error ? null : profileResponse.data;
-
-  //     // Handle role data
-  //     const roleData = roleResponse.error ? null : roleResponse.data;
-
-  //     // Handle onboarding data
-  //     const onboardingData = onboardingResponse.error
-  //       ? null
-  //       : onboardingResponse.data;
-
-  //     // Determine user role with email-based fallback
-  //     let userRole: "youth" | "mentor" | "admin" = "youth";
-
-  //     if (roleData?.role) {
-  //       userRole = roleData.role;
-  //     } else {
-  //       // Fallback: determine role based on email if no role in database
-  //       const email = sessionUser.email || "";
-  //       if (email.startsWith("admin") || email === "admin@test.com") {
-  //         userRole = "admin";
-  //       } else if (email.startsWith("mentor") || email === "mentor@test.com") {
-  //         userRole = "mentor";
-  //       }
-  //     }
-
-  //     // Check if onboarding is completed
-  //     const hasCompletedOnboarding =
-  //       onboardingData && onboardingData.completed_at;
-
-  //     // Admin and mentor users should skip onboarding
-  //     const shouldSkipOnboarding =
-  //       userRole === "admin" || userRole === "mentor";
-
-  //     const userData: User = {
-  //       id: sessionUser.id,
-  //       email: sessionUser.email || "",
-  //       name:
-  //         profileData?.display_name ||
-  //         sessionUser.user_metadata?.full_name ||
-  //         "User",
-  //       role: userRole,
-  //       isFirstLogin: !hasCompletedOnboarding && !shouldSkipOnboarding,
-  //     };
-
-  //     console.log("Constructed user data:", userData);
-  //     return userData;
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-
-  //     // Fallback: create user object with email-based role detection
-  //     const email = sessionUser.email || "";
-  //     let fallbackRole: "youth" | "mentor" | "admin" = "youth";
-
-  //     if (email.startsWith("admin") || email === "admin@test.com") {
-  //       fallbackRole = "admin";
-  //     } else if (email.startsWith("mentor") || email === "mentor@test.com") {
-  //       fallbackRole = "mentor";
-  //     }
-
-  //     return {
-  //       id: sessionUser.id,
-  //       email: sessionUser.email || "",
-  //       name: sessionUser.user_metadata?.full_name || "User",
-  //       role: fallbackRole,
-  //       isFirstLogin: fallbackRole === "youth", // Only youth users need onboarding
-  //     };
-  //   }
-  // };
-
   const fetchUserData = async (sessionUser: SupabaseUser): Promise<User> => {
     // Prevent concurrent fetches for the same user
     if (isFetchingUserData) {
-      console.log("Already fetching user data, using cache if available");
       const cached = getCachedUserData(sessionUser.id);
       if (cached) return cached;
     }
@@ -179,12 +76,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsFetchingUserData(true);
 
     try {
-      console.log("Fetching user data for:", sessionUser.id);
-
-      // Helper to add a timeout to any promise
       function timeoutPromise<T>(promise: Promise<T>, ms: number): Promise<T> {
         return new Promise((resolve, reject) => {
-          const timer = setTimeout(() => reject(new Error("Database timeout")), ms);
+          const timer = setTimeout(
+            () => reject(new Error("Database timeout")),
+            ms
+          );
           promise
             .then((value) => {
               clearTimeout(timer);
@@ -217,12 +114,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .eq("user_id", sessionUser.id)
               .maybeSingle(),
           ]),
-          10000 // 10 seconds timeout (increased from 5s)
+          10000
         );
-
-      console.log("Profile response:", profileResponse);
-      console.log("Role response:", roleResponse);
-      console.log("Onboarding response:", onboardingResponse);
 
       // Handle profile data
       const profileData = profileResponse.error ? null : profileResponse.data;
@@ -238,7 +131,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Determine user role with email-based fallback
       let userRole: "youth" | "mentor" | "admin" = "youth";
 
-      if (roleData?.role && ['youth', 'mentor', 'admin'].includes(roleData.role)) {
+      if (
+        roleData?.role &&
+        ["youth", "mentor", "admin"].includes(roleData.role)
+      ) {
         userRole = roleData.role as "youth" | "mentor" | "admin";
       } else {
         // Fallback: determine role based on email if no role in database
@@ -269,19 +165,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isFirstLogin: !hasCompletedOnboarding && !shouldSkipOnboarding,
       };
 
-      console.log("Constructed user data:", userData);
-
       // Cache successful user data
       cacheUserData(userData);
 
       return userData;
     } catch (error) {
-      console.error("Error fetching user data:", error);
-
-      // Try to get cached data first (CRITICAL FIX)
+      // Try to get cached data first
       const cachedUser = getCachedUserData(sessionUser.id);
       if (cachedUser) {
-        console.log("Using cached user data due to fetch error:", cachedUser);
         return cachedUser;
       }
 
@@ -302,10 +193,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: sessionUser.email || "",
         name: sessionUser.user_metadata?.full_name || "User",
         role: fallbackRole,
-        isFirstLogin: fallbackRole === "youth", // Default for youth without cache
+        isFirstLogin: fallbackRole === "youth",
       };
-
-      console.log("Using fallback user data (no cache):", fallbackData);
       return fallbackData;
     } finally {
       setIsFetchingUserData(false);
@@ -315,8 +204,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Cache helpers
   const cacheUserData = (userData: User) => {
     try {
-      localStorage.setItem(`user_cache_${userData.id}`, JSON.stringify(userData));
-      localStorage.setItem(`user_cache_timestamp_${userData.id}`, Date.now().toString());
+      localStorage.setItem(
+        `user_cache_${userData.id}`,
+        JSON.stringify(userData)
+      );
+      localStorage.setItem(
+        `user_cache_timestamp_${userData.id}`,
+        Date.now().toString()
+      );
     } catch (e) {
       console.warn("Failed to cache user data:", e);
     }
@@ -344,7 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Function to update user's onboarding status after completion
+  // update user's onboarding status after completion
   const updateUserOnboardingStatus = async () => {
     if (!user) return;
 
@@ -388,17 +283,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
-
-      console.log("Auth state changed:", event, session?.user?.id);
-
-      // Debounce rapid auth state changes (e.g., when user returns to app)
       const now = Date.now();
       const timeSinceLastFetch = now - lastFetchTime;
 
       // If less than 2 seconds since last fetch, debounce
-      if (timeSinceLastFetch < 2000 && event !== 'SIGNED_OUT') {
-        console.log("Debouncing auth state change, too soon after last fetch");
-
+      if (timeSinceLastFetch < 2000 && event !== "SIGNED_OUT") {
         if (debounceTimer) clearTimeout(debounceTimer);
 
         debounceTimer = setTimeout(async () => {
@@ -412,7 +301,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await handleAuthStateChange(event, session);
     });
 
-    const handleAuthStateChange = async (event: string, session: Session | null) => {
+    const handleAuthStateChange = async (
+      event: string,
+      session: Session | null
+    ) => {
       lastFetchTime = Date.now();
       setSession(session);
 
@@ -420,10 +312,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const userData = await fetchUserData(session.user);
           if (mounted) setUser(userData);
-        } catch (error) {
-          console.error("Error fetching user data in auth state change:", error);
-          // The fetchUserData function already handles cache fallback
-        }
+        } catch (error) {}
       } else {
         if (mounted) setUser(null);
       }
@@ -436,9 +325,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: { session: currentSession },
           error,
         } = await supabase.auth.getSession();
-        
-        console.log("Initial session check:", currentSession?.user?.id);
-        
+
         if (error || !currentSession?.user) {
           if (mounted) {
             setSession(null);
@@ -545,8 +432,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await supabase.auth.signOut();
     } catch (error) {
-      console.error("Error signing out:", error);
-      // Force local logout even if network request fails
       setUser(null);
       setSession(null);
     }

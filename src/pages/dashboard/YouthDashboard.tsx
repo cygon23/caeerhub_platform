@@ -139,13 +139,10 @@ export default function YouthDashboard() {
         .select("preferred_path, ai_recommended_path")
         .eq("user_id", user.id)
         .single();
-
-      console.log("onboarding_responses fetch:", { data, error });
       setUserCareerPath(
         data?.ai_recommended_path || data?.preferred_path || null
       );
     } catch (err) {
-      console.error("fetchUserCareerPath error:", err);
       setUserCareerPath(null);
     }
   };
@@ -279,7 +276,7 @@ export default function YouthDashboard() {
     return group;
   });
 
-  console.log("🧩 filteredSidebarItems", filteredSidebarItems);
+  // console.log("🧩 filteredSidebarItems", filteredSidebarItems);
 
   const quickStats = [
     {
@@ -655,7 +652,11 @@ export default function YouthDashboard() {
             </div>
             {filteredSidebarItems.map((group, index) => {
               // Skip groups with no items
-              if (!group || !Array.isArray(group.items) || group.items.length === 0) {
+              if (
+                !group ||
+                !Array.isArray(group.items) ||
+                group.items.length === 0
+              ) {
                 return null;
               }
 
