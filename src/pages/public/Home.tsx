@@ -252,9 +252,11 @@ export default function Home() {
                 <span className='text-[#00690D]'>Guided by Experts</span>
               </h1>
 
-              {/* Description */}
+              {/* Description - Powerful Slogan */}
               <p className='text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl'>
-                Empowering Tanzanian youth with AI-driven career guidance and expert mentorship.
+                <span className='font-semibold text-foreground'>AI Drives It.</span>{" "}
+                <span className='font-semibold text-foreground'>Experts Refine It.</span>{" "}
+                <span className='font-semibold text-foreground'>You Lead It.</span>
               </p>
 
               {/* Stats - Circular Badges */}
@@ -303,31 +305,95 @@ export default function Home() {
 
             {/* Right Column - Visual Representation */}
             <div className='relative hidden lg:block'>
-              {/* Vector Background Decoration */}
-              <div className='absolute inset-0 opacity-[0.06]'>
-                {/* Geometric Shapes */}
-                <svg className='absolute top-20 right-10 w-32 h-32' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+              {/* Animated Vector Background Decoration */}
+              <div className='absolute inset-0 opacity-[0.08]'>
+                {/* Concentric Circles - AI Processing (Spin) */}
+                <svg
+                  className='absolute top-20 right-10 w-32 h-32 animate-spin'
+                  viewBox='0 0 100 100'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                  style={{ animationDuration: '20s' }}>
                   <circle cx='50' cy='50' r='40' stroke='#FE047F' strokeWidth='1' strokeDasharray='4 4' />
                   <circle cx='50' cy='50' r='25' stroke='#00690D' strokeWidth='1' />
+                  <circle cx='50' cy='50' r='10' stroke='#FE047F' strokeWidth='0.5' strokeDasharray='2 2' />
                 </svg>
 
-                <svg className='absolute bottom-32 left-10 w-24 h-24' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                {/* Data Grid - Knowledge Base (Pulse) */}
+                <svg
+                  className='absolute bottom-32 left-10 w-24 h-24 animate-pulse-scale'
+                  viewBox='0 0 100 100'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'>
                   <rect x='10' y='10' width='80' height='80' stroke='#FE047F' strokeWidth='1' strokeDasharray='6 6' />
+                  <line x1='50' y1='10' x2='50' y2='90' stroke='#FE047F' strokeWidth='0.5' opacity='0.5' />
+                  <line x1='10' y1='50' x2='90' y2='50' stroke='#FE047F' strokeWidth='0.5' opacity='0.5' />
                 </svg>
 
-                <svg className='absolute top-1/2 right-5 w-20 h-20' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                {/* Triangle - Direction/Growth (Float) */}
+                <svg
+                  className='absolute top-1/2 right-5 w-20 h-20 animate-float'
+                  viewBox='0 0 100 100'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                  style={{ animationDuration: '6s' }}>
                   <polygon points='50,10 90,90 10,90' stroke='#00690D' strokeWidth='1' fill='none' />
+                  <circle cx='50' cy='10' r='3' fill='#00690D' />
                 </svg>
 
-                <svg className='absolute bottom-10 right-20 w-16 h-16' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                {/* Diamond - Achievement (Rotate & Pulse) */}
+                <svg
+                  className='absolute bottom-10 right-20 w-16 h-16 animate-pulse'
+                  viewBox='0 0 100 100'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                  style={{ animation: 'pulse 3s ease-in-out infinite, spin 15s linear infinite' }}>
                   <path d='M50 10 L90 50 L50 90 L10 50 Z' stroke='#FE047F' strokeWidth='1' fill='none' strokeDasharray='3 3' />
+                  <circle cx='50' cy='50' r='5' fill='#FE047F' opacity='0.6' />
+                </svg>
+
+                {/* Network Nodes - Connection Pattern */}
+                <svg
+                  className='absolute top-1/3 left-12 w-28 h-28 animate-pulse-scale'
+                  viewBox='0 0 100 100'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                  style={{ animationDuration: '4s' }}>
+                  <circle cx='25' cy='25' r='4' fill='#FE047F' opacity='0.8' />
+                  <circle cx='75' cy='25' r='4' fill='#00690D' opacity='0.8' />
+                  <circle cx='50' cy='75' r='4' fill='#FE047F' opacity='0.8' />
+                  <line x1='25' y1='25' x2='75' y2='25' stroke='#FE047F' strokeWidth='0.5' opacity='0.4' strokeDasharray='2 2' />
+                  <line x1='25' y1='25' x2='50' y2='75' stroke='#00690D' strokeWidth='0.5' opacity='0.4' strokeDasharray='2 2' />
+                  <line x1='75' y1='25' x2='50' y2='75' stroke='#FE047F' strokeWidth='0.5' opacity='0.4' strokeDasharray='2 2' />
+                </svg>
+
+                {/* Brain Waves - AI Thinking */}
+                <svg
+                  className='absolute top-40 left-5 w-20 h-16'
+                  viewBox='0 0 100 100'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M 10 50 Q 25 30, 40 50 T 70 50 T 90 50'
+                    stroke='#FE047F'
+                    strokeWidth='1'
+                    fill='none'
+                    opacity='0.6'>
+                    <animate
+                      attributeName='stroke-dashoffset'
+                      from='0'
+                      to='100'
+                      dur='3s'
+                      repeatCount='indefinite' />
+                  </path>
                 </svg>
               </div>
 
-              {/* Floating Abstract Shapes */}
-              <div className='absolute top-10 left-5 w-12 h-12 rounded-full bg-[#FE047F]/5 border border-[#FE047F]/20'></div>
-              <div className='absolute bottom-20 right-8 w-8 h-8 rounded-full bg-[#00690D]/5 border border-[#00690D]/20'></div>
-              <div className='absolute top-1/3 left-8 w-6 h-6 rotate-45 bg-[#FE047F]/5 border border-[#FE047F]/20'></div>
+              {/* Floating Abstract Shapes - Orbiting Elements */}
+              <div className='absolute top-10 left-5 w-12 h-12 rounded-full bg-[#FE047F]/5 border border-[#FE047F]/20 animate-float' style={{ animationDuration: '5s', animationDelay: '0s' }}></div>
+              <div className='absolute bottom-20 right-8 w-8 h-8 rounded-full bg-[#00690D]/5 border border-[#00690D]/20 animate-float' style={{ animationDuration: '7s', animationDelay: '1s' }}></div>
+              <div className='absolute top-1/3 left-8 w-6 h-6 rotate-45 bg-[#FE047F]/5 border border-[#FE047F]/20 animate-pulse' style={{ animationDuration: '4s' }}></div>
+              <div className='absolute bottom-1/3 left-16 w-10 h-10 rounded-full bg-[#00690D]/5 border border-[#00690D]/20 animate-pulse-scale' style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
 
               {/* Modern 3D-style Card Stack Visualization */}
               <div className='relative h-[600px]'>
