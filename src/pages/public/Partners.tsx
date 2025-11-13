@@ -283,113 +283,169 @@ export default function Partners() {
       </section>
 
       {/* Partnership Success Stories - Be The First */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden">
+        {/* Subtle background elements */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="founding-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                <circle cx="15" cy="15" r="1" fill="currentColor" className="text-foreground" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#founding-grid)" />
+          </svg>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">Partnership Success Stories</h2>
             <p className="text-xl text-muted-foreground">
               Be among the first to create impact stories with us
             </p>
           </div>
 
-          <Card className="border-2 border-[#FE047F]/20 bg-white dark:bg-slate-900 hover:shadow-2xl transition-all duration-500">
-            <CardContent className="p-12 text-center">
-              <div className="flex justify-center mb-6">
-                <div className="w-24 h-24 rounded-full bg-[#FE047F]/10 flex items-center justify-center">
-                  <Handshake className="h-12 w-12 text-[#FE047F]" />
-                </div>
+          {/* Split Layout - Cleaner Design */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Main Content */}
+            <div className="text-left">
+              <div className="inline-flex items-center gap-2 bg-[#FE047F]/10 px-5 py-2 rounded-full mb-6 border border-[#FE047F]/20">
+                <Handshake className="h-5 w-5 text-[#FE047F]" />
+                <span className="text-sm font-semibold text-[#FE047F]">Founding Partnership</span>
               </div>
 
-              <h3 className="text-3xl font-bold text-foreground mb-4">
-                Your Story Starts Here
+              <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
+                Your Story <span className="text-[#FE047F]">Starts Here</span>
               </h3>
 
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 We're building something special together. As we launch our platform, we're inviting forward-thinking
                 organizations to be founding partners. Your partnership will directly shape our impact and create the
                 first success stories that inspire others.
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="p-6 bg-[#FE047F]/5 rounded-xl">
-                  <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center mx-auto mb-3">
-                    <Rocket className="h-6 w-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-foreground mb-2">Founding Partner Status</h4>
-                  <p className="text-sm text-muted-foreground">Recognition as one of our first strategic partners</p>
-                </div>
+              <Link to="/contact">
+                <Button size="lg" className="bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-10 py-6 shadow-xl shadow-[#FE047F]/20 group">
+                  Become a Founding Partner
+                  <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
+                </Button>
+              </Link>
+            </div>
 
-                <div className="p-6 bg-[#00690D]/5 rounded-xl">
-                  <div className="w-12 h-12 rounded-full bg-[#00690D] flex items-center justify-center mx-auto mb-3">
-                    <Users className="h-6 w-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-foreground mb-2">Direct Youth Impact</h4>
-                  <p className="text-sm text-muted-foreground">Help empower the next generation of Tanzanian leaders</p>
+            {/* Right Column - Benefits List */}
+            <div className="space-y-6">
+              {/* Benefit 1 */}
+              <div className="flex items-start gap-4 p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
+                <div className="w-14 h-14 rounded-full bg-[#FE047F] flex items-center justify-center flex-shrink-0">
+                  <Rocket className="h-7 w-7 text-white" />
                 </div>
-
-                <div className="p-6 bg-[#FE047F]/5 rounded-xl">
-                  <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center mx-auto mb-3">
-                    <Award className="h-6 w-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-foreground mb-2">Co-Create Solutions</h4>
-                  <p className="text-sm text-muted-foreground">Shape programs that align with your CSR goals</p>
+                <div>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">Founding Partner Status</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Recognition as one of our first strategic partners</p>
                 </div>
               </div>
 
-              <Link to="/contact">
-                <Button size="lg" className="bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20">
-                  Become a Founding Partner
-                  <ArrowRight className="ml-3 h-5 w-5" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+              {/* Benefit 2 */}
+              <div className="flex items-start gap-4 p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
+                <div className="w-14 h-14 rounded-full bg-[#00690D] flex items-center justify-center flex-shrink-0">
+                  <Users className="h-7 w-7 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">Direct Youth Impact</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Help empower the next generation of Tanzanian leaders</p>
+                </div>
+              </div>
+
+              {/* Benefit 3 */}
+              <div className="flex items-start gap-4 p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
+                <div className="w-14 h-14 rounded-full bg-[#FE047F] flex items-center justify-center flex-shrink-0">
+                  <Award className="h-7 w-7 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">Co-Create Solutions</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Shape programs that align with your CSR goals</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* How to Partner */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-foreground mb-8">Ready to Partner With Us?</h2>
-          <p className="text-xl text-muted-foreground mb-12">
-            Join our growing network of partners committed to empowering Tanzanian youth
-          </p>
+      {/* How to Partner - Enhanced UX/UI */}
+      <section className="py-24 bg-white dark:bg-slate-950 relative overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#FE047F]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#00690D]/10 rounded-full blur-3xl"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">1</span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Ready to Partner <span className="text-[#FE047F]">With Us?</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Join our growing network of partners committed to empowering Tanzanian youth
+            </p>
+          </div>
+
+          {/* Partnership Steps - Circular Badge Design */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16 max-w-4xl mx-auto">
+            {/* Step 1 */}
+            <div className="flex flex-col items-center text-center group">
+              <div className="relative mb-6">
+                {/* Outer glow ring */}
+                <div className="absolute inset-0 rounded-full bg-[#FE047F] opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+
+                {/* Main circular badge */}
+                <div className="relative w-24 h-24 rounded-full bg-[#FE047F] flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-3xl">1</span>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Connect</h3>
-              <p className="text-muted-foreground text-sm">Reach out to discuss partnership opportunities</p>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Connect</h3>
+              <p className="text-muted-foreground leading-relaxed">Reach out to discuss partnership opportunities</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">2</span>
+
+            {/* Step 2 */}
+            <div className="flex flex-col items-center text-center group">
+              <div className="relative mb-6">
+                {/* Outer glow ring */}
+                <div className="absolute inset-0 rounded-full bg-[#00690D] opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+
+                {/* Main circular badge */}
+                <div className="relative w-24 h-24 rounded-full bg-[#00690D] flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-3xl">2</span>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Collaborate</h3>
-              <p className="text-muted-foreground text-sm">Design programs that align with your goals</p>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Collaborate</h3>
+              <p className="text-muted-foreground leading-relaxed">Design programs that align with your goals</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-xl">3</span>
+
+            {/* Step 3 */}
+            <div className="flex flex-col items-center text-center group">
+              <div className="relative mb-6">
+                {/* Outer glow ring */}
+                <div className="absolute inset-0 rounded-full bg-[#FE047F] opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+
+                {/* Main circular badge */}
+                <div className="relative w-24 h-24 rounded-full bg-[#FE047F] flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-3xl">3</span>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Impact</h3>
-              <p className="text-muted-foreground text-sm">Measure and celebrate our collective impact</p>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Impact</h3>
+              <p className="text-muted-foreground leading-relaxed">Measure and celebrate our collective impact</p>
             </div>
           </div>
 
+          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/contact">
-              <Button size="lg" className="bg-gradient-hero text-white shadow-primary">
+              <Button size="lg" className="bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 group">
                 Become a Partner
-                <ArrowRight className="ml-2 h-6 w-6" />
+                <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
               </Button>
             </Link>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-primary text-primary hover:bg-primary/10"
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white text-lg px-12 py-6 font-semibold transition-all duration-300"
             >
               <ExternalLink className="mr-2 h-5 w-5" />
               Partnership Deck
