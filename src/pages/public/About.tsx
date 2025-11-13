@@ -22,22 +22,10 @@ import {
   ArrowRight,
   UserCircle2,
 } from "lucide-react";
-import {
-  useGSAP,
-  useGSAPScale,
-  useGSAPStagger,
-  useGSAPTextReveal,
-  useGSAPFlip,
-} from "@/hooks/useGSAP";
+import { useTranslation } from "react-i18next";
 
 export default function About() {
-  const heroRef = useGSAPTextReveal();
-  const missionRef = useGSAPStagger(0.3);
-  const timelineRef = useGSAP();
-  const teamRef = useGSAPStagger(0.1);
-  const valuesRef = useGSAPStagger(0.2);
-  const impactRef = useGSAPFlip();
-  const ctaRef = useGSAPScale();
+  const { t } = useTranslation('about');
 
   const timeline = [
     {
@@ -115,34 +103,30 @@ export default function About() {
 
   const values = [
     {
-      icon: Target,
-      title: "Purpose-Driven",
-      description:
-        "Everything we do is focused on empowering young Tanzanians to achieve their career dreams.",
+      icon: Lightbulb,
+      title: t('values.innovation.title'),
+      description: t('values.innovation.description'),
       gradient: "from-[#FE047F]/10 to-[#FE047F]/5",
       iconColor: "text-[#FE047F]",
     },
     {
-      icon: Heart,
-      title: "Locally Rooted",
-      description:
-        "We understand the unique challenges and opportunities within the Tanzanian context.",
+      icon: Globe,
+      title: t('values.accessibility.title'),
+      description: t('values.accessibility.description'),
       gradient: "from-[#FE047F]/10 to-[#FE047F]/5",
       iconColor: "text-[#FE047F]",
     },
     {
-      icon: Users,
-      title: "Community-Centered",
-      description:
-        "We believe in the power of mentorship, collaboration, and peer-to-peer learning.",
+      icon: Rocket,
+      title: t('values.empowerment.title'),
+      description: t('values.empowerment.description'),
       gradient: "from-[#00690D]/10 to-[#00690D]/5",
       iconColor: "text-[#00690D]",
     },
     {
-      icon: Award,
-      title: "Excellence-Focused",
-      description:
-        "We strive for the highest quality in everything we deliver to our youth community.",
+      icon: Users,
+      title: t('values.community.title'),
+      description: t('values.community.description'),
       gradient: "from-[#00690D]/10 to-[#00690D]/5",
       iconColor: "text-[#00690D]",
     },
@@ -151,25 +135,25 @@ export default function About() {
   const impactStats = [
     {
       number: "200+",
-      label: "Youth Empowered",
+      label: t('stats.youth'),
       icon: Users,
       color: "bg-[#FE047F]",
     },
     {
       number: "2+",
-      label: "Regions Covered",
+      label: t('stats.regions'),
       icon: MapPin,
       color: "bg-[#00690D]",
     },
     {
       number: "89%",
-      label: "Success Rate",
+      label: t('stats.successRate'),
       icon: TrendingUp,
       color: "bg-[#00690D]",
     },
     {
       number: "5+",
-      label: "Corporate Partners",
+      label: t('stats.partners'),
       icon: Award,
       color: "bg-[#FE047F]",
     },
@@ -227,18 +211,16 @@ export default function About() {
         </div>
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
-          <div ref={heroRef}>
+          <div>
             <div className='flex items-center justify-center mb-6'>
               <Sparkles className='h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale' />
               <h1 className='text-4xl md:text-6xl font-bold text-foreground'>
-                About{" "}
-                <span className='text-[#FE047F]'>Career na Mimi</span>
+                {t('hero.title')}{" "}
+                <span className='text-[#FE047F]'>{t('hero.titleHighlight')}</span>
               </h1>
             </div>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto mb-8'>
-              Empowering Tanzanian youth since 2024 through innovative career
-              development, mentorship, and AI-powered guidance to build
-              successful and fulfilling careers.
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -247,9 +229,7 @@ export default function About() {
       {/* Mission & Vision - Flipped Modern Design */}
       <section className='py-24 bg-white dark:bg-slate-950'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div
-            ref={missionRef}
-            className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
             {/* Vision First (Flipped) */}
             <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 border-[#00690D]/20 bg-white dark:bg-slate-900'>
               <CardContent className='p-10'>
@@ -261,14 +241,11 @@ export default function About() {
                 </div>
 
                 <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
-                  Our Vision
+                  {t('vision.title')}
                 </h2>
 
                 <p className='text-lg text-muted-foreground leading-relaxed'>
-                  A Tanzania where every young person has the knowledge, skills,
-                  and support network needed to pursue meaningful careers that
-                  contribute to both personal fulfillment and national development,
-                  creating a generation of empowered leaders and innovators.
+                  {t('vision.content')}
                 </p>
 
                 {/* Bottom accent line */}
@@ -287,15 +264,11 @@ export default function About() {
                 </div>
 
                 <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
-                  Our Mission
+                  {t('mission.title')}
                 </h2>
 
                 <p className='text-lg text-muted-foreground leading-relaxed'>
-                  To democratize access to quality career guidance and mentorship
-                  for all Tanzanian youth, regardless of their background or
-                  location, using innovative technology and local expertise to
-                  unlock their full potential and create pathways to economic
-                  prosperity.
+                  {t('mission.content')}
                 </p>
 
                 {/* Bottom accent line */}
@@ -487,20 +460,14 @@ export default function About() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
-              Meet the{" "}
-              <span className='text-[#FE047F]'>
-                Visionaries
-              </span>
+              {t('team.title')}
             </h2>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              Passionate leaders united by a commitment to empowering the next
-              generation of Tanzanian professionals
+              {t('team.subtitle')}
             </p>
           </div>
 
-          <div
-            ref={teamRef}
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
             {team.map((member, index) => (
               <Card
                 key={member.name}
@@ -547,20 +514,14 @@ export default function About() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
-              Our{" "}
-              <span className='text-[#FE047F]'>
-                Values
-              </span>
+              {t('values.title')}
             </h2>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              The guiding principles that shape our culture, drive our decisions,
-              and define our commitment to excellence
+              {t('values.subtitle')}
             </p>
           </div>
 
-          <div
-            ref={valuesRef}
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
             {values.map((value, index) => (
               <Card
                 key={value.title}

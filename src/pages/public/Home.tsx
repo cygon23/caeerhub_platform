@@ -34,27 +34,11 @@ import {
   PlayCircle,
 } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
-import {
-  useGSAP,
-  useGSAPScale,
-  useGSAPStagger,
-  useGSAPTextReveal,
-  useGSAPMorphing,
-  useGSAPFlip,
-  useGSAPMagnetic,
-} from "@/hooks/useGSAP";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const heroRef = useGSAPTextReveal();
-  const morphingRef = useGSAPMorphing();
-  const statsRef = useGSAPStagger(0.1);
-  const howItWorksRef = useGSAPStagger(0.2);
-  const featuresRef = useGSAPStagger(0.15);
-  const testimonialsRef = useGSAPStagger(0.1);
-  const faqRef = useGSAPStagger(0.1);
-  const ctaRef = useGSAPScale();
-
+  const { t } = useTranslation('home');
   const [openFAQ, setOpenFAQ] = useState(null);
 
   useEffect(() => {
@@ -84,66 +68,57 @@ export default function Home() {
   }, []);
 
   const stats = [
-    { number: "200+", label: "Youth Empowered", icon: Users },
-    { number: "89%", label: "Career Success Rate", icon: TrendingUp },
-    { number: "5+", label: "Partner Organizations", icon: Award },
-    { number: "24/7", label: "AI Support Available", icon: Sparkles },
+    { number: "200+", label: t('stats.youthImpacted'), icon: Users },
+    { number: "89%", label: t('stats.successRate'), icon: TrendingUp },
+    { number: "5+", label: t('stats.partnerOrganizations'), icon: Award },
+    { number: "24/7", label: t('stats.aiSupport'), icon: Sparkles },
   ];
 
   const howItWorksSteps = [
     {
       step: "01",
-      title: "Discover Yourself",
-      description:
-        "Embark on a journey of self-discovery with our AI-powered career assessment. Uncover your hidden strengths, passions, and the career paths that align with who you truly are.",
+      title: t('howItWorks.steps.signUp.title'),
+      description: t('howItWorks.steps.signUp.description'),
       icon: Compass,
     },
     {
       step: "02",
-      title: "Chart Your Path",
-      description:
-        "Receive a personalized roadmap designed specifically for you. Our AI analyzes Tanzania's dynamic job market to create actionable steps that transform your dreams into achievable milestones.",
+      title: t('howItWorks.steps.getInsights.title'),
+      description: t('howItWorks.steps.getInsights.description'),
       icon: MapPin,
     },
     {
       step: "03",
-      title: "Grow With Experts",
-      description:
-        "Connect with industry leaders and mentors who've walked your path. Access exclusive resources, real opportunities, and a community that believes in your potential.",
+      title: t('howItWorks.steps.connect.title'),
+      description: t('howItWorks.steps.connect.description'),
       icon: Rocket,
     },
   ];
 
   const faqData = [
     {
-      question: "Is Career na Mimi really free to use?",
-      answer:
-        "Yes! Our core features including AI career assessment, personalized roadmaps, and basic mentorship matching are completely free. We also offer premium features for advanced coaching and exclusive opportunities.",
+      question: t('faq.questions.free.q'),
+      answer: t('faq.questions.free.a'),
     },
     {
-      question: "How does your AI career matching work?",
-      answer:
-        "Our AI analyzes your skills, interests, personality, and local market data to suggest careers with high success potential. It considers Tanzania-specific opportunities and creates step-by-step pathways to reach your goals.",
+      question: t('faq.questions.ai.q'),
+      answer: t('faq.questions.ai.a'),
     },
     {
-      question: "Is my personal data safe and private?",
-      answer:
-        "Absolutely. We use bank-level encryption to protect your data and never share your personal information with third parties without your consent. You control what information you share with mentors and employers.",
+      question: t('faq.questions.privacy.q'),
+      answer: t('faq.questions.privacy.a'),
     },
     {
-      question: "What kind of mentors can I connect with?",
-      answer:
-        "Our mentors are successful professionals across various industries in Tanzania and globally. They're vetted experts who volunteer their time to guide young people through career development and real-world challenges.",
+      question: t('faq.questions.mentors.q'),
+      answer: t('faq.questions.mentors.a'),
     },
     {
-      question: "How long does it take to see results?",
-      answer:
-        "Many users report clarity on their career direction within the first week. Actual career progress varies, but our average user sees meaningful career advancement within 6-8 months of active platform use.",
+      question: t('faq.questions.results.q'),
+      answer: t('faq.questions.results.a'),
     },
     {
-      question: "Do you help with job placement?",
-      answer:
-        "While we don't guarantee job placement, we connect you with partner organizations, provide interview preparation, and alert you to relevant opportunities. Many users find employment through our network.",
+      question: t('faq.questions.jobPlacement.q'),
+      answer: t('faq.questions.jobPlacement.a'),
     },
   ];
 
@@ -188,21 +163,18 @@ export default function Home() {
 
   const impactFeatures = [
     {
-      title: "AI-Powered Personality Test",
-      description:
-        "Dive deep into your unique strengths with our scientifically-backed assessment that reveals career paths you never imagined.",
+      title: t('features.aiAssessment.title'),
+      description: t('features.aiAssessment.description'),
       icon: Brain,
     },
     {
-      title: "Smart Career Roadmap",
-      description:
-        "Your personalized blueprint for success, with step-by-step guidance tailored to Tanzania's opportunities and your unique goals.",
+      title: t('features.smartRoadmap.title'),
+      description: t('features.smartRoadmap.description'),
       icon: Target,
     },
     {
-      title: "Expert Mentorship Network",
-      description:
-        "Learn from those who've succeeded. Get guidance, feedback, and insights from industry leaders who genuinely care about your growth.",
+      title: t('features.mentorship.title'),
+      description: t('features.mentorship.description'),
       icon: UserCheck,
     },
   ];
@@ -236,7 +208,7 @@ export default function Home() {
         <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
           <div className='grid lg:grid-cols-2 gap-16 items-center'>
             {/* Left Column - Content */}
-            <div ref={heroRef}>
+            <div>
               {/* Badge */}
               <div className='inline-flex items-center gap-2 bg-[#FE047F]/10 px-4 py-2 rounded-full mb-6 border border-[#FE047F]/20'>
                 <Sparkles className='h-4 w-4 text-[#FE047F]' />
@@ -245,16 +217,13 @@ export default function Home() {
 
               {/* Main Headline - Powerful Slogan */}
               <h1 className='text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-[1.1]'>
-                <span className='text-[#FE047F]'>AI Drives It.</span>
-                <br />
-                <span className='text-[#00690D]'>Experts Refine It.</span>
-                <br />
-                <span className='text-foreground'>You Lead It.</span>
+                <span className='text-[#FE047F]'>{t('hero.title')} </span>
+                <span className='text-[#00690D]'>{t('hero.titleHighlight')}</span>
               </h1>
 
               {/* Description */}
               <p className='text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl'>
-                Empowering Tanzanian youth with AI-driven career guidance and expert mentorship.
+                {t('hero.subtitle')}
               </p>
 
               {/* Stats - Circular Badges */}
@@ -285,7 +254,7 @@ export default function Home() {
                   <Button
                     size='lg'
                     className='bg-[#FE047F] hover:bg-[#FE047F]/90 text-white px-8 py-6 text-lg font-semibold shadow-xl shadow-[#FE047F]/20 hover:shadow-2xl hover:shadow-[#FE047F]/30 transition-all duration-300'>
-                    Get Started Now
+                    {t('hero.startJourney')}
                     <ArrowRight className='ml-2 h-5 w-5' />
                   </Button>
                 </Link>
@@ -487,9 +456,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div
-            ref={statsRef}
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto'>
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
@@ -521,19 +488,14 @@ export default function Home() {
         <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
-              Your Journey in{" "}
-              <span className='text-[#FE047F]'>
-                Three Steps
-              </span>
+              {t('howItWorks.title')}
             </h2>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              A proven pathway that has guided thousands of Tanzanian youth from confusion to clarity, from potential to success
+              {t('howItWorks.subtitle')}
             </p>
           </div>
 
-          <div
-            ref={howItWorksRef}
-            className='grid grid-cols-1 lg:grid-cols-3 gap-12'>
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-12'>
             {howItWorksSteps.map((step, index) => (
               <div key={step.step} className='relative group'>
                 {/* Connection line */}
@@ -589,19 +551,17 @@ export default function Home() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
-              Powered by Intelligence,{" "}
+              {t('features.title')}{" "}
               <span className='text-[#00690D]'>
-                Guided by Heart
+                {t('features.titleHighlight')}
               </span>
             </h2>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              Cutting-edge AI technology meets human expertise to create a platform that understands you, guides you, and grows with you
+              {t('features.subtitle')}
             </p>
           </div>
 
-          <div
-            ref={featuresRef}
-            className='grid grid-cols-1 md:grid-cols-3 gap-10'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-10'>
             {impactFeatures.map((feature, index) => (
               <Card
                 key={feature.title}
@@ -655,19 +615,14 @@ export default function Home() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
-              Stories of{" "}
-              <span className='text-[#00690D]'>
-                Transformation
-              </span>
+              {t('testimonials.title')}
             </h2>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              Real people. Real journeys. Real success. These are the faces of Tanzania's future.
+              {t('testimonials.subtitle')}
             </p>
           </div>
 
-          <div
-            ref={testimonialsRef}
-            className='grid grid-cols-1 md:grid-cols-3 gap-10'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-10'>
             {testimonials.map((testimonial, index) => (
               <Card
                 key={testimonial.name}
@@ -731,17 +686,14 @@ export default function Home() {
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
-              Questions? We've Got{" "}
-              <span className='text-[#FE047F]'>
-                Answers
-              </span>
+              {t('faq.title')}
             </h2>
             <p className='text-xl text-muted-foreground'>
-              Everything you need to know about starting your journey with Career na Mimi
+              {t('faq.subtitle')}
             </p>
           </div>
 
-          <div ref={faqRef} className='space-y-4'>
+          <div className='space-y-4'>
             {faqData.map((faq, index) => (
               <Card
                 key={index}
@@ -793,7 +745,7 @@ export default function Home() {
       <section className='py-20 bg-white dark:bg-slate-950'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
           <h3 className='text-2xl font-semibold text-muted-foreground mb-12'>
-            Trusted by Leading Organizations Across Africa & Beyond
+            {t('partners.title')}
           </h3>
           <div className='relative overflow-hidden'>
             <div className='flex animate-scroll space-x-16'>
@@ -855,7 +807,7 @@ export default function Home() {
         </div>
 
         <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-          <div ref={ctaRef}>
+          <div>
             {/* Split Layout Container */}
             <div className='grid lg:grid-cols-2 gap-12 items-center'>
               {/* Left Column - Content */}
@@ -867,14 +819,11 @@ export default function Home() {
                 </div>
 
                 <h2 className='text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight'>
-                  Your Future is Waiting.
-                  <span className='block mt-2 text-[#00690D]'>
-                    Let's Build It Together.
-                  </span>
+                  {t('cta.title')}
                 </h2>
 
                 <p className='text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed'>
-                  Every success story started with a single step. Take yours today—completely free, no credit card required.
+                  {t('cta.subtitle')}
                 </p>
 
                 <div className='flex flex-col sm:flex-row gap-4 mb-8'>
@@ -882,7 +831,7 @@ export default function Home() {
                     <Button
                       size='lg'
                       className='group bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 transform hover:scale-105 transition-all duration-300 font-semibold'>
-                      Start Free Now
+                      {t('cta.getStarted')}
                       <ArrowRight className='ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform' />
                     </Button>
                   </Link>
@@ -900,7 +849,7 @@ export default function Home() {
                 <div className='flex flex-wrap gap-4 text-sm text-muted-foreground'>
                   <div className='flex items-center gap-2'>
                     <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
-                    <span>2-Minute Setup</span>
+                    <span>{t('cta.trustBadges.instantSetup')}</span>
                   </div>
                   <div className='flex items-center gap-2'>
                     <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
@@ -908,7 +857,7 @@ export default function Home() {
                   </div>
                   <div className='flex items-center gap-2'>
                     <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
-                    <span>24/7 Support</span>
+                    <span>{t('cta.trustBadges.support')}</span>
                   </div>
                 </div>
               </div>

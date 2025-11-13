@@ -20,14 +20,10 @@ import {
   Award,
   Star
 } from "lucide-react";
-import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip, useGSAPMagnetic } from "@/hooks/useGSAP";
+import { useTranslation } from "react-i18next";
 
 export default function Features() {
-  const heroRef = useGSAPTextReveal();
-  const featuresRef = useGSAPStagger(0.05);
-  const processRef = useGSAPStagger(0.2);
-  const statsRef = useGSAPFlip();
-  const ctaRef = useGSAPMagnetic();
+  const { t } = useTranslation('features');
 
   const features = [
     {
@@ -165,19 +161,18 @@ export default function Features() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div ref={heroRef}>
+          <div>
             <div className="flex items-center justify-center mb-6">
               <Sparkles className="h-8 w-8 text-primary mr-3 animate-pulse-scale" />
               <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-                AI-Powered 
-                <span className="bg-gradient-hero bg-clip-text text-transparent"> Features</span>
+                {t('hero.title')}{" "}
+                <span className="bg-gradient-hero bg-clip-text text-transparent">{t('hero.titleHighlight')}</span>
               </h1>
             </div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Discover how our cutting-edge technology and expert guidance work together 
-              to accelerate your career development and unlock your full potential.
+              {t('hero.subtitle')}
             </p>
-            <div ref={ctaRef}>
+            <div>
               <Link to="/signup">
                 <Button size="lg" className="bg-gradient-hero text-white shadow-primary transform hover:scale-110 transition-all duration-300">
                   Try All Features Free
@@ -232,14 +227,14 @@ export default function Features() {
       <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">How It Works</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">{t('howItWorks.title')}</h2>
             <p className="text-xl text-muted-foreground">
-              Your journey to career success in just 4 simple steps
+              {t('howItWorks.subtitle')}
             </p>
           </div>
 
           {/* Circular Journey Path */}
-          <div ref={processRef} className="relative max-w-5xl mx-auto">
+          <div className="relative max-w-5xl mx-auto">
             {/* Connecting Rope/Line */}
             <div className="absolute top-24 left-0 right-0 h-1 hidden md:block">
               <svg className="w-full h-full" preserveAspectRatio="none">
@@ -259,29 +254,29 @@ export default function Features() {
               {[
                 {
                   step: "01",
-                  title: "Take Assessment",
-                  description: "Complete our comprehensive AI-powered personality and skills assessment",
+                  title: t('howItWorks.step1.title'),
+                  description: t('howItWorks.step1.description'),
                   icon: Brain,
                   color: "bg-[#FE047F]"
                 },
                 {
                   step: "02",
-                  title: "Get Your Roadmap",
-                  description: "Receive a personalized career development plan tailored to your profile",
+                  title: t('howItWorks.step2.title'),
+                  description: t('howItWorks.step2.description'),
                   icon: Map,
                   color: "bg-[#00690D]"
                 },
                 {
                   step: "03",
-                  title: "Connect & Learn",
-                  description: "Access mentors, learning modules, and career-building tools",
+                  title: t('howItWorks.step3.title'),
+                  description: t('howItWorks.step3.description'),
                   icon: Users,
                   color: "bg-[#FE047F]"
                 },
                 {
                   step: "04",
-                  title: "Achieve Success",
-                  description: "Track progress, build skills, and land your dream career",
+                  title: t('howItWorks.step4.title'),
+                  description: t('howItWorks.step4.description'),
                   icon: Target,
                   color: "bg-[#00690D]"
                 }
@@ -325,19 +320,19 @@ export default function Features() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Proven Results
+              {t('results.title')}
             </h2>
             <p className="text-xl text-muted-foreground">
-              Data-driven success metrics from real users
+              {t('results.subtitle')}
             </p>
           </div>
 
-          <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {[
-              { number: "94%", label: "Career Match Accuracy", icon: Target, color: "bg-[#FE047F]" },
-              { number: "87%", label: "Job Placement Rate", icon: TrendingUp, color: "bg-[#00690D]" },
-              { number: "76%", label: "Average Salary Increase", icon: Award, color: "bg-[#FE047F]" },
-              { number: "4.8/5", label: "User Satisfaction Rating", icon: Star, color: "bg-[#00690D]" }
+              { number: "94%", label: t('results.completionRate'), icon: Target, color: "bg-[#FE047F]" },
+              { number: "87%", label: t('results.satisfactionScore'), icon: TrendingUp, color: "bg-[#00690D]" },
+              { number: "76%", label: t('results.careerClarity'), icon: Award, color: "bg-[#FE047F]" },
+              { number: "4.8/5", label: t('results.rating'), icon: Star, color: "bg-[#00690D]" }
             ].map((stat, index) => (
               <div
                 key={stat.label}
@@ -404,12 +399,11 @@ export default function Features() {
               </div>
 
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-                Ready to Experience the Future of{" "}
-                <span className="text-[#00690D]">Career Development?</span>
+                {t('cta.title')}
               </h2>
 
               <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed">
-                Join thousands of Tanzanian youth who are already using AI to accelerate their career growth and achieve their dreams.
+                {t('cta.subtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -417,7 +411,7 @@ export default function Features() {
                   <Button
                     size="lg"
                     className="group bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 transform hover:scale-105 transition-all duration-300 font-semibold">
-                    Start Your Free Trial
+                    {t('cta.button')}
                     <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
                   </Button>
                 </Link>
