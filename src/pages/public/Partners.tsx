@@ -2,15 +2,23 @@ import PublicLayout from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { 
-  Building2, 
-  Handshake, 
-  Globe, 
-  TrendingUp, 
-  Users, 
+import {
+  Building2,
+  Handshake,
+  Globe,
+  TrendingUp,
+  Users,
   Award,
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  Sprout,
+  Flag,
+  Landmark,
+  Smartphone,
+  CreditCard,
+  Search,
+  GraduationCap,
+  Rocket
 } from "lucide-react";
 import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip } from "@/hooks/useGSAP";
 
@@ -26,49 +34,49 @@ export default function Partners() {
       name: "TechnoServe",
       category: "Development Partner",
       description: "Supporting youth entrepreneurship programs and business skills training across East Africa.",
-      logo: "🌱",
+      logo: Sprout,
       impact: "15,000+ youth trained",
-      color: "bg-green-500/10 text-green-600"
+      color: "bg-secondary/10 text-secondary"
     },
     {
       name: "USAID Tanzania",
-      category: "Government Partner", 
+      category: "Government Partner",
       description: "Funding workforce development initiatives and digital skills programs for Tanzanian youth.",
-      logo: "🇺🇸",
+      logo: Flag,
       impact: "TZS 2.5B invested",
-      color: "bg-blue-500/10 text-blue-600"
+      color: "bg-primary/10 text-primary"
     },
     {
       name: "World Bank Group",
       category: "Financial Partner",
       description: "Supporting policy development and large-scale youth employment programs in Tanzania.",
-      logo: "🏦",
+      logo: Landmark,
       impact: "Policy framework support",
-      color: "bg-purple-500/10 text-purple-600"
+      color: "bg-primary/10 text-primary"
     },
     {
       name: "Vodacom Foundation",
       category: "Technology Partner",
       description: "Providing mobile learning platforms and digital literacy programs for underserved communities.",
-      logo: "📱",
+      logo: Smartphone,
       impact: "100,000+ digital connections",
-      color: "bg-red-500/10 text-red-600"
+      color: "bg-secondary/10 text-secondary"
     },
     {
       name: "Mastercard Foundation",
       category: "Strategic Partner",
       description: "Funding comprehensive youth development programs focusing on financial inclusion and skills.",
-      logo: "💳",
+      logo: CreditCard,
       impact: "25,000+ youth empowered",
-      color: "bg-orange-500/10 text-orange-600"
+      color: "bg-primary/10 text-primary"
     },
     {
       name: "Google.org",
       category: "Technology Partner",
       description: "Supporting AI-powered educational tools and providing access to Google Career Certificates.",
-      logo: "🔍",
+      logo: Search,
       impact: "AI tools & certification",
-      color: "bg-indigo-500/10 text-indigo-600"
+      color: "bg-secondary/10 text-secondary"
     }
   ];
 
@@ -166,14 +174,16 @@ export default function Partners() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {partners.map((partner, index) => (
-              <Card 
+              <Card
                 key={partner.name}
                 className="hover:shadow-primary transition-all duration-300 animate-slide-up border-0 bg-background/50 backdrop-blur-sm"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="text-4xl">{partner.logo}</div>
+                    <div className={`p-3 rounded-lg ${partner.color}`}>
+                      <partner.logo className="h-8 w-8" />
+                    </div>
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${partner.color}`}>
                       {partner.category}
                     </span>
@@ -252,7 +262,9 @@ export default function Partners() {
             <Card className="border-0 bg-background/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300">
               <CardContent className="p-8">
                 <div className="flex items-start mb-4">
-                  <div className="text-3xl mr-4">🎓</div>
+                  <div className="p-3 bg-primary/10 rounded-lg mr-4">
+                    <GraduationCap className="h-8 w-8 text-primary" />
+                  </div>
                   <div>
                     <h3 className="text-xl font-semibold text-foreground mb-2">
                       Vodacom Foundation Digital Skills Program
@@ -286,7 +298,9 @@ export default function Partners() {
             <Card className="border-0 bg-background/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300">
               <CardContent className="p-8">
                 <div className="flex items-start mb-4">
-                  <div className="text-3xl mr-4">🚀</div>
+                  <div className="p-3 bg-secondary/10 rounded-lg mr-4">
+                    <Rocket className="h-8 w-8 text-secondary" />
+                  </div>
                   <div>
                     <h3 className="text-xl font-semibold text-foreground mb-2">
                       Mastercard Foundation Entrepreneurship Hub
