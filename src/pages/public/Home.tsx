@@ -31,6 +31,7 @@ import {
   Heart,
   Cpu,
   Network,
+  PlayCircle,
 } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 import {
@@ -73,32 +74,6 @@ export default function Home() {
       }
       .animate-scroll:hover {
         animation-play-state: paused;
-      }
-
-      @keyframes pulse-glow {
-        0%, 100% {
-          opacity: 0.4;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.8;
-          transform: scale(1.1);
-        }
-      }
-      .pulse-glow {
-        animation: pulse-glow 3s ease-in-out infinite;
-      }
-
-      @keyframes float-slow {
-        0%, 100% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-20px);
-        }
-      }
-      .float-slow {
-        animation: float-slow 6s ease-in-out infinite;
       }
     `;
     document.head.appendChild(style);
@@ -238,151 +213,185 @@ export default function Home() {
 
   return (
     <PublicLayout>
-      {/* Hero Section - Technology + Humanity = Youth Success */}
-      <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-slate-950'>
-        {/* Split background - Pink left, Green right */}
-        <div className='absolute inset-0'>
-          <div className='absolute inset-y-0 left-0 w-1/2 bg-gradient-to-br from-[#FE047F] to-[#FE047F]/80'></div>
-          <div className='absolute inset-y-0 right-0 w-1/2 bg-gradient-to-bl from-[#00690D] to-[#00690D]/80'></div>
-
-          {/* Diagonal merge line with glow */}
-          <div className='absolute inset-0 bg-gradient-to-r from-[#FE047F]/50 via-white to-[#00690D]/50 transform -skew-x-12 left-1/4 w-1/2'></div>
+      {/* Modern Hero Section - AI + Experts = Success */}
+      <section className='relative min-h-screen flex items-center bg-white dark:bg-slate-950 overflow-hidden'>
+        {/* Subtle Background Pattern */}
+        <div className='absolute inset-0 opacity-[0.03]'>
+          <svg className='w-full h-full' xmlns='http://www.w3.org/2000/svg'>
+            <defs>
+              <pattern id='grid' width='40' height='40' patternUnits='userSpaceOnUse'>
+                <circle cx='20' cy='20' r='1' fill='currentColor' className='text-[#FE047F]' />
+              </pattern>
+            </defs>
+            <rect width='100%' height='100%' fill='url(#grid)' />
+          </svg>
         </div>
 
-        {/* Floating icons representing technology + humanity */}
-        <div className='absolute inset-0 overflow-hidden'>
-          {/* Technology side - Pink */}
-          <div className='absolute top-1/4 left-[15%] float-slow'>
-            <Cpu className='h-16 w-16 text-white/30' />
-          </div>
-          <div className='absolute top-1/2 left-[10%] float-slow' style={{ animationDelay: '1s' }}>
-            <Brain className='h-20 w-20 text-white/40' />
-          </div>
-          <div className='absolute bottom-1/4 left-[20%] float-slow' style={{ animationDelay: '2s' }}>
-            <Sparkles className='h-14 w-14 text-white/30' />
-          </div>
+        {/* Large Gradient Orb - Top Right */}
+        <div className='absolute -top-48 -right-48 w-96 h-96 bg-[#FE047F]/10 rounded-full blur-3xl'></div>
 
-          {/* Humanity side - Green */}
-          <div className='absolute top-1/4 right-[15%] float-slow' style={{ animationDelay: '0.5s' }}>
-            <Heart className='h-16 w-16 text-white/30' />
-          </div>
-          <div className='absolute top-1/2 right-[10%] float-slow' style={{ animationDelay: '1.5s' }}>
-            <Users className='h-20 w-20 text-white/40' />
-          </div>
-          <div className='absolute bottom-1/4 right-[20%] float-slow' style={{ animationDelay: '2.5s' }}>
-            <UserCheck className='h-14 w-14 text-white/30' />
-          </div>
+        {/* Large Gradient Orb - Bottom Left */}
+        <div className='absolute -bottom-48 -left-48 w-96 h-96 bg-[#00690D]/10 rounded-full blur-3xl'></div>
 
-          {/* Connection/Network in center */}
-          <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pulse-glow'>
-            <Network className='h-32 w-32 text-white/50' />
+        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
+          <div className='grid lg:grid-cols-2 gap-16 items-center'>
+            {/* Left Column - Content */}
+            <div ref={heroRef}>
+              {/* Badge */}
+              <div className='inline-flex items-center gap-2 bg-[#FE047F]/10 px-4 py-2 rounded-full mb-6 border border-[#FE047F]/20'>
+                <Sparkles className='h-4 w-4 text-[#FE047F]' />
+                <span className='text-sm font-semibold text-[#FE047F]'>AI-Powered Career Platform</span>
+              </div>
+
+              {/* Main Headline */}
+              <h1 className='text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-[1.1]'>
+                Your Career,
+                <br />
+                <span className='text-[#FE047F]'>Powered by AI</span>
+                <br />
+                <span className='text-[#00690D]'>Guided by Experts</span>
+              </h1>
+
+              {/* Description */}
+              <p className='text-xl text-muted-foreground mb-8 leading-relaxed max-w-xl'>
+                Join Tanzania's most intelligent career development platform where cutting-edge artificial intelligence meets experienced mentorship to unlock your full potential.
+              </p>
+
+              {/* Stats Row */}
+              <div className='flex flex-wrap gap-8 mb-10'>
+                <div>
+                  <div className='text-3xl font-bold text-foreground'>42,000+</div>
+                  <div className='text-sm text-muted-foreground'>Youth Empowered</div>
+                </div>
+                <div>
+                  <div className='text-3xl font-bold text-foreground'>89%</div>
+                  <div className='text-sm text-muted-foreground'>Success Rate</div>
+                </div>
+                <div>
+                  <div className='text-3xl font-bold text-foreground'>24/7</div>
+                  <div className='text-sm text-muted-foreground'>AI Support</div>
+                </div>
+              </div>
+
+              {/* CTA Buttons - Modern Layout */}
+              <div className='flex flex-col sm:flex-row gap-4'>
+                <Link to='/signup'>
+                  <Button
+                    size='lg'
+                    className='bg-[#FE047F] hover:bg-[#FE047F]/90 text-white px-8 py-6 text-lg font-semibold shadow-xl shadow-[#FE047F]/20 hover:shadow-2xl hover:shadow-[#FE047F]/30 transition-all duration-300'>
+                    Start Free Journey
+                    <ArrowRight className='ml-2 h-5 w-5' />
+                  </Button>
+                </Link>
+                <Link to='/features'>
+                  <Button
+                    size='lg'
+                    variant='outline'
+                    className='border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white px-8 py-6 text-lg font-semibold transition-all duration-300'>
+                    <PlayCircle className='mr-2 h-5 w-5' />
+                    See How It Works
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className='flex items-center gap-6 mt-8 text-sm text-muted-foreground'>
+                <div className='flex items-center gap-2'>
+                  <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
+                  <span>Free Forever</span>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
+                  <span>No Credit Card</span>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
+                  <span>Instant Access</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Visual Representation */}
+            <div className='relative hidden lg:block'>
+              {/* Modern 3D-style Card Stack Visualization */}
+              <div className='relative h-[600px]'>
+                {/* AI Card - Back */}
+                <div className='absolute top-0 right-0 w-80 h-96 bg-gradient-to-br from-[#FE047F] to-[#FE047F]/80 rounded-3xl shadow-2xl transform rotate-6 transition-transform hover:rotate-3'>
+                  <div className='p-8 text-white'>
+                    <div className='w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm'>
+                      <Brain className='h-8 w-8 text-white' />
+                    </div>
+                    <h3 className='text-2xl font-bold mb-3'>AI Technology</h3>
+                    <p className='text-white/90 text-sm leading-relaxed'>
+                      Advanced machine learning algorithms analyze your unique strengths, interests, and goals to provide personalized career recommendations.
+                    </p>
+                    <div className='mt-6 space-y-2'>
+                      <div className='flex items-center gap-2'>
+                        <CheckCircle2 className='h-4 w-4' />
+                        <span className='text-sm'>Personality Assessment</span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <CheckCircle2 className='h-4 w-4' />
+                        <span className='text-sm'>Smart Roadmaps</span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <CheckCircle2 className='h-4 w-4' />
+                        <span className='text-sm'>24/7 AI Coach</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expert Card - Front */}
+                <div className='absolute bottom-0 left-0 w-80 h-96 bg-gradient-to-br from-[#00690D] to-[#00690D]/80 rounded-3xl shadow-2xl transform -rotate-6 transition-transform hover:-rotate-3'>
+                  <div className='p-8 text-white'>
+                    <div className='w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm'>
+                      <Users className='h-8 w-8 text-white' />
+                    </div>
+                    <h3 className='text-2xl font-bold mb-3'>Expert Mentors</h3>
+                    <p className='text-white/90 text-sm leading-relaxed'>
+                      Connect with successful professionals who provide real-world guidance, industry insights, and proven strategies for career success.
+                    </p>
+                    <div className='mt-6 space-y-2'>
+                      <div className='flex items-center gap-2'>
+                        <CheckCircle2 className='h-4 w-4' />
+                        <span className='text-sm'>1-on-1 Mentorship</span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <CheckCircle2 className='h-4 w-4' />
+                        <span className='text-sm'>Industry Experts</span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <CheckCircle2 className='h-4 w-4' />
+                        <span className='text-sm'>Career Coaching</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Success Badge - Center */}
+                <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10'>
+                  <div className='w-32 h-32 bg-white dark:bg-slate-900 rounded-full shadow-2xl flex items-center justify-center border-4 border-white dark:border-slate-800'>
+                    <div className='text-center'>
+                      <Rocket className='h-12 w-12 text-[#FE047F] mx-auto mb-1' />
+                      <div className='text-xs font-bold text-foreground'>Success</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Connecting Lines - SVG */}
+                <svg className='absolute inset-0 w-full h-full pointer-events-none' xmlns='http://www.w3.org/2000/svg'>
+                  <line x1='40%' y1='35%' x2='50%' y2='50%' stroke='#FE047F' strokeWidth='2' strokeDasharray='5,5' opacity='0.3' />
+                  <line x1='60%' y1='65%' x2='50%' y2='50%' stroke='#00690D' strokeWidth='2' strokeDasharray='5,5' opacity='0.3' />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div ref={heroRef} className='text-center'>
-            {/* Main concept visual */}
-            <div className='mb-12'>
-              <div className='flex items-center justify-center gap-8 mb-8'>
-                {/* Technology */}
-                <div className='flex flex-col items-center gap-3'>
-                  <div className='w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm border-2 border-white flex items-center justify-center shadow-2xl'>
-                    <Cpu className='h-10 w-10 text-white' />
-                  </div>
-                  <span className='text-white font-bold text-lg'>Technology</span>
-                </div>
-
-                {/* Plus symbol */}
-                <div className='text-6xl font-bold text-white'>+</div>
-
-                {/* Humanity */}
-                <div className='flex flex-col items-center gap-3'>
-                  <div className='w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm border-2 border-white flex items-center justify-center shadow-2xl'>
-                    <Heart className='h-10 w-10 text-white' />
-                  </div>
-                  <span className='text-white font-bold text-lg'>Humanity</span>
-                </div>
-
-                {/* Equals symbol */}
-                <div className='text-6xl font-bold text-white'>=</div>
-
-                {/* Youth Success */}
-                <div className='flex flex-col items-center gap-3'>
-                  <div className='w-20 h-20 rounded-2xl bg-white backdrop-blur-sm border-2 border-white flex items-center justify-center shadow-2xl'>
-                    <Rocket className='h-10 w-10 text-[#FE047F]' />
-                  </div>
-                  <span className='text-white font-bold text-lg'>Youth Success</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Main headline */}
-            <h1 className='text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight'>
-              <span className='text-white'>
-                Where AI Meets
-              </span>
-              <br />
-              <span className='text-white'>
-                Humanity for
-              </span>
-              <br />
-              <span className='inline-block px-6 py-2 bg-white text-[#FE047F] rounded-2xl'>
-                Youth Success
-              </span>
-            </h1>
-
-            {/* Subheadline */}
-            <p className='text-xl md:text-2xl text-white mb-4 max-w-4xl mx-auto leading-relaxed font-medium'>
-              Combining cutting-edge technology with human expertise to empower
-              <span className='block mt-2 text-white font-bold'>
-                Tanzanian youth and build stronger communities together.
-              </span>
-            </p>
-
-            {/* Trust indicators */}
-            <div className='flex flex-wrap justify-center items-center gap-8 mb-12 text-white text-sm'>
-              <div className='flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full'>
-                <CheckCircle2 className='h-5 w-5' />
-                <span>42,000+ Youth Empowered</span>
-              </div>
-              <div className='flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full'>
-                <CheckCircle2 className='h-5 w-5' />
-                <span>89% Success Rate</span>
-              </div>
-              <div className='flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full'>
-                <CheckCircle2 className='h-5 w-5' />
-                <span>100% Free to Start</span>
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className='flex flex-col sm:flex-row gap-6 justify-center items-center mb-16'>
-              <Link to='/signup'>
-                <Button
-                  size='lg'
-                  className='group relative bg-white text-[#FE047F] hover:bg-white/90 text-lg px-10 py-7 shadow-2xl transform hover:scale-105 transition-all duration-300 border-0 font-bold'>
-                  <span className='flex items-center gap-2'>
-                    Begin Your Journey
-                    <ArrowRight className='h-5 w-5 group-hover:translate-x-1 transition-transform' />
-                  </span>
-                </Button>
-              </Link>
-              <Link to='/features'>
-                <Button
-                  size='lg'
-                  variant='outline'
-                  className='border-2 border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 text-lg px-10 py-7 transform hover:scale-105 transition-all duration-300 font-bold'>
-                  <Lightbulb className='mr-2 h-5 w-5' />
-                  Explore Features
-                </Button>
-              </Link>
-            </div>
-
-            {/* Scroll indicator */}
-            <div className='animate-bounce'>
-              <ChevronDown className='h-8 w-8 text-white mx-auto' />
-            </div>
-          </div>
+        {/* Scroll Indicator */}
+        <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce'>
+          <ChevronDown className='h-6 w-6 text-muted-foreground' />
         </div>
       </section>
 
