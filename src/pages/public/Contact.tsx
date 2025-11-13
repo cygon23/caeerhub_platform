@@ -4,26 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
   MessageCircle,
   Send,
   Building,
   Users,
-  HeadphonesIcon
+  HeadphonesIcon,
+  Sparkles
 } from "lucide-react";
 import { useState } from "react";
-import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPMagnetic } from "@/hooks/useGSAP";
 
 export default function Contact() {
-  const heroRef = useGSAPTextReveal();
-  const contactInfoRef = useGSAPStagger(0.1);
-  const formRef = useGSAPScale();
-  const specializedRef = useGSAPStagger(0.15);
-
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -44,8 +39,8 @@ export default function Contact() {
       icon: MapPin,
       title: "Our Office",
       details: ["Njiro", "Arusha, Tanzania"],
+      color: "bg-[#FE047F]"
     },
-
     {
       icon: Phone,
       title: "Phone Numbers",
@@ -54,6 +49,7 @@ export default function Contact() {
         "+255 673 045 414",
         "Available 8 AM - 6 PM EAT",
       ],
+      color: "bg-[#00690D]"
     },
     {
       icon: Mail,
@@ -62,6 +58,7 @@ export default function Contact() {
         "info@careernamimi.org",
         "support@careernamimi.org",
       ],
+      color: "bg-[#FE047F]"
     },
     {
       icon: Clock,
@@ -71,6 +68,7 @@ export default function Contact() {
         "Saturday: 9:00 AM - 2:00 PM",
         "Sunday: Closed",
       ],
+      color: "bg-[#00690D]"
     },
   ];
 
@@ -81,6 +79,7 @@ export default function Contact() {
       description:
         "Questions about our career development programs, assessments, and mentorship opportunities.",
       email: "info@careernamimi.org",
+      color: "bg-[#FE047F]"
     },
     {
       icon: Building,
@@ -88,6 +87,7 @@ export default function Contact() {
       description:
         "Partnership inquiries, corporate programs, and bulk assessment services.",
       email: "info@careernamimi.org",
+      color: "bg-[#00690D]"
     },
     {
       icon: HeadphonesIcon,
@@ -95,164 +95,186 @@ export default function Contact() {
       description:
         "Platform issues, account problems, and technical assistance.",
       email: "support@careernamimi.org",
+      color: "bg-[#FE047F]"
     },
   ];
 
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className='py-20 bg-gradient-card'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-          <div className='animate-fade-in'>
-            <div className='flex items-center justify-center mb-6'>
-              <MessageCircle className='h-8 w-8 text-primary mr-3' />
-              <h1 className='text-4xl md:text-6xl font-bold text-foreground'>
-                Contact
-                <span className='bg-gradient-hero bg-clip-text text-transparent'>
-                  {" "}
-                  Us
-                </span>
+      {/* Hero Section - Consistent Style */}
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          {[...Array(25)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-[#FE047F]/10 animate-float"
+              style={{
+                width: `${20 + Math.random() * 60}px`,
+                height: `${20 + Math.random() * 60}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${4 + Math.random() * 4}s`
+              }}
+            ></div>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="animate-fade-in">
+            <div className="flex items-center justify-center mb-6">
+              <Sparkles className="h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale" />
+              <h1 className="text-4xl md:text-6xl font-bold text-foreground">
+                Get in{" "}
+                <span className="text-[#FE047F]">Touch</span>
               </h1>
             </div>
-            <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              Have questions about our platform? Want to explore partnership
-              opportunities? We're here to help and would love to hear from you.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Have questions about our platform? Want to explore partnership opportunities?
+              We're here to help and would love to hear from you.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Contact Information */}
-      <section className='py-20'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16'>
+      {/* Contact Information - Circular Badges */}
+      <section className="py-20 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contactInfo.map((info, index) => (
-              <Card
+              <div
                 key={info.title}
-                className='text-center hover:shadow-primary transition-all duration-300 animate-bounce-in border-0 bg-gradient-card'
-                style={{ animationDelay: `${index * 0.1}s` }}>
-                <CardContent className='p-6'>
-                  <div className='p-3 bg-primary/10 rounded-lg w-fit mx-auto mb-4'>
-                    <info.icon className='h-8 w-8 text-primary' />
+                className="flex flex-col items-center text-center group"
+              >
+                {/* Circular Badge */}
+                <div className="relative mb-6">
+                  {/* Outer glow ring */}
+                  <div className={`absolute inset-0 rounded-full ${info.color} opacity-20 blur-xl group-hover:opacity-40 transition-opacity animate-pulse-scale`}></div>
+
+                  {/* Main circular badge */}
+                  <div className={`relative w-20 h-20 rounded-full ${info.color} flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300`}>
+                    <info.icon className="h-9 w-9 text-white" />
                   </div>
-                  <h3 className='text-lg font-semibold text-foreground mb-3'>
-                    {info.title}
-                  </h3>
-                  <div className='space-y-1'>
-                    {info.details.map((detail, idx) => (
-                      <p key={idx} className='text-muted-foreground text-sm'>
-                        {detail}
-                      </p>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+
+                <h3 className="text-lg font-semibold text-foreground mb-3">
+                  {info.title}
+                </h3>
+                <div className="space-y-1">
+                  {info.details.map((detail, idx) => (
+                    <p key={idx} className="text-muted-foreground text-sm leading-relaxed">
+                      {detail}
+                    </p>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Contact Form & Map */}
-      <section className='py-20 bg-muted/30'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className='animate-slide-up'>
-              <Card className='border-0 bg-background/50 backdrop-blur-sm shadow-elegant'>
-                <CardHeader>
-                  <CardTitle className='text-2xl text-foreground'>
+            <div className="animate-fade-in">
+              <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl">
+                <CardHeader className="border-b border-slate-200 dark:border-slate-800">
+                  <CardTitle className="text-2xl text-foreground flex items-center gap-2">
+                    <MessageCircle className="h-6 w-6 text-[#FE047F]" />
                     Send us a Message
                   </CardTitle>
-                  <p className='text-muted-foreground'>
-                    Fill out the form below and we'll get back to you within 24
-                    hours.
+                  <p className="text-muted-foreground mt-2">
+                    Fill out the form below and we'll get back to you within 24 hours.
                   </p>
                 </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className='space-y-6'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <CardContent className="pt-6">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor='name'>Full Name *</Label>
+                        <Label htmlFor="name" className="text-foreground font-medium">Full Name *</Label>
                         <Input
-                          id='name'
-                          type='text'
-                          placeholder='Your full name'
+                          id="name"
+                          type="text"
+                          placeholder="Your full name"
                           value={formData.name}
                           onChange={(e) =>
                             setFormData({ ...formData, name: e.target.value })
                           }
                           required
-                          className='mt-1'
+                          className="mt-2"
                         />
                       </div>
                       <div>
-                        <Label htmlFor='email'>Email Address *</Label>
+                        <Label htmlFor="email" className="text-foreground font-medium">Email Address *</Label>
                         <Input
-                          id='email'
-                          type='email'
-                          placeholder='your.email@example.com'
+                          id="email"
+                          type="email"
+                          placeholder="your.email@example.com"
                           value={formData.email}
                           onChange={(e) =>
                             setFormData({ ...formData, email: e.target.value })
                           }
                           required
-                          className='mt-1'
+                          className="mt-2"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor='type'>Inquiry Type</Label>
+                      <Label htmlFor="type" className="text-foreground font-medium">Inquiry Type</Label>
                       <select
-                        id='type'
+                        id="type"
                         value={formData.type}
                         onChange={(e) =>
                           setFormData({ ...formData, type: e.target.value })
                         }
-                        className='w-full mt-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary'>
-                        <option value='general'>General Inquiry</option>
-                        <option value='youth'>Youth Programs</option>
-                        <option value='partnership'>Partnership</option>
-                        <option value='support'>Technical Support</option>
-                        <option value='media'>Media & Press</option>
+                        className="w-full mt-2 px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-md bg-white dark:bg-slate-900 text-foreground focus:outline-none focus:ring-2 focus:ring-[#FE047F]">
+                        <option value="general">General Inquiry</option>
+                        <option value="youth">Youth Programs</option>
+                        <option value="partnership">Partnership</option>
+                        <option value="support">Technical Support</option>
+                        <option value="media">Media & Press</option>
                       </select>
                     </div>
 
                     <div>
-                      <Label htmlFor='subject'>Subject *</Label>
+                      <Label htmlFor="subject" className="text-foreground font-medium">Subject *</Label>
                       <Input
-                        id='subject'
-                        type='text'
-                        placeholder='Brief description of your inquiry'
+                        id="subject"
+                        type="text"
+                        placeholder="Brief description of your inquiry"
                         value={formData.subject}
                         onChange={(e) =>
                           setFormData({ ...formData, subject: e.target.value })
                         }
                         required
-                        className='mt-1'
+                        className="mt-2"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor='message'>Message *</Label>
+                      <Label htmlFor="message" className="text-foreground font-medium">Message *</Label>
                       <Textarea
-                        id='message'
-                        placeholder='Please provide details about your inquiry...'
+                        id="message"
+                        placeholder="Please provide details about your inquiry..."
                         rows={6}
                         value={formData.message}
                         onChange={(e) =>
                           setFormData({ ...formData, message: e.target.value })
                         }
                         required
-                        className='mt-1'
+                        className="mt-2"
                       />
                     </div>
 
                     <Button
-                      type='submit'
-                      className='w-full bg-gradient-hero text-white shadow-primary'
-                      size='lg'>
-                      <Send className='mr-2 h-5 w-5' />
+                      type="submit"
+                      className="w-full bg-[#FE047F] hover:bg-[#FE047F]/90 text-white shadow-xl shadow-[#FE047F]/20"
+                      size="lg">
+                      <Send className="mr-2 h-5 w-5" />
                       Send Message
                     </Button>
                   </form>
@@ -261,68 +283,76 @@ export default function Contact() {
             </div>
 
             {/* Map & Quick Contact */}
-            <div className='space-y-8 animate-fade-in'>
-              {/* Map Placeholder */}
-              <Card className='border-0 bg-background/50 backdrop-blur-sm shadow-elegant'>
-                <CardContent className='p-0'>
-                  <div className='bg-gradient-hero rounded-lg p-8 text-center text-white relative overflow-hidden'>
-                    <div className='relative z-10'>
-                      <MapPin className='h-12 w-12 mx-auto mb-4' />
-                      <h3 className='text-xl font-semibold mb-2'>
+            <div className="space-y-6 animate-fade-in">
+              {/* Map Card */}
+              <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="bg-gradient-to-br from-[#FE047F] to-[#FE047F]/80 p-12 text-center text-white relative overflow-hidden">
+                    <div className="relative z-10">
+                      <MapPin className="h-16 w-16 mx-auto mb-4" />
+                      <h3 className="text-2xl font-bold mb-3">
                         Visit Our Office
                       </h3>
-                      <p className='text-white/90'>
-                        Njiro, Tanesco
+                      <p className="text-white/90 text-lg mb-6">
+                        Njiro
                         <br />
                         Arusha, Tanzania
                       </p>
                       <Button
-                        variant='outline'
-                        className='mt-4 border-white text-white hover:bg-white/10'>
+                        variant="outline"
+                        className="border-2 border-white text-white hover:bg-white hover:text-[#FE047F] transition-all duration-300">
                         Get Directions
                       </Button>
                     </div>
-                    <div className='absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20'></div>
+                    {/* Decorative circles */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Quick Contact Options */}
-              <Card className='border-0 bg-background/50 backdrop-blur-sm shadow-elegant'>
-                <CardHeader>
-                  <CardTitle className='text-xl text-foreground'>
-                    Quick Contact
+              <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl">
+                <CardHeader className="border-b border-slate-200 dark:border-slate-800">
+                  <CardTitle className="text-xl text-foreground">
+                    Quick Contact Options
                   </CardTitle>
                 </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='flex items-center p-3 bg-gradient-accent rounded-lg'>
-                    <Phone className='h-5 w-5 text-primary mr-3' />
+                <CardContent className="space-y-4 pt-6">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 group">
+                    <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                      <Phone className="h-6 w-6 text-white" />
+                    </div>
                     <div>
-                      <p className='font-medium text-foreground'>Call Us Now</p>
-                      <p className='text-sm text-muted-foreground'>
-                        +255 628 055 646/673 045 414
+                      <p className="font-semibold text-foreground">Call Us Now</p>
+                      <p className="text-sm text-muted-foreground">
+                        +255 628 055 646 / 673 045 414
                       </p>
                     </div>
                   </div>
 
-                  <div className='flex items-center p-3 bg-gradient-accent rounded-lg'>
-                    <Mail className='h-5 w-5 text-primary mr-3' />
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 group">
+                    <div className="w-12 h-12 rounded-full bg-[#00690D] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                      <Mail className="h-6 w-6 text-white" />
+                    </div>
                     <div>
-                      <p className='font-medium text-foreground'>
+                      <p className="font-semibold text-foreground">
                         Email Support
                       </p>
-                      <p className='text-sm text-muted-foreground'>
+                      <p className="text-sm text-muted-foreground">
                         info@careernamimi.org
                       </p>
                     </div>
                   </div>
 
-                  <div className='flex items-center p-3 bg-gradient-accent rounded-lg'>
-                    <MessageCircle className='h-5 w-5 text-primary mr-3' />
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 group">
+                    <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                      <MessageCircle className="h-6 w-6 text-white" />
+                    </div>
                     <div>
-                      <p className='font-medium text-foreground'>WhatsApp</p>
-                      <p className='text-sm text-muted-foreground'>
-                        +255 628 055 646/673 045 414
+                      <p className="font-semibold text-foreground">WhatsApp</p>
+                      <p className="text-sm text-muted-foreground">
+                        +255 628 055 646 / 673 045 414
                       </p>
                     </div>
                   </div>
@@ -333,93 +363,49 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Specialized Contact */}
-      <section className='py-20'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-foreground mb-4'>
+      {/* Specialized Support - Improved Design */}
+      <section className="py-20 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
               Specialized Support
             </h2>
-            <p className='text-xl text-muted-foreground'>
+            <p className="text-xl text-muted-foreground">
               Get the right help for your specific needs
             </p>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {inquiryTypes.map((type, index) => (
               <Card
                 key={type.title}
-                className='hover:shadow-secondary transition-all duration-300 animate-slide-up border-0 bg-gradient-card'
-                style={{ animationDelay: `${index * 0.15}s` }}>
-                <CardContent className='p-6 text-center'>
-                  <div className='p-3 bg-secondary/10 rounded-lg w-fit mx-auto mb-4'>
-                    <type.icon className='h-8 w-8 text-secondary' />
+                className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-xl transition-all duration-300 group"
+              >
+                <CardContent className="p-8 text-center">
+                  <div className="relative mb-6 inline-block">
+                    {/* Outer glow ring */}
+                    <div className={`absolute inset-0 rounded-full ${type.color} opacity-20 blur-xl group-hover:opacity-40 transition-opacity`}></div>
+
+                    {/* Main circular badge */}
+                    <div className={`relative w-16 h-16 rounded-full ${type.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <type.icon className="h-8 w-8 text-white" />
+                    </div>
                   </div>
-                  <h3 className='text-xl font-semibold text-foreground mb-3'>
+
+                  <h3 className="text-xl font-semibold text-foreground mb-3">
                     {type.title}
                   </h3>
-                  <p className='text-muted-foreground text-sm mb-4'>
+                  <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
                     {type.description}
                   </p>
-                  <div className='bg-background/50 p-3 rounded-lg'>
-                    <p className='text-primary font-medium text-sm'>
+                  <div className="bg-slate-50 dark:bg-slate-800 px-4 py-3 rounded-lg">
+                    <p className="text-[#FE047F] font-semibold text-sm">
                       {type.email}
                     </p>
                   </div>
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Preview */}
-      <section className='py-20 bg-gradient-card'>
-        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-          <h2 className='text-4xl font-bold text-foreground mb-8'>
-            Frequently Asked Questions
-          </h2>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-8 text-left'>
-            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
-              <h3 className='font-semibold text-foreground mb-2'>
-                How quickly will I hear back?
-              </h3>
-              <p className='text-muted-foreground text-sm'>
-                We respond to all inquiries within 24 hours during business
-                days. Urgent technical issues are handled within 4 hours.
-              </p>
-            </div>
-
-            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
-              <h3 className='font-semibold text-foreground mb-2'>
-                Do you offer in-person meetings?
-              </h3>
-              <p className='text-muted-foreground text-sm'>
-                Yes! We welcome visitors to our Dar es Salaam office. Please
-                schedule in advance to ensure availability.
-              </p>
-            </div>
-
-            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
-              <h3 className='font-semibold text-foreground mb-2'>
-                Can I get a demo of the platform?
-              </h3>
-              <p className='text-muted-foreground text-sm'>
-                Absolutely! We offer personalized demos for organizations and
-                detailed walkthroughs for individual users.
-              </p>
-            </div>
-
-            <div className='bg-background/50 backdrop-blur-sm p-6 rounded-lg'>
-              <h3 className='font-semibold text-foreground mb-2'>
-                What languages do you support?
-              </h3>
-              <p className='text-muted-foreground text-sm'>
-                Our platform and support are available in both English and
-                Swahili to serve all Tanzanian users effectively.
-              </p>
-            </div>
           </div>
         </div>
       </section>
