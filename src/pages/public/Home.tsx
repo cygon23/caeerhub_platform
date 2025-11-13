@@ -253,23 +253,29 @@ export default function Home() {
               </h1>
 
               {/* Description */}
-              <p className='text-xl text-muted-foreground mb-8 leading-relaxed max-w-xl'>
-                Join Tanzania's most intelligent career development platform where cutting-edge artificial intelligence meets experienced mentorship to unlock your full potential.
+              <p className='text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl'>
+                Empowering Tanzanian youth with AI-driven career guidance and expert mentorship.
               </p>
 
-              {/* Stats Row */}
-              <div className='flex flex-wrap gap-8 mb-10'>
-                <div>
-                  <div className='text-3xl font-bold text-foreground'>42,000+</div>
-                  <div className='text-sm text-muted-foreground'>Youth Empowered</div>
+              {/* Stats - Circular Badges */}
+              <div className='flex flex-wrap gap-4 mb-10'>
+                <div className='flex items-center gap-3 bg-[#FE047F]/10 px-5 py-3 rounded-full border border-[#FE047F]/20'>
+                  <div className='w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center'>
+                    <span className='text-white font-bold text-sm'>200+</span>
+                  </div>
+                  <span className='text-sm font-semibold text-foreground'>Youth Empowered</span>
                 </div>
-                <div>
-                  <div className='text-3xl font-bold text-foreground'>89%</div>
-                  <div className='text-sm text-muted-foreground'>Success Rate</div>
+                <div className='flex items-center gap-3 bg-[#00690D]/10 px-5 py-3 rounded-full border border-[#00690D]/20'>
+                  <div className='w-12 h-12 rounded-full bg-[#00690D] flex items-center justify-center'>
+                    <span className='text-white font-bold text-sm'>89%</span>
+                  </div>
+                  <span className='text-sm font-semibold text-foreground'>Success Rate</span>
                 </div>
-                <div>
-                  <div className='text-3xl font-bold text-foreground'>24/7</div>
-                  <div className='text-sm text-muted-foreground'>AI Support</div>
+                <div className='flex items-center gap-3 bg-[#FE047F]/10 px-5 py-3 rounded-full border border-[#FE047F]/20'>
+                  <div className='w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center'>
+                    <span className='text-white font-bold text-sm'>24/7</span>
+                  </div>
+                  <span className='text-sm font-semibold text-foreground'>AI Support</span>
                 </div>
               </div>
 
@@ -279,7 +285,7 @@ export default function Home() {
                   <Button
                     size='lg'
                     className='bg-[#FE047F] hover:bg-[#FE047F]/90 text-white px-8 py-6 text-lg font-semibold shadow-xl shadow-[#FE047F]/20 hover:shadow-2xl hover:shadow-[#FE047F]/30 transition-all duration-300'>
-                    Start Free Journey
+                    Get Started Now
                     <ArrowRight className='ml-2 h-5 w-5' />
                   </Button>
                 </Link>
@@ -289,30 +295,40 @@ export default function Home() {
                     variant='outline'
                     className='border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white px-8 py-6 text-lg font-semibold transition-all duration-300'>
                     <PlayCircle className='mr-2 h-5 w-5' />
-                    See How It Works
+                    Explore Features
                   </Button>
                 </Link>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className='flex items-center gap-6 mt-8 text-sm text-muted-foreground'>
-                <div className='flex items-center gap-2'>
-                  <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
-                  <span>Free Forever</span>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
-                  <span>No Credit Card</span>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
-                  <span>Instant Access</span>
-                </div>
               </div>
             </div>
 
             {/* Right Column - Visual Representation */}
             <div className='relative hidden lg:block'>
+              {/* Vector Background Decoration */}
+              <div className='absolute inset-0 opacity-[0.06]'>
+                {/* Geometric Shapes */}
+                <svg className='absolute top-20 right-10 w-32 h-32' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <circle cx='50' cy='50' r='40' stroke='#FE047F' strokeWidth='1' strokeDasharray='4 4' />
+                  <circle cx='50' cy='50' r='25' stroke='#00690D' strokeWidth='1' />
+                </svg>
+
+                <svg className='absolute bottom-32 left-10 w-24 h-24' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <rect x='10' y='10' width='80' height='80' stroke='#FE047F' strokeWidth='1' strokeDasharray='6 6' />
+                </svg>
+
+                <svg className='absolute top-1/2 right-5 w-20 h-20' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <polygon points='50,10 90,90 10,90' stroke='#00690D' strokeWidth='1' fill='none' />
+                </svg>
+
+                <svg className='absolute bottom-10 right-20 w-16 h-16' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M50 10 L90 50 L50 90 L10 50 Z' stroke='#FE047F' strokeWidth='1' fill='none' strokeDasharray='3 3' />
+                </svg>
+              </div>
+
+              {/* Floating Abstract Shapes */}
+              <div className='absolute top-10 left-5 w-12 h-12 rounded-full bg-[#FE047F]/5 border border-[#FE047F]/20'></div>
+              <div className='absolute bottom-20 right-8 w-8 h-8 rounded-full bg-[#00690D]/5 border border-[#00690D]/20'></div>
+              <div className='absolute top-1/3 left-8 w-6 h-6 rotate-45 bg-[#FE047F]/5 border border-[#FE047F]/20'></div>
+
               {/* Modern 3D-style Card Stack Visualization */}
               <div className='relative h-[600px]'>
                 {/* AI Card - Back */}
