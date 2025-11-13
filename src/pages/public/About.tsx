@@ -207,46 +207,38 @@ export default function About() {
 
   return (
     <PublicLayout>
-      {/* Hero Section - Redesigned */}
-      <section className='relative py-32 bg-gradient-to-br from-[#FE047F]/20 via-white to-[#00690D]/20 overflow-hidden'>
-        {/* Animated background */}
+      {/* Hero Section - Clean & Simple */}
+      <section className='py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden'>
+        {/* Animated background elements */}
         <div className='absolute inset-0'>
-          <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
-          {[...Array(20)].map((_, i) => (
+          {[...Array(25)].map((_, i) => (
             <div
               key={i}
-              className='absolute rounded-full bg-white/5 animate-pulse'
+              className='absolute rounded-full bg-[#FE047F]/10 animate-float'
               style={{
-                width: `${30 + Math.random() * 100}px`,
-                height: `${30 + Math.random() * 100}px`,
+                width: `${20 + Math.random() * 60}px`,
+                height: `${20 + Math.random() * 60}px`,
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 2}s`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${4 + Math.random() * 4}s`,
               }}></div>
           ))}
         </div>
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
           <div ref={heroRef}>
-            <div className='inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full text-white mb-8 border border-white/20'>
-              <Sparkles className='h-5 w-5 text-yellow-300' />
-              <span className='font-semibold'>Empowering Tanzania's Future</span>
+            <div className='flex items-center justify-center mb-6'>
+              <Sparkles className='h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale' />
+              <h1 className='text-4xl md:text-6xl font-bold text-foreground'>
+                About{" "}
+                <span className='text-[#FE047F]'>Career na Mimi</span>
+              </h1>
             </div>
-
-            <h1 className='text-5xl md:text-7xl font-bold mb-6 leading-tight'>
-              <span className='text-white'>Our Story,</span>
-              <br />
-              <span className='bg-gradient-to-r from-[#FE047F] to-[#FE047F] bg-clip-text text-transparent'>
-                Your Journey
-              </span>
-            </h1>
-
-            <p className='text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed'>
-              Since 2024, we've been on a mission to democratize career development for Tanzanian youth.
-              <span className='block mt-2 text-blue-300'>
-                Every success story fuels our commitment to building a brighter future.
-              </span>
+            <p className='text-xl text-muted-foreground max-w-3xl mx-auto mb-8'>
+              Empowering Tanzanian youth since 2024 through innovative career
+              development, mentorship, and AI-powered guidance to build
+              successful and fulfilling careers.
             </p>
           </div>
         </div>
