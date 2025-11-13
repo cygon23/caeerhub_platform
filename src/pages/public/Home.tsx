@@ -86,7 +86,7 @@ export default function Home() {
   const stats = [
     { number: "200+", label: "Youth Empowered", icon: Users },
     { number: "89%", label: "Career Success Rate", icon: TrendingUp },
-    { number: "150+", label: "Partner Organizations", icon: Award },
+    { number: "5+", label: "Partner Organizations", icon: Award },
     { number: "24/7", label: "AI Support Available", icon: Sparkles },
   ];
 
