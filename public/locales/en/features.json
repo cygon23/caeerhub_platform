@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "title": "Platform",
+    "titleHighlight": "Features",
+    "subtitle": "Discover the powerful tools and features designed to transform your career journey from exploration to success."
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Your journey to career success in four simple steps",
+    "step1": {
+      "title": "Sign Up & Assess",
+      "description": "Create your account and complete our AI-powered career assessment"
+    },
+    "step2": {
+      "title": "Get Your Roadmap",
+      "description": "Receive personalized career pathways tailored to your goals"
+    },
+    "step3": {
+      "title": "Connect with Mentors",
+      "description": "Match with experienced professionals in your field"
+    },
+    "step4": {
+      "title": "Track & Grow",
+      "description": "Monitor progress and achieve your career milestones"
+    }
+  },
+  "results": {
+    "title": "Proven Results",
+    "subtitle": "Real outcomes from our platform",
+    "completionRate": "Assessment Completion Rate",
+    "satisfactionScore": "User Satisfaction Score",
+    "careerClarity": "Career Clarity Improvement",
+    "rating": "Average Platform Rating"
+  },
+  "cta": {
+    "title": "Ready to Experience the Future of Career Development?",
+    "subtitle": "Join thousands of youth building successful careers with AI-powered guidance",
+    "button": "Start Your Journey Free"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "title": "About",
+    "titleHighlight": "Us",
+    "subtitle": "Empowering Tanzanian youth with AI-driven career guidance and mentorship to build successful, fulfilling careers."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "content": "To democratize access to career development resources and opportunities for all Tanzanian youth, regardless of their background or location. We believe every young person deserves the tools, guidance, and support to discover and pursue their dream career."
+  },
+  "vision": {
+    "title": "Our Vision",
+    "content": "A Tanzania where every young person has clear career pathways, access to mentorship, and the skills needed to thrive in the modern workforce. We envision a future where AI-powered tools and human expertise combine to unlock unprecedented career opportunities across the nation."
+  },
+  "stats": {
+    "youth": "Youth Empowered",
+    "regions": "Regions Served",
+    "successRate": "Success Rate",
+    "partners": "Active Partners"
+  },
+  "values": {
+    "title": "Our Core Values",
+    "subtitle": "The principles that guide everything we do",
+    "innovation": {
+      "title": "Innovation",
+      "description": "We leverage cutting-edge AI technology to create personalized career pathways."
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "description": "Quality career guidance should be available to every Tanzanian youth, everywhere."
+    },
+    "empowerment": {
+      "title": "Empowerment",
+      "description": "We equip young people with tools and knowledge to take control of their futures."
+    },
+    "community": {
+      "title": "Community",
+      "description": "Success is built through meaningful connections between mentors and mentees."
+    }
+  },
+  "story": {
+    "title": "Our Story",
+    "content": "Career na Mimi was born from a simple observation: talented Tanzanian youth often lack access to career guidance and mentorship. Founded by a team of educators, technologists, and career development experts, we set out to bridge this gap using AI technology and community-driven support. Today, we're proud to serve thousands of young people across Tanzania."
+  },
+  "team": {
+    "title": "Meet Our Team",
+    "subtitle": "Passionate professionals dedicated to youth empowerment"
+  }
+}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sun, Moon, Languages, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import ModernFooter from "@/components/ModernFooter";
 import {
   DropdownMenu,
@@ -17,12 +18,12 @@ interface PublicLayoutProps {
 
 // Language options
 const languages = [
-  { code: "en", name: "English", flag: "🇺🇸" },
+  { code: "en", name: "English", flag: "🇬🇧" },
   { code: "sw", name: "Kiswahili", flag: "🇹🇿" },
-  { code: "fr", name: "Français", flag: "🇫🇷" },
 ];
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
+  const { t, i18n } = useTranslation('common');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => {
     // Check localStorage first, then system preference
@@ -36,24 +37,13 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     return "light";
   });
 
-  const [currentLanguage, setCurrentLanguage] = useState(() => {
-    // Check localStorage first, then browser language, then default to English
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("language");
-      if (saved) return saved;
-      const browserLang = navigator.language.split("-")[0];
-      return languages.find((lang) => lang.code === browserLang)?.code || "en";
-    }
-    return "en";
-  });
-
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "About Us", href: "/about" },
-    { name: "Features", href: "/features" },
-    { name: "Services", href: "/services" },
-    { name: "Partners", href: "/partners" },
-    { name: "Contact", href: "/contact" },
+    { name: t('navigation.home'), href: "/" },
+    { name: t('navigation.about'), href: "/about" },
+    { name: t('navigation.features'), href: "/features" },
+    { name: t('navigation.services'), href: "/services" },
+    { name: t('navigation.partners'), href: "/partners" },
+    { name: t('navigation.contact'), href: "/contact" },
   ];
 
   // Theme switching logic
@@ -69,25 +59,19 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Language switching logic
-  useEffect(() => {
-    localStorage.setItem("language", currentLanguage);
-    document.documentElement.lang = currentLanguage;
-    // Here you can trigger your translation system
-    // Example: i18n.changeLanguage(currentLanguage);
-  }, [currentLanguage]);
-
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   const changeLanguage = (langCode: string) => {
-    setCurrentLanguage(langCode);
+    i18n.changeLanguage(langCode);
+    localStorage.setItem("i18nextLng", langCode);
+    document.documentElement.lang = langCode;
   };
 
   const getCurrentLanguage = () => {
     return (
-      languages.find((lang) => lang.code === currentLanguage) || languages[0]
+      languages.find((lang) => lang.code === i18n.language) || languages[0]
     );
   };
 
@@ -140,7 +124,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       key={lang.code}
                       onClick={() => changeLanguage(lang.code)}
                       className={`flex items-center space-x-3 cursor-pointer ${
-                        currentLanguage === lang.code
+                        i18n.language === lang.code
                           ? "bg-primary/10 text-primary"
                           : ""
                       }`}>
@@ -173,12 +157,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                   <Button
                     variant='ghost'
                     className='text-foreground hover:text-primary'>
-                    Login
+                    {t('buttons.login')}
                   </Button>
                 </Link>
                 <Link to='/signup'>
                   <Button className='bg-gradient-hero text-white shadow-primary hover:opacity-90 transform hover:scale-105 transition-all duration-300'>
-                    Get Started
+                    {t('buttons.getStarted')}
                   </Button>
                 </Link>
               </div>
@@ -227,7 +211,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       <Button
                         key={lang.code}
                         variant={
-                          currentLanguage === lang.code ? "default" : "outline"
+                          i18n.language === lang.code ? "default" : "outline"
                         }
                         size='sm'
                         onClick={() => changeLanguage(lang.code)}
@@ -254,12 +238,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                 <div className='px-3 py-2 space-y-2 border-t border-border mt-2 pt-4'>
                   <Link to='/login' onClick={() => setIsMenuOpen(false)}>
                     <Button variant='ghost' className='w-full justify-start'>
-                      Login
+                      {t('buttons.login')}
                     </Button>
                   </Link>
                   <Link to='/signup' onClick={() => setIsMenuOpen(false)}>
                     <Button className='w-full bg-gradient-hero text-white shadow-primary'>
-                      Get Started
+                      {t('buttons.getStarted')}
                     </Button>
                   </Link>
                 </div>

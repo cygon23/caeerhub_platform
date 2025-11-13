@@ -1,0 +1,79 @@
+{
+  "hero": {
+    "title": "Our",
+    "titleHighlight": "Partners",
+    "subtitle": "Collaborating with leading organizations to create opportunities and drive sustainable career development for Tanzanian youth."
+  },
+  "stats": {
+    "activePartners": "Active Partners",
+    "youthReached": "Youth Reached Through Partnerships",
+    "investmentValue": "Partnership Investment - Join Us",
+    "regions": "Expand to New Regions",
+    "beFirst": "Be First",
+    "joinUs": "Join Us"
+  },
+  "featured": {
+    "title": "Featured Partners",
+    "subtitle": "Working together to transform career development in Tanzania"
+  },
+  "opportunities": {
+    "title": "Partnership Opportunities",
+    "subtitle": "Multiple ways to collaborate and make a lasting impact on youth development",
+    "corporate": {
+      "title": "Corporate Partnerships",
+      "description": "Partner with us to access Tanzania's top young talent and build your future workforce."
+    },
+    "international": {
+      "title": "International Organizations",
+      "description": "Collaborate on large-scale youth development and economic empowerment initiatives."
+    },
+    "educational": {
+      "title": "Educational Institutions",
+      "description": "Integrate our platform into your curriculum and career services programs."
+    }
+  },
+  "founding": {
+    "title": "Partnership Success Stories",
+    "subtitle": "Be among the first to create impact stories with us",
+    "badge": "Founding Partnership",
+    "heading": "Your Story",
+    "headingHighlight": "Starts Here",
+    "description": "We're building something special together. As we launch our platform, we're inviting forward-thinking organizations to be founding partners. Your partnership will directly shape our impact and create the first success stories that inspire others.",
+    "button": "Become a Founding Partner",
+    "benefits": {
+      "status": {
+        "title": "Founding Partner Status",
+        "description": "Recognition as one of our first strategic partners"
+      },
+      "impact": {
+        "title": "Direct Youth Impact",
+        "description": "Help empower the next generation of Tanzanian leaders"
+      },
+      "coCreate": {
+        "title": "Co-Create Solutions",
+        "description": "Shape programs that align with your CSR goals"
+      }
+    }
+  },
+  "readyToPartner": {
+    "title": "Ready to Partner",
+    "titleHighlight": "With Us?",
+    "subtitle": "Join our growing network of partners committed to empowering Tanzanian youth",
+    "steps": {
+      "connect": {
+        "title": "Connect",
+        "description": "Reach out to discuss partnership opportunities"
+      },
+      "collaborate": {
+        "title": "Collaborate",
+        "description": "Design programs that align with your goals"
+      },
+      "impact": {
+        "title": "Impact",
+        "description": "Measure and celebrate our collective impact"
+      }
+    },
+    "buttonPartner": "Become a Partner",
+    "buttonDeck": "Partnership Deck"
+  }
+}

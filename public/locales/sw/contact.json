@@ -1,0 +1,95 @@
+{
+  "hero": {
+    "title": "Wasiliana",
+    "titleHighlight": "Nasi",
+    "subtitle": "Una maswali kuhusu jukwaa letu? Unataka kuchunguza fursa za ushirikiano? Tuko hapa kusaidia na tungependa kusikia kutoka kwako."
+  },
+  "contactInfo": {
+    "office": {
+      "title": "Ofisi Yetu",
+      "location1": "Njiro",
+      "location2": "Arusha, Tanzania"
+    },
+    "phone": {
+      "title": "Nambari za Simu",
+      "number1": "+255 628 055 646",
+      "number2": "+255 673 045 414",
+      "hours": "Inapatikana 8 AM - 6 PM EAT"
+    },
+    "email": {
+      "title": "Anwani za Barua Pepe",
+      "info": "info@careernamimi.org",
+      "support": "support@careernamimi.org"
+    },
+    "businessHours": {
+      "title": "Saa za Biashara",
+      "weekdays": "Jumatatu - Ijumaa: 8:00 AM - 6:00 PM",
+      "saturday": "Jumamosi: 9:00 AM - 2:00 PM",
+      "sunday": "Jumapili: Imefungwa"
+    }
+  },
+  "form": {
+    "title": "Tutumie Ujumbe",
+    "subtitle": "Jaza fomu hapa chini na tutawasiliana nawe ndani ya masaa 24.",
+    "fields": {
+      "name": "Jina Kamili",
+      "email": "Anwani ya Barua Pepe",
+      "type": "Aina ya Swali",
+      "subject": "Mada",
+      "message": "Ujumbe",
+      "namePlaceholder": "Jina lako kamili",
+      "emailPlaceholder": "barua.yako@mfano.com",
+      "subjectPlaceholder": "Maelezo mafupi ya swali lako",
+      "messagePlaceholder": "Tafadhali toa maelezo kuhusu swali lako..."
+    },
+    "types": {
+      "general": "Swali la Jumla",
+      "youth": "Programu za Vijana",
+      "partnership": "Ushirikiano",
+      "support": "Msaada wa Kiufundi",
+      "media": "Vyombo vya Habari"
+    },
+    "button": "Tuma Ujumbe",
+    "required": "*"
+  },
+  "map": {
+    "title": "Tembelea Ofisi Yetu",
+    "location": "Njiro",
+    "city": "Arusha, Tanzania",
+    "button": "Pata Mwelekeo"
+  },
+  "quickContact": {
+    "title": "Chaguo za Mawasiliano ya Haraka",
+    "call": {
+      "title": "Tupigie Sasa",
+      "number": "+255 628 055 646 / 673 045 414"
+    },
+    "email": {
+      "title": "Msaada wa Barua Pepe",
+      "address": "info@careernamimi.org"
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "number": "+255 628 055 646 / 673 045 414"
+    }
+  },
+  "specialized": {
+    "title": "Msaada Maalum",
+    "subtitle": "Pata msaada sahihi kwa mahitaji yako maalum",
+    "youth": {
+      "title": "Kwa Vijana na Wanafunzi",
+      "description": "Maswali kuhusu programu zetu za maendeleo ya kazi, tathmini, na fursa za ushauri.",
+      "email": "info@careernamimi.org"
+    },
+    "organizations": {
+      "title": "Kwa Mashirika",
+      "description": "Maswali ya ushirikiano, programu za makampuni, na huduma za tathmini kwa wingi.",
+      "email": "info@careernamimi.org"
+    },
+    "technical": {
+      "title": "Msaada wa Kiufundi",
+      "description": "Matatizo ya jukwaa, matatizo ya akaunti, na msaada wa kiufundi.",
+      "email": "support@careernamimi.org"
+    }
+  }
+}

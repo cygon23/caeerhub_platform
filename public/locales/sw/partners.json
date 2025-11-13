@@ -1,0 +1,79 @@
+{
+  "hero": {
+    "title": "Washirika",
+    "titleHighlight": "Wetu",
+    "subtitle": "Kush irikiana na mashirika makuu kuunda fursa na kuendesha maendeleo endelevu ya kazi kwa vijana wa Tanzania."
+  },
+  "stats": {
+    "activePartners": "Washirika wa Sasa",
+    "youthReached": "Vijana Waliofikwa Kupitia Ushirikiano",
+    "investmentValue": "Uwekezaji wa Ushirikiano - Jiunge Nasi",
+    "regions": "Panua hadi Mikoa Mipya",
+    "beFirst": "Kuwa wa Kwanza",
+    "joinUs": "Jiunge Nasi"
+  },
+  "featured": {
+    "title": "Washirika Maalum",
+    "subtitle": "Tukifanya kazi pamoja kubadilisha maendeleo ya kazi Tanzania"
+  },
+  "opportunities": {
+    "title": "Fursa za Ushirikiano",
+    "subtitle": "Njia nyingi za kushirikiana na kuleta athari ya kudumu kwa maendeleo ya vijana",
+    "corporate": {
+      "title": "Ushirikiano wa Makampuni",
+      "description": "Shirikiana nasi kupata talanta bora za vijana wa Tanzania na kujenga nguvu za kazi za baadaye."
+    },
+    "international": {
+      "title": "Mashirika ya Kimataifa",
+      "description": "Shirikiana kwenye mipango mikubwa ya maendeleo ya vijana na uwezeshaji wa kiuchumi."
+    },
+    "educational": {
+      "title": "Taasisi za Elimu",
+      "description": "Unganisha jukwaa letu katika mtaala wako na programu za huduma za kazi."
+    }
+  },
+  "founding": {
+    "title": "Hadithi za Mafanikio ya Ushirikiano",
+    "subtitle": "Kuwa miongoni mwa wa kwanza kuunda hadithi za athari nasi",
+    "badge": "Ushirikiano wa Wanzilishi",
+    "heading": "Hadithi Yako",
+    "headingHighlight": "Inaanza Hapa",
+    "description": "Tunajenga kitu cha pekee pamoja. Tunapozindua jukwaa letu, tunawaalika mashirika yenye mawazo ya mbele kuwa washirika wanzilishi. Ushirikiano wako utaunda moja kwa moja athari yetu na kuunda hadithi za kwanza za mafanikio zinazowachochea wengine.",
+    "button": "Kuwa Mshirika Mwanzilishi",
+    "benefits": {
+      "status": {
+        "title": "Hadhi ya Mshirika Mwanzilishi",
+        "description": "Utambuzi kama mmoja wa washirika wetu wa kwanza wa kimkakati"
+      },
+      "impact": {
+        "title": "Athari ya Moja kwa Moja kwa Vijana",
+        "description": "Saidia kuwawezesha kizazi kijacho cha viongozi wa Kitanzania"
+      },
+      "coCreate": {
+        "title": "Unda Suluhisho Pamoja",
+        "description": "Unda programu zinazoambatana na malengo yako ya CSR"
+      }
+    }
+  },
+  "readyToPartner": {
+    "title": "Uko Tayari Kushirikiana",
+    "titleHighlight": "Nasi?",
+    "subtitle": "Jiunge na mtandao wetu unaokua wa washirika waliojitoa kuwawezesha vijana wa Tanzania",
+    "steps": {
+      "connect": {
+        "title": "Unganisha",
+        "description": "Wasiliana ili kujadili fursa za ushirikiano"
+      },
+      "collaborate": {
+        "title": "Shirikiana",
+        "description": "Buni programu zinazoambatana na malengo yako"
+      },
+      "impact": {
+        "title": "Athari",
+        "description": "Pima na usherehekee athari yetu ya pamoja"
+      }
+    },
+    "buttonPartner": "Kuwa Mshirika",
+    "buttonDeck": "Pakiti ya Ushirikiano"
+  }
+}
