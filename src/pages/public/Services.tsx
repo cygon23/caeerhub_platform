@@ -19,13 +19,10 @@ import {
   Target,
   Brain
 } from "lucide-react";
-import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPMagnetic } from "@/hooks/useGSAP";
+import { useTranslation } from "react-i18next";
 
 export default function Services() {
-  const heroRef = useGSAPTextReveal();
-  const tabsRef = useGSAPScale();
-  const additionalRef = useGSAPStagger(0.2);
-  const ctaRef = useGSAPMagnetic();
+  const { t } = useTranslation('services');
 
   const services = {
     youth: {
@@ -143,17 +140,16 @@ export default function Services() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div ref={heroRef}>
+          <div>
             <div className="flex items-center justify-center mb-6">
               <Sparkles className="h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale" />
               <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-                Our{" "}
-                <span className="text-[#FE047F]">Services</span>
+                {t('hero.title')}{" "}
+                <span className="text-[#FE047F]">{t('hero.titleHighlight')}</span>
               </h1>
             </div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Comprehensive career development solutions tailored for youth, parents, and mentors
-              in the Tanzanian professional ecosystem.
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -322,9 +318,9 @@ export default function Services() {
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Additional Services</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">{t('organizations.title')}</h2>
             <p className="text-xl text-muted-foreground">
-              Specialized solutions for organizations and institutions
+              {t('organizations.subtitle')}
             </p>
           </div>
 
@@ -397,12 +393,11 @@ export default function Services() {
               </div>
 
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-                Ready to Transform Your{" "}
-                <span className="text-[#00690D]">Career Journey?</span>
+                {t('cta.title')}
               </h2>
 
               <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed">
-                Choose the service that's right for you and join thousands of successful Tanzanians building their dream careers.
+                {t('cta.subtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -410,7 +405,7 @@ export default function Services() {
                   <Button
                     size="lg"
                     className="group bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 transform hover:scale-105 transition-all duration-300 font-semibold">
-                    Start Free Trial
+                    {t('cta.buttonIndividual')}
                     <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
                   </Button>
                 </Link>
@@ -420,7 +415,7 @@ export default function Services() {
                     variant="outline"
                     className="border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white text-lg px-12 py-6 font-semibold transition-all duration-300">
                     <Clock className="mr-2 h-5 w-5" />
-                    Schedule Consultation
+                    {t('cta.buttonOrganization')}
                   </Button>
                 </Link>
               </div>
