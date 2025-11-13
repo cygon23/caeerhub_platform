@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
-import { 
-  Users, 
-  Heart, 
-  UserCheck, 
+import {
+  Users,
+  Heart,
+  UserCheck,
   GraduationCap,
   Briefcase,
   TrendingUp,
@@ -14,7 +14,10 @@ import {
   Clock,
   Star,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  Sparkles,
+  Target,
+  Brain
 } from "lucide-react";
 import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPMagnetic } from "@/hooks/useGSAP";
 
@@ -119,16 +122,37 @@ export default function Services() {
 
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-              Our 
-              <span className="bg-gradient-hero bg-clip-text text-transparent"> Services</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive career development solutions tailored for youth, parents, and mentors 
+      {/* Hero Section - Clean & Consistent */}
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          {[...Array(25)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-[#FE047F]/10 animate-float"
+              style={{
+                width: `${20 + Math.random() * 60}px`,
+                height: `${20 + Math.random() * 60}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${4 + Math.random() * 4}s`
+              }}
+            ></div>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div ref={heroRef}>
+            <div className="flex items-center justify-center mb-6">
+              <Sparkles className="h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale" />
+              <h1 className="text-4xl md:text-6xl font-bold text-foreground">
+                Our{" "}
+                <span className="text-[#FE047F]">Services</span>
+              </h1>
+            </div>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Comprehensive career development solutions tailored for youth, parents, and mentors
               in the Tanzanian professional ecosystem.
             </p>
           </div>
@@ -334,36 +358,135 @@ export default function Services() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-hero">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-bounce-in">
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Ready to Transform Your Career Journey?
-            </h2>
-            <p className="text-xl text-white/90 mb-8">
-              Choose the service that's right for you and join thousands of successful Tanzanians.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/signup">
-                <Button 
-                  size="lg" 
-                  className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-4 shadow-elegant"
-                >
-                  Start Free Trial
-                  <ArrowRight className="ml-2 h-6 w-6" />
-                </Button>
-              </Link>
-              <Link to="/contact">
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white/10 text-lg px-8 py-4"
-                >
-                  <Clock className="mr-2 h-5 w-5" />
-                  Schedule Consultation
-                </Button>
-              </Link>
+      {/* CTA Section - Creative Dual-Tone Design */}
+      <section className="relative py-32 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        {/* Creative Background Elements */}
+        <div className="absolute inset-0">
+          {/* Subtle Grid Pattern */}
+          <div className="absolute inset-0 opacity-[0.03]">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="services-cta-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="20" cy="20" r="1" fill="currentColor" className="text-foreground" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#services-cta-grid)" />
+            </svg>
+          </div>
+
+          {/* Left Accent - Pink Gradient Orb */}
+          <div className="absolute -left-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#FE047F]/20 rounded-full blur-3xl"></div>
+
+          {/* Right Accent - Green Gradient Orb */}
+          <div className="absolute -right-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#00690D]/20 rounded-full blur-3xl"></div>
+
+          {/* Animated Floating Shapes */}
+          <div className="absolute top-20 left-20 w-16 h-16 border-2 border-[#FE047F]/20 rounded-full animate-float" style={{ animationDuration: '8s' }}></div>
+          <div className="absolute bottom-20 right-20 w-12 h-12 border-2 border-[#00690D]/20 rounded-lg animate-float" style={{ animationDuration: '6s', animationDelay: '1s' }}></div>
+          <div className="absolute top-1/3 right-1/4 w-8 h-8 border-2 border-[#FE047F]/20 rotate-45 animate-pulse" style={{ animationDuration: '4s' }}></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Content */}
+            <div className="text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-[#FE047F]/10 px-6 py-3 rounded-full mb-8 border border-[#FE047F]/20">
+                <Sparkles className="h-5 w-5 text-[#FE047F]" />
+                <span className="font-semibold text-[#FE047F]">Comprehensive Career Services</span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+                Ready to Transform Your{" "}
+                <span className="text-[#00690D]">Career Journey?</span>
+              </h2>
+
+              <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed">
+                Choose the service that's right for you and join thousands of successful Tanzanians building their dream careers.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <Link to="/signup">
+                  <Button
+                    size="lg"
+                    className="group bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 transform hover:scale-105 transition-all duration-300 font-semibold">
+                    Start Free Trial
+                    <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
+                  </Button>
+                </Link>
+                <Link to="/contact">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white text-lg px-12 py-6 font-semibold transition-all duration-300">
+                    <Clock className="mr-2 h-5 w-5" />
+                    Schedule Consultation
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Trust badges - Compact */}
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#00690D]" />
+                  <span>Free for Students</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#00690D]" />
+                  <span>No Credit Card</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#00690D]" />
+                  <span>Cancel Anytime</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Service Highlights */}
+            <div className="relative hidden lg:block">
+              {/* Service Cards */}
+              <div className="space-y-4">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-800 hover:scale-105 transition-transform">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center">
+                      <GraduationCap className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground">Youth Empowerment</p>
+                      <p className="text-sm text-muted-foreground">Free for Students</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-800 hover:scale-105 transition-transform">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#00690D] flex items-center justify-center">
+                      <Heart className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground">Parental Guidance</p>
+                      <p className="text-sm text-muted-foreground">Family Packages</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-800 hover:scale-105 transition-transform">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center">
+                      <UserCheck className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground">Expert Mentorship</p>
+                      <p className="text-sm text-muted-foreground">Earn While You Guide</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Badge */}
+              <div className="absolute -bottom-6 -right-6 bg-[#00690D] text-white px-6 py-4 rounded-2xl shadow-xl transform rotate-3 hover:rotate-0 transition-transform">
+                <p className="text-sm font-medium">🎉 3 Service Options</p>
+              </div>
             </div>
           </div>
         </div>
