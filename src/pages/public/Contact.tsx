@@ -17,8 +17,10 @@ import {
   Sparkles
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Contact() {
+  const { t } = useTranslation('contact');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -31,42 +33,42 @@ export default function Contact() {
     e.preventDefault();
     console.log('Form submitted:', formData);
     // Here you would typically send the form data to your backend
-    alert('Thank you for your message! We will get back to you within 24 hours.');
+    alert(t('form.subtitle'));
   };
 
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Our Office",
-      details: ["Njiro", "Arusha, Tanzania"],
+      title: t('contactInfo.office.title'),
+      details: [t('contactInfo.office.location1'), t('contactInfo.office.location2')],
       color: "bg-[#FE047F]"
     },
     {
       icon: Phone,
-      title: "Phone Numbers",
+      title: t('contactInfo.phone.title'),
       details: [
-        "+255 628 055 646",
-        "+255 673 045 414",
-        "Available 8 AM - 6 PM EAT",
+        t('contactInfo.phone.number1'),
+        t('contactInfo.phone.number2'),
+        t('contactInfo.phone.hours'),
       ],
       color: "bg-[#00690D]"
     },
     {
       icon: Mail,
-      title: "Email Addresses",
+      title: t('contactInfo.email.title'),
       details: [
-        "info@careernamimi.org",
-        "support@careernamimi.org",
+        t('contactInfo.email.info'),
+        t('contactInfo.email.support'),
       ],
       color: "bg-[#FE047F]"
     },
     {
       icon: Clock,
-      title: "Business Hours",
+      title: t('contactInfo.businessHours.title'),
       details: [
-        "Monday - Friday: 8:00 AM - 6:00 PM",
-        "Saturday: 9:00 AM - 2:00 PM",
-        "Sunday: Closed",
+        t('contactInfo.businessHours.weekdays'),
+        t('contactInfo.businessHours.saturday'),
+        t('contactInfo.businessHours.sunday'),
       ],
       color: "bg-[#00690D]"
     },
@@ -75,26 +77,23 @@ export default function Contact() {
   const inquiryTypes = [
     {
       icon: Users,
-      title: "For Youth & Students",
-      description:
-        "Questions about our career development programs, assessments, and mentorship opportunities.",
-      email: "info@careernamimi.org",
+      title: t('specialized.youth.title'),
+      description: t('specialized.youth.description'),
+      email: t('specialized.youth.email'),
       color: "bg-[#FE047F]"
     },
     {
       icon: Building,
-      title: "For Organizations",
-      description:
-        "Partnership inquiries, corporate programs, and bulk assessment services.",
-      email: "info@careernamimi.org",
+      title: t('specialized.organizations.title'),
+      description: t('specialized.organizations.description'),
+      email: t('specialized.organizations.email'),
       color: "bg-[#00690D]"
     },
     {
       icon: HeadphonesIcon,
-      title: "Technical Support",
-      description:
-        "Platform issues, account problems, and technical assistance.",
-      email: "support@careernamimi.org",
+      title: t('specialized.technical.title'),
+      description: t('specialized.technical.description'),
+      email: t('specialized.technical.email'),
       color: "bg-[#FE047F]"
     },
   ];
@@ -126,13 +125,12 @@ export default function Contact() {
             <div className="flex items-center justify-center mb-6">
               <Sparkles className="h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale" />
               <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-                Get in{" "}
-                <span className="text-[#FE047F]">Touch</span>
+                {t('hero.title')}{" "}
+                <span className="text-[#FE047F]">{t('hero.titleHighlight')}</span>
               </h1>
             </div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Have questions about our platform? Want to explore partnership opportunities?
-              We're here to help and would love to hear from you.
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -184,21 +182,23 @@ export default function Contact() {
                 <CardHeader className="border-b border-slate-200 dark:border-slate-800">
                   <CardTitle className="text-2xl text-foreground flex items-center gap-2">
                     <MessageCircle className="h-6 w-6 text-[#FE047F]" />
-                    Send us a Message
+                    {t('form.title')}
                   </CardTitle>
                   <p className="text-muted-foreground mt-2">
-                    Fill out the form below and we'll get back to you within 24 hours.
+                    {t('form.subtitle')}
                   </p>
                 </CardHeader>
                 <CardContent className="pt-6">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="name" className="text-foreground font-medium">Full Name *</Label>
+                        <Label htmlFor="name" className="text-foreground font-medium">
+                          {t('form.fields.name')} {t('form.required')}
+                        </Label>
                         <Input
                           id="name"
                           type="text"
-                          placeholder="Your full name"
+                          placeholder={t('form.fields.namePlaceholder')}
                           value={formData.name}
                           onChange={(e) =>
                             setFormData({ ...formData, name: e.target.value })
@@ -208,11 +208,13 @@ export default function Contact() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="email" className="text-foreground font-medium">Email Address *</Label>
+                        <Label htmlFor="email" className="text-foreground font-medium">
+                          {t('form.fields.email')} {t('form.required')}
+                        </Label>
                         <Input
                           id="email"
                           type="email"
-                          placeholder="your.email@example.com"
+                          placeholder={t('form.fields.emailPlaceholder')}
                           value={formData.email}
                           onChange={(e) =>
                             setFormData({ ...formData, email: e.target.value })
@@ -224,7 +226,9 @@ export default function Contact() {
                     </div>
 
                     <div>
-                      <Label htmlFor="type" className="text-foreground font-medium">Inquiry Type</Label>
+                      <Label htmlFor="type" className="text-foreground font-medium">
+                        {t('form.fields.type')}
+                      </Label>
                       <select
                         id="type"
                         value={formData.type}
@@ -232,20 +236,22 @@ export default function Contact() {
                           setFormData({ ...formData, type: e.target.value })
                         }
                         className="w-full mt-2 px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-md bg-white dark:bg-slate-900 text-foreground focus:outline-none focus:ring-2 focus:ring-[#FE047F]">
-                        <option value="general">General Inquiry</option>
-                        <option value="youth">Youth Programs</option>
-                        <option value="partnership">Partnership</option>
-                        <option value="support">Technical Support</option>
-                        <option value="media">Media & Press</option>
+                        <option value="general">{t('form.types.general')}</option>
+                        <option value="youth">{t('form.types.youth')}</option>
+                        <option value="partnership">{t('form.types.partnership')}</option>
+                        <option value="support">{t('form.types.support')}</option>
+                        <option value="media">{t('form.types.media')}</option>
                       </select>
                     </div>
 
                     <div>
-                      <Label htmlFor="subject" className="text-foreground font-medium">Subject *</Label>
+                      <Label htmlFor="subject" className="text-foreground font-medium">
+                        {t('form.fields.subject')} {t('form.required')}
+                      </Label>
                       <Input
                         id="subject"
                         type="text"
-                        placeholder="Brief description of your inquiry"
+                        placeholder={t('form.fields.subjectPlaceholder')}
                         value={formData.subject}
                         onChange={(e) =>
                           setFormData({ ...formData, subject: e.target.value })
@@ -256,10 +262,12 @@ export default function Contact() {
                     </div>
 
                     <div>
-                      <Label htmlFor="message" className="text-foreground font-medium">Message *</Label>
+                      <Label htmlFor="message" className="text-foreground font-medium">
+                        {t('form.fields.message')} {t('form.required')}
+                      </Label>
                       <Textarea
                         id="message"
-                        placeholder="Please provide details about your inquiry..."
+                        placeholder={t('form.fields.messagePlaceholder')}
                         rows={6}
                         value={formData.message}
                         onChange={(e) =>
@@ -275,7 +283,7 @@ export default function Contact() {
                       className="w-full bg-[#FE047F] hover:bg-[#FE047F]/90 text-white shadow-xl shadow-[#FE047F]/20"
                       size="lg">
                       <Send className="mr-2 h-5 w-5" />
-                      Send Message
+                      {t('form.button')}
                     </Button>
                   </form>
                 </CardContent>
@@ -291,17 +299,17 @@ export default function Contact() {
                     <div className="relative z-10">
                       <MapPin className="h-16 w-16 mx-auto mb-4" />
                       <h3 className="text-2xl font-bold mb-3">
-                        Visit Our Office
+                        {t('map.title')}
                       </h3>
                       <p className="text-white/90 text-lg mb-6">
-                        Njiro
+                        {t('map.location')}
                         <br />
-                        Arusha, Tanzania
+                        {t('map.city')}
                       </p>
                       <Button
                         variant="outline"
                         className="border-2 border-white text-white hover:bg-white hover:text-[#FE047F] transition-all duration-300">
-                        Get Directions
+                        {t('map.button')}
                       </Button>
                     </div>
                     {/* Decorative circles */}
@@ -315,7 +323,7 @@ export default function Contact() {
               <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl">
                 <CardHeader className="border-b border-slate-200 dark:border-slate-800">
                   <CardTitle className="text-xl text-foreground">
-                    Quick Contact Options
+                    {t('quickContact.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-6">
@@ -324,9 +332,9 @@ export default function Contact() {
                       <Phone className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">Call Us Now</p>
+                      <p className="font-semibold text-foreground">{t('quickContact.call.title')}</p>
                       <p className="text-sm text-muted-foreground">
-                        +255 628 055 646 / 673 045 414
+                        {t('quickContact.call.number')}
                       </p>
                     </div>
                   </div>
@@ -337,10 +345,10 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-semibold text-foreground">
-                        Email Support
+                        {t('quickContact.email.title')}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        info@careernamimi.org
+                        {t('quickContact.email.address')}
                       </p>
                     </div>
                   </div>
@@ -350,9 +358,9 @@ export default function Contact() {
                       <MessageCircle className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">WhatsApp</p>
+                      <p className="font-semibold text-foreground">{t('quickContact.whatsapp.title')}</p>
                       <p className="text-sm text-muted-foreground">
-                        +255 628 055 646 / 673 045 414
+                        {t('quickContact.whatsapp.number')}
                       </p>
                     </div>
                   </div>
@@ -368,10 +376,10 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Specialized Support
+              {t('specialized.title')}
             </h2>
             <p className="text-xl text-muted-foreground">
-              Get the right help for your specific needs
+              {t('specialized.subtitle')}
             </p>
           </div>
 
