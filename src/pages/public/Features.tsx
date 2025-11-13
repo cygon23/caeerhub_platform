@@ -2,19 +2,23 @@ import PublicLayout from "@/components/layout/PublicLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { 
-  Brain, 
-  Map, 
-  FileText, 
-  MessageCircle, 
-  BarChart3, 
-  Users, 
+import {
+  Brain,
+  Map,
+  FileText,
+  MessageCircle,
+  BarChart3,
+  Users,
   GraduationCap,
   Briefcase,
   Target,
   ArrowRight,
   Sparkles,
-  CheckCircle
+  CheckCircle,
+  UserCircle2,
+  TrendingUp,
+  Award,
+  Star
 } from "lucide-react";
 import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip, useGSAPMagnetic } from "@/hooks/useGSAP";
 
@@ -224,8 +228,8 @@ export default function Features() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 bg-muted/30">
+      {/* How It Works - Circular Connected Journey */}
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">How It Works</h2>
@@ -234,99 +238,261 @@ export default function Features() {
             </p>
           </div>
 
-            <div ref={processRef} className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Take Assessment",
-                description: "Complete our comprehensive AI-powered personality and skills assessment"
-              },
-              {
-                step: "02", 
-                title: "Get Your Roadmap",
-                description: "Receive a personalized career development plan tailored to your profile"
-              },
-              {
-                step: "03",
-                title: "Connect & Learn",
-                description: "Access mentors, learning modules, and career-building tools"
-              },
-              {
-                step: "04",
-                title: "Achieve Success",
-                description: "Track progress, build skills, and land your dream career"
-              }
-            ].map((item, index) => (
-              <Card 
-                key={item.step}
-                className="text-center hover:shadow-secondary transition-all duration-500 border-0 bg-background/50 backdrop-blur-sm hover-tilt group"
-              >
-                <CardContent className="p-6">
-                  <div className="text-4xl font-bold text-primary mb-4 group-hover:scale-125 transition-transform duration-300">{item.step}</div>
-                  <h3 className="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Circular Journey Path */}
+          <div ref={processRef} className="relative max-w-5xl mx-auto">
+            {/* Connecting Rope/Line */}
+            <div className="absolute top-24 left-0 right-0 h-1 hidden md:block">
+              <svg className="w-full h-full" preserveAspectRatio="none">
+                <path
+                  d="M 0 0 Q 25 20, 33 0 T 66 0 T 100 0"
+                  stroke="#FE047F"
+                  strokeWidth="3"
+                  fill="none"
+                  strokeDasharray="8 4"
+                  opacity="0.3"
+                />
+              </svg>
+            </div>
+
+            {/* Steps as Connected Circles */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+              {[
+                {
+                  step: "01",
+                  title: "Take Assessment",
+                  description: "Complete our comprehensive AI-powered personality and skills assessment",
+                  icon: Brain,
+                  color: "bg-[#FE047F]"
+                },
+                {
+                  step: "02",
+                  title: "Get Your Roadmap",
+                  description: "Receive a personalized career development plan tailored to your profile",
+                  icon: Map,
+                  color: "bg-[#00690D]"
+                },
+                {
+                  step: "03",
+                  title: "Connect & Learn",
+                  description: "Access mentors, learning modules, and career-building tools",
+                  icon: Users,
+                  color: "bg-[#FE047F]"
+                },
+                {
+                  step: "04",
+                  title: "Achieve Success",
+                  description: "Track progress, build skills, and land your dream career",
+                  icon: Target,
+                  color: "bg-[#00690D]"
+                }
+              ].map((item, index) => (
+                <div key={item.step} className="flex flex-col items-center group relative">
+                  {/* Climbing Person Icon Between Steps */}
+                  {index < 3 && (
+                    <div className="absolute -right-12 top-16 hidden md:block z-10 animate-float" style={{ animationDuration: '4s', animationDelay: `${index * 0.5}s` }}>
+                      <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow-lg flex items-center justify-center border-2 border-[#FE047F]/30">
+                        <UserCircle2 className="h-6 w-6 text-[#FE047F]" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Circular Badge */}
+                  <div className="relative mb-6">
+                    {/* Outer glow ring */}
+                    <div className={`absolute inset-0 rounded-full ${item.color} opacity-20 blur-xl group-hover:opacity-40 transition-opacity`}></div>
+
+                    {/* Main circular badge */}
+                    <div className={`relative w-32 h-32 rounded-full ${item.color} flex flex-col items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300 border-4 border-white dark:border-slate-900`}>
+                      {/* Icon */}
+                      <item.icon className="h-10 w-10 text-white mb-1" />
+                      {/* Step Number */}
+                      <span className="text-sm font-bold text-white/80">{item.step}</span>
+                    </div>
+                  </div>
+
+                  {/* Title and Description */}
+                  <h3 className="text-xl font-semibold text-foreground mb-3 text-center">{item.title}</h3>
+                  <p className="text-muted-foreground text-center text-sm leading-relaxed">{item.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-foreground mb-12">
-            Proven Results
-          </h2>
-          
-          <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      {/* Proven Results - Circular Badge Design */}
+      <section className="py-20 bg-white dark:bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Proven Results
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Data-driven success metrics from real users
+            </p>
+          </div>
+
+          <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {[
-              { number: "94%", label: "Career Match Accuracy" },
-              { number: "87%", label: "Job Placement Rate" },  
-              { number: "76%", label: "Average Salary Increase" },
-              { number: "4.8/5", label: "User Satisfaction Rating" }
+              { number: "94%", label: "Career Match Accuracy", icon: Target, color: "bg-[#FE047F]" },
+              { number: "87%", label: "Job Placement Rate", icon: TrendingUp, color: "bg-[#00690D]" },
+              { number: "76%", label: "Average Salary Increase", icon: Award, color: "bg-[#FE047F]" },
+              { number: "4.8/5", label: "User Satisfaction Rating", icon: Star, color: "bg-[#00690D]" }
             ].map((stat, index) => (
-              <div 
+              <div
                 key={stat.label}
-                className="text-center hover-lift cursor-pointer"
+                className="flex flex-col items-center group"
               >
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2 animate-pulse-scale">{stat.number}</div>
-                <div className="text-muted-foreground font-medium">{stat.label}</div>
+                {/* Circular Badge */}
+                <div className="relative mb-6">
+                  {/* Outer glow ring */}
+                  <div className={`absolute inset-0 rounded-full ${stat.color} opacity-20 blur-xl group-hover:opacity-40 transition-opacity animate-pulse-scale`}></div>
+
+                  {/* Main circular badge */}
+                  <div className={`relative w-32 h-32 rounded-full ${stat.color} flex flex-col items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300`}>
+                    {/* Icon */}
+                    <stat.icon className="h-8 w-8 text-white mb-2" />
+                    {/* Number */}
+                    <span className="text-2xl font-bold text-white">{stat.number}</span>
+                  </div>
+                </div>
+
+                {/* Label below */}
+                <p className="text-center text-foreground font-semibold text-lg">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-hero">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-bounce-in">
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Ready to Experience the Future of Career Development?
-            </h2>
-            <p className="text-xl text-white/90 mb-8">
-              Join thousands of Tanzanian youth who are already using AI to accelerate their career growth.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/signup">
-                <Button 
-                  size="lg" 
-                  className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-4 shadow-elegant"
-                >
-                  Start Your Free Trial
-                  <ArrowRight className="ml-2 h-6 w-6" />
-                </Button>
-              </Link>
-              <Link to="/contact">
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white/10 text-lg px-8 py-4"
-                >
-                  Schedule Demo
-                </Button>
-              </Link>
+      {/* CTA Section - Creative Dual-Tone Design */}
+      <section className="relative py-32 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        {/* Creative Background Elements */}
+        <div className="absolute inset-0">
+          {/* Subtle Grid Pattern */}
+          <div className="absolute inset-0 opacity-[0.03]">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="features-cta-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="20" cy="20" r="1" fill="currentColor" className="text-foreground" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#features-cta-grid)" />
+            </svg>
+          </div>
+
+          {/* Left Accent - Pink Gradient Orb */}
+          <div className="absolute -left-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#FE047F]/20 rounded-full blur-3xl"></div>
+
+          {/* Right Accent - Green Gradient Orb */}
+          <div className="absolute -right-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#00690D]/20 rounded-full blur-3xl"></div>
+
+          {/* Animated Floating Shapes */}
+          <div className="absolute top-20 left-20 w-16 h-16 border-2 border-[#FE047F]/20 rounded-full animate-float" style={{ animationDuration: '8s' }}></div>
+          <div className="absolute bottom-20 right-20 w-12 h-12 border-2 border-[#00690D]/20 rounded-lg animate-float" style={{ animationDuration: '6s', animationDelay: '1s' }}></div>
+          <div className="absolute top-1/3 right-1/4 w-8 h-8 border-2 border-[#FE047F]/20 rotate-45 animate-pulse" style={{ animationDuration: '4s' }}></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Content */}
+            <div className="text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-[#FE047F]/10 px-6 py-3 rounded-full mb-8 border border-[#FE047F]/20">
+                <Sparkles className="h-5 w-5 text-[#FE047F]" />
+                <span className="font-semibold text-[#FE047F]">AI-Powered Career Platform</span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+                Ready to Experience the Future of{" "}
+                <span className="text-[#00690D]">Career Development?</span>
+              </h2>
+
+              <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed">
+                Join thousands of Tanzanian youth who are already using AI to accelerate their career growth and achieve their dreams.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <Link to="/signup">
+                  <Button
+                    size="lg"
+                    className="group bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 transform hover:scale-105 transition-all duration-300 font-semibold">
+                    Start Your Free Trial
+                    <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
+                  </Button>
+                </Link>
+                <Link to="/contact">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white text-lg px-12 py-6 font-semibold transition-all duration-300">
+                    Schedule Demo
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Trust badges - Compact */}
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#00690D]" />
+                  <span>Free to Start</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#00690D]" />
+                  <span>No Credit Card</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-[#00690D]" />
+                  <span>Cancel Anytime</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Visual Feature Highlights */}
+            <div className="relative hidden lg:block">
+              {/* Feature Cards */}
+              <div className="space-y-4">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-800 hover:scale-105 transition-transform">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center">
+                      <Brain className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground">AI Career Matching</p>
+                      <p className="text-sm text-muted-foreground">94% Accuracy Rate</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-800 hover:scale-105 transition-transform">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#00690D] flex items-center justify-center">
+                      <Users className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground">Expert Mentorship</p>
+                      <p className="text-sm text-muted-foreground">Connect with Pros</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-slate-200 dark:border-slate-800 hover:scale-105 transition-transform">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center">
+                      <Target className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-foreground">Track Progress</p>
+                      <p className="text-sm text-muted-foreground">Real-Time Analytics</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Badge */}
+              <div className="absolute -bottom-6 -right-6 bg-[#00690D] text-white px-6 py-4 rounded-2xl shadow-xl transform rotate-3 hover:rotate-0 transition-transform">
+                <p className="text-sm font-medium">🎉 200+ Youth Empowered</p>
+              </div>
             </div>
           </div>
         </div>
