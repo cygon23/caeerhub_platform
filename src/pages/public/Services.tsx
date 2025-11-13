@@ -20,9 +20,11 @@ import {
   Brain
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useGSAPStagger } from "@/hooks/useGSAP";
 
 export default function Services() {
   const { t } = useTranslation('services');
+  const servicesRef = useGSAPStagger(0.15);
 
   const services = {
     youth: {
@@ -324,9 +326,9 @@ export default function Services() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div ref={servicesRef} className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {additionalServices.map((service, index) => (
-              <Card 
+              <Card
                 key={service.title}
                 className="hover:shadow-primary transition-all duration-300 animate-bounce-in border-0 bg-background/50 backdrop-blur-sm"
                 style={{ animationDelay: `${index * 0.15}s` }}

@@ -24,9 +24,12 @@ import {
   MapPin
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useGSAPTextReveal, useGSAPStagger } from "@/hooks/useGSAP";
 
 export default function Partners() {
   const { t } = useTranslation('partners');
+  const heroRef = useGSAPTextReveal();
+  const statsRef = useGSAPStagger(0.1);
 
   const partners = [
     {
@@ -169,7 +172,7 @@ export default function Partners() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div>
+          <div ref={heroRef}>
             <div className="flex items-center justify-center mb-6">
               <Sparkles className="h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale" />
               <h1 className="text-4xl md:text-6xl font-bold text-foreground">
@@ -187,7 +190,7 @@ export default function Partners() {
       {/* Partnership Stats - Circular Badge Design */}
       <section className="py-20 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+          <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {stats.map((stat, index) => (
               <div
                 key={stat.label}

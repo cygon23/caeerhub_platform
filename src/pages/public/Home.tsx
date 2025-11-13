@@ -35,10 +35,13 @@ import {
 } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 import { useTranslation } from "react-i18next";
+import { useGSAPTextReveal, useGSAPStagger } from "@/hooks/useGSAP";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const { t } = useTranslation('home');
+  const heroRef = useGSAPTextReveal();
+  const statsRef = useGSAPStagger(0.1);
   const [openFAQ, setOpenFAQ] = useState(null);
 
   useEffect(() => {
@@ -208,7 +211,7 @@ export default function Home() {
         <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
           <div className='grid lg:grid-cols-2 gap-16 items-center'>
             {/* Left Column - Content */}
-            <div>
+            <div ref={heroRef}>
               {/* Badge */}
               <div className='inline-flex items-center gap-2 bg-[#FE047F]/10 px-4 py-2 rounded-full mb-6 border border-[#FE047F]/20'>
                 <Sparkles className='h-4 w-4 text-[#FE047F]' />
@@ -456,7 +459,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto'>
+          <div ref={statsRef} className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto'>
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
