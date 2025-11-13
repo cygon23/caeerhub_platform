@@ -23,14 +23,10 @@ import {
   DollarSign,
   MapPin
 } from "lucide-react";
-import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip } from "@/hooks/useGSAP";
+import { useTranslation } from "react-i18next";
 
 export default function Partners() {
-  const heroRef = useGSAPTextReveal();
-  const statsRef = useGSAPStagger(0.1);
-  const partnersRef = useGSAPStagger(0.08);
-  const typesRef = useGSAPFlip();
-  const storiesRef = useGSAPScale();
+  const { t } = useTranslation('partners');
 
   const partners = [
     {
@@ -86,8 +82,8 @@ export default function Partners() {
   const partnershipTypes = [
     {
       icon: Building2,
-      title: "Corporate Partnerships",
-      description: "Partner with us to access Tanzania's top young talent and build your future workforce.",
+      title: t('opportunities.corporate.title'),
+      description: t('opportunities.corporate.description'),
       benefits: [
         "Early access to skilled graduates",
         "Custom training programs",
@@ -97,8 +93,8 @@ export default function Partners() {
     },
     {
       icon: Globe,
-      title: "International Organizations",
-      description: "Collaborate on large-scale youth development and economic empowerment initiatives.",
+      title: t('opportunities.international.title'),
+      description: t('opportunities.international.description'),
       benefits: [
         "Program co-development",
         "Knowledge sharing platforms",
@@ -108,8 +104,8 @@ export default function Partners() {
     },
     {
       icon: Users,
-      title: "Educational Institutions",
-      description: "Integrate our platform into your curriculum and career services programs.",
+      title: t('opportunities.educational.title'),
+      description: t('opportunities.educational.description'),
       benefits: [
         "Student career readiness tools",
         "Alumni engagement platforms",
@@ -120,10 +116,34 @@ export default function Partners() {
   ];
 
   const stats = [
-    { number: "5+", label: "Active Partners", icon: Handshake, color: "bg-[#FE047F]", ready: true },
-    { number: "200+", label: "Youth Reached Through Partnerships", icon: Users, color: "bg-[#00690D]", ready: true },
-    { number: "Be First", label: "Partnership Investment - Join Us", icon: DollarSign, color: "bg-[#FE047F]", ready: false },
-    { number: "Join Us", label: "Expand to New Regions", icon: MapPin, color: "bg-[#00690D]", ready: false },
+    {
+      number: "5+",
+      label: t('stats.activePartners'),
+      icon: Handshake,
+      color: "bg-[#FE047F]",
+      ready: true
+    },
+    {
+      number: "200+",
+      label: t('stats.youthReached'),
+      icon: Users,
+      color: "bg-[#00690D]",
+      ready: true
+    },
+    {
+      number: t('stats.beFirst'),
+      label: t('stats.investmentValue'),
+      icon: DollarSign,
+      color: "bg-[#FE047F]",
+      ready: false
+    },
+    {
+      number: t('stats.joinUs'),
+      label: t('stats.regions'),
+      icon: MapPin,
+      color: "bg-[#00690D]",
+      ready: false
+    },
   ];
 
   return (
@@ -149,17 +169,16 @@ export default function Partners() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div ref={heroRef}>
+          <div>
             <div className="flex items-center justify-center mb-6">
               <Sparkles className="h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale" />
               <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-                Our{" "}
-                <span className="text-[#FE047F]">Partners</span>
+                {t('hero.title')}{" "}
+                <span className="text-[#FE047F]">{t('hero.titleHighlight')}</span>
               </h1>
             </div>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Collaborating with leading organizations to create opportunities and drive
-              sustainable career development for Tanzanian youth.
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -200,9 +219,9 @@ export default function Partners() {
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Featured Partners</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">{t('featured.title')}</h2>
             <p className="text-xl text-muted-foreground">
-              Working together to transform career development in Tanzania
+              {t('featured.subtitle')}
             </p>
           </div>
 
@@ -245,15 +264,15 @@ export default function Partners() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Partnership Opportunities</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">{t('opportunities.title')}</h2>
             <p className="text-xl text-muted-foreground">
-              Multiple ways to collaborate and make a lasting impact on youth development
+              {t('opportunities.subtitle')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {partnershipTypes.map((type, index) => (
-              <Card 
+              <Card
                 key={type.title}
                 className="hover:shadow-secondary transition-all duration-300 animate-fade-in border-0 bg-gradient-card"
                 style={{ animationDelay: `${index * 0.2}s` }}
@@ -298,9 +317,9 @@ export default function Partners() {
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Partnership Success Stories</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">{t('founding.title')}</h2>
             <p className="text-xl text-muted-foreground">
-              Be among the first to create impact stories with us
+              {t('founding.subtitle')}
             </p>
           </div>
 
@@ -310,22 +329,20 @@ export default function Partners() {
             <div className="text-left">
               <div className="inline-flex items-center gap-2 bg-[#FE047F]/10 px-5 py-2 rounded-full mb-6 border border-[#FE047F]/20">
                 <Handshake className="h-5 w-5 text-[#FE047F]" />
-                <span className="text-sm font-semibold text-[#FE047F]">Founding Partnership</span>
+                <span className="text-sm font-semibold text-[#FE047F]">{t('founding.badge')}</span>
               </div>
 
               <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
-                Your Story <span className="text-[#FE047F]">Starts Here</span>
+                {t('founding.heading')} <span className="text-[#FE047F]">{t('founding.headingHighlight')}</span>
               </h3>
 
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                We're building something special together. As we launch our platform, we're inviting forward-thinking
-                organizations to be founding partners. Your partnership will directly shape our impact and create the
-                first success stories that inspire others.
+                {t('founding.description')}
               </p>
 
               <Link to="/contact">
                 <Button size="lg" className="bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-10 py-6 shadow-xl shadow-[#FE047F]/20 group">
-                  Become a Founding Partner
+                  {t('founding.button')}
                   <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
                 </Button>
               </Link>
@@ -339,8 +356,8 @@ export default function Partners() {
                   <Rocket className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-foreground mb-2">Founding Partner Status</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">Recognition as one of our first strategic partners</p>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">{t('founding.benefits.status.title')}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t('founding.benefits.status.description')}</p>
                 </div>
               </div>
 
@@ -350,8 +367,8 @@ export default function Partners() {
                   <Users className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-foreground mb-2">Direct Youth Impact</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">Help empower the next generation of Tanzanian leaders</p>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">{t('founding.benefits.impact.title')}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t('founding.benefits.impact.description')}</p>
                 </div>
               </div>
 
@@ -361,8 +378,8 @@ export default function Partners() {
                   <Award className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-foreground mb-2">Co-Create Solutions</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">Shape programs that align with your CSR goals</p>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">{t('founding.benefits.coCreate.title')}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t('founding.benefits.coCreate.description')}</p>
                 </div>
               </div>
             </div>
@@ -379,10 +396,10 @@ export default function Partners() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Ready to Partner <span className="text-[#FE047F]">With Us?</span>
+              {t('readyToPartner.title')} <span className="text-[#FE047F]">{t('readyToPartner.titleHighlight')}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Join our growing network of partners committed to empowering Tanzanian youth
+              {t('readyToPartner.subtitle')}
             </p>
           </div>
 
@@ -399,8 +416,8 @@ export default function Partners() {
                   <span className="text-white font-bold text-3xl">1</span>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Connect</h3>
-              <p className="text-muted-foreground leading-relaxed">Reach out to discuss partnership opportunities</p>
+              <h3 className="text-xl font-semibold text-foreground mb-3">{t('readyToPartner.steps.connect.title')}</h3>
+              <p className="text-muted-foreground leading-relaxed">{t('readyToPartner.steps.connect.description')}</p>
             </div>
 
             {/* Step 2 */}
@@ -414,8 +431,8 @@ export default function Partners() {
                   <span className="text-white font-bold text-3xl">2</span>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Collaborate</h3>
-              <p className="text-muted-foreground leading-relaxed">Design programs that align with your goals</p>
+              <h3 className="text-xl font-semibold text-foreground mb-3">{t('readyToPartner.steps.collaborate.title')}</h3>
+              <p className="text-muted-foreground leading-relaxed">{t('readyToPartner.steps.collaborate.description')}</p>
             </div>
 
             {/* Step 3 */}
@@ -429,8 +446,8 @@ export default function Partners() {
                   <span className="text-white font-bold text-3xl">3</span>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">Impact</h3>
-              <p className="text-muted-foreground leading-relaxed">Measure and celebrate our collective impact</p>
+              <h3 className="text-xl font-semibold text-foreground mb-3">{t('readyToPartner.steps.impact.title')}</h3>
+              <p className="text-muted-foreground leading-relaxed">{t('readyToPartner.steps.impact.description')}</p>
             </div>
           </div>
 
@@ -438,7 +455,7 @@ export default function Partners() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/contact">
               <Button size="lg" className="bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 group">
-                Become a Partner
+                {t('readyToPartner.buttonPartner')}
                 <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform" />
               </Button>
             </Link>
@@ -448,7 +465,7 @@ export default function Partners() {
               className="border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white text-lg px-12 py-6 font-semibold transition-all duration-300"
             >
               <ExternalLink className="mr-2 h-5 w-5" />
-              Partnership Deck
+              {t('readyToPartner.buttonDeck')}
             </Button>
           </div>
         </div>
