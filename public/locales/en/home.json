@@ -1,290 +1,96 @@
 {
-  "en_home.json": {
-    "hero": {
-      "title": "Discover Your",
-      "titleHighlight": "Dream Career",
-      "subtitle": "AI-powered career development platform empowering Tanzanian youth to build successful careers through personalized guidance and mentorship.",
-      "startJourney": "Start Your Journey"
-    },
-    "howItWorks": {
-      "title": "How It Works",
-      "subtitle": "Get started in just 3 simple steps and begin your journey to career success",
-      "steps": {
-        "signUp": {
-          "title": "Sign Up",
-          "description": "Create your free account and complete our comprehensive career assessment to understand your strengths and interests."
-        },
-        "getInsights": {
-          "title": "Get AI Insights",
-          "description": "Our AI analyzes your profile and generates personalized career recommendations with detailed roadmaps tailored to Tanzania's job market."
-        },
-        "connect": {
-          "title": "Connect & Grow",
-          "description": "Match with mentors, access learning resources, and connect with real opportunities to launch your dream career."
-        }
-      }
-    },
-    "stats": {
-      "youthImpacted": "Youth Impacted",
-      "successRate": "Career Success Rate",
-      "partnerOrganizations": "Partner Organizations",
-      "aiSupport": "AI Support Available"
-    },
-    "features": {
-      "title": "Powered by AI, Driven by",
-      "titleHighlight": "Purpose",
-      "subtitle": "Our intelligent platform combines cutting-edge AI with local expertise to create personalized career pathways for every young Tanzanian.",
-      "aiAssessment": {
-        "title": "AI Career Assessment",
-        "description": "Discover your strengths, interests, and ideal career matches through our advanced personality analysis."
+  "hero": {
+    "title": "Discover Your",
+    "titleHighlight": "Dream Career",
+    "subtitle": "AI-powered career development platform empowering Tanzanian youth to build successful careers through personalized guidance and mentorship.",
+    "startJourney": "Start Your Journey"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Get started in just 3 simple steps and begin your journey to career success",
+    "steps": {
+      "signUp": {
+        "title": "Sign Up",
+        "description": "Create your free account and complete our comprehensive career assessment to understand your strengths and interests."
       },
-      "smartRoadmap": {
-        "title": "Smart Roadmap Generator",
-        "description": "Get step-by-step career pathways tailored to your goals, skills, and local opportunities."
+      "getInsights": {
+        "title": "Get AI Insights",
+        "description": "Our AI analyzes your profile and generates personalized career recommendations with detailed roadmaps tailored to Tanzania's job market."
       },
-      "mentorship": {
-        "title": "Expert Mentorship",
-        "description": "Connect with successful professionals who guide you through real-world career challenges."
-      }
-    },
-    "testimonials": {
-      "title": "Success Stories",
-      "subtitle": "Real stories from youth who transformed their careers with Career na Mimi"
-    },
-    "faq": {
-      "title": "Frequently Asked Questions",
-      "subtitle": "Everything you need to know about Career na Mimi",
-      "questions": {
-        "free": {
-          "q": "Is Career na Mimi really free to use?",
-          "a": "Yes! Our core features including AI career assessment, personalized roadmaps, and basic mentorship matching are completely free. We also offer premium features for advanced coaching and exclusive opportunities."
-        },
-        "ai": {
-          "q": "How does your AI career matching work?",
-          "a": "Our AI analyzes your skills, interests, personality, and local market data to suggest careers with high success potential. It considers Tanzania-specific opportunities and creates step-by-step pathways to reach your goals."
-        },
-        "privacy": {
-          "q": "Is my personal data safe and private?",
-          "a": "Absolutely. We use bank-level encryption to protect your data and never share your personal information with third parties without your consent. You control what information you share with mentors and employers."
-        },
-        "mentors": {
-          "q": "What kind of mentors can I connect with?",
-          "a": "Our mentors are successful professionals across various industries in Tanzania and globally. They're vetted experts who volunteer their time to guide young people through career development and real-world challenges."
-        },
-        "results": {
-          "q": "How long does it take to see results?",
-          "a": "Many users report clarity on their career direction within the first week. Actual career progress varies, but our average user sees meaningful career advancement within 6-8 months of active platform use."
-        },
-        "jobPlacement": {
-          "q": "Do you help with job placement?",
-          "a": "While we don't guarantee job placement, we connect you with partner organizations, provide interview preparation, and alert you to relevant opportunities. Many users find employment through our network."
-        }
-      }
-    },
-    "partners": {
-      "title": "Trusted by Leading Organizations"
-    },
-    "cta": {
-      "title": "Ready to Shape Your Future?",
-      "subtitle": "Join thousands of young Tanzanians who are already building their dream careers.",
-      "getStarted": "Get Started Free Today",
-      "trustBadges": {
-        "secure": "Secure",
-        "instantSetup": "Instant Setup",
-        "support": "24/7 Support"
+      "connect": {
+        "title": "Connect & Grow",
+        "description": "Match with mentors, access learning resources, and connect with real opportunities to launch your dream career."
       }
     }
   },
-  "sw_home.json": {
-    "hero": {
-      "title": "Gundua",
-      "titleHighlight": "Kazi ya Ndoto Yako",
-      "subtitle": "Mfumo wa maendeleo ya kazi unaotumia AI kuwawezesha vijana wa Tanzania kujenga kazi za mafanikio kupitia mwongozo binafsi na ushauri.",
-      "startJourney": "Anza Safari Yako"
+  "stats": {
+    "youthImpacted": "Youth Impacted",
+    "successRate": "Career Success Rate",
+    "partnerOrganizations": "Partner Organizations",
+    "aiSupport": "AI Support Available"
+  },
+  "features": {
+    "title": "Powered by AI, Driven by",
+    "titleHighlight": "Purpose",
+    "subtitle": "Our intelligent platform combines cutting-edge AI with local expertise to create personalized career pathways for every young Tanzanian.",
+    "aiAssessment": {
+      "title": "AI Career Assessment",
+      "description": "Discover your strengths, interests, and ideal career matches through our advanced personality analysis."
     },
-    "howItWorks": {
-      "title": "Jinsi Inavyofanya Kazi",
-      "subtitle": "Anza kwa hatua 3 rahisi tu na uanze safari yako ya mafanikio ya kazi",
-      "steps": {
-        "signUp": {
-          "title": "Jiunge",
-          "description": "Fungua akaunti yako ya bure na ukamilishe tathmini yetu ya kina ya kazi ili kuelewa nguvu zako na vipengele vyako."
-        },
-        "getInsights": {
-          "title": "Pata Maarifa ya AI",
-          "description": "AI yetu inachambua wasifu wako na kuzalisha mapendekezo ya kazi ya kibinafsi yenye ramani za kina zilizobinafsishwa kwa soko la kazi la Tanzania."
-        },
-        "connect": {
-          "title": "Unganisha na Ukue",
-          "description": "Patana na washauri, pata rasilimali za kujifunza, na uunganike na fursa halisi za kuzindua kazi ya ndoto yako."
-        }
-      }
+    "smartRoadmap": {
+      "title": "Smart Roadmap Generator",
+      "description": "Get step-by-step career pathways tailored to your goals, skills, and local opportunities."
     },
-    "stats": {
-      "youthImpacted": "Vijana Walioathiriwa",
-      "successRate": "Kiwango cha Mafanikio ya Kazi",
-      "partnerOrganizations": "Mashirika ya Ushirikiano",
-      "aiSupport": "Msaada wa AI Unapatikana"
-    },
-    "features": {
-      "title": "Inaendeshwa na AI, Inaongozwa na",
-      "titleHighlight": "Kusudi",
-      "subtitle": "Jukwaa letu la akili linachanganya AI ya kisasa na utaalamu wa ndani kuunda njia za kazi za kibinafsi kwa kila kijana wa Kitanzania.",
-      "aiAssessment": {
-        "title": "Tathmini ya Kazi ya AI",
-        "description": "Gundua nguvu zako, vipengele vyako, na mechi kamilifu za kazi kupitia uchambuzi wetu wa hali ya juu wa utu."
+    "mentorship": {
+      "title": "Expert Mentorship",
+      "description": "Connect with successful professionals who guide you through real-world career challenges."
+    }
+  },
+  "testimonials": {
+    "title": "Success Stories",
+    "subtitle": "Real stories from youth who transformed their careers with Career na Mimi"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about Career na Mimi",
+    "questions": {
+      "free": {
+        "q": "Is Career na Mimi really free to use?",
+        "a": "Yes! Our core features including AI career assessment, personalized roadmaps, and basic mentorship matching are completely free. We also offer premium features for advanced coaching and exclusive opportunities."
       },
-      "smartRoadmap": {
-        "title": "Kizalishaji cha Ramani Mahiri",
-        "description": "Pata njia za kazi za hatua kwa hatua zilizobinafsishwa kwa malengo yako, ujuzi wako, na fursa za ndani."
+      "ai": {
+        "q": "How does your AI career matching work?",
+        "a": "Our AI analyzes your skills, interests, personality, and local market data to suggest careers with high success potential. It considers Tanzania-specific opportunities and creates step-by-step pathways to reach your goals."
       },
-      "mentorship": {
-        "title": "Ushauri wa Kitaalamu",
-        "description": "Unganisha na wataalamu mafanikio wanaokuongoza kupitia changamoto za kazi za ulimwengu halisi."
-      }
-    },
-    "testimonials": {
-      "title": "Hadithi za Mafanikio",
-      "subtitle": "Hadithi za kweli kutoka kwa vijana walioibadilisha kazi zao na Career na Mimi"
-    },
-    "faq": {
-      "title": "Maswali Yanayoulizwa Mara kwa Mara",
-      "subtitle": "Kila kitu unachohitaji kujua kuhusu Career na Mimi",
-      "questions": {
-        "free": {
-          "q": "Je, Career na Mimi ni ya bure kweli kutumia?",
-          "a": "Ndiyo! Vipengele vyetu vikuu ikiwemo tathmini ya kazi ya AI, ramani za kibinafsi, na ulinganishaji wa msingi wa ushauri ni za kabisa bure. Pia tunatoa vipengele vya bei ya juu kwa mafunzo ya hali ya juu na fursa za kipekee."
-        },
-        "ai": {
-          "q": "Ulinganishaji wenu wa kazi wa AI unafanyaje kazi?",
-          "a": "AI yetu inachambua ujuzi wako, vipengele vyako, utu wako, na data ya soko la ndani kupendekeza kazi zenye uwezekano mkubwa wa mafanikio. Inazingatia fursa maalum za Tanzania na kuunda njia za hatua kwa hatua za kufikia malengo yako."
-        },
-        "privacy": {
-          "q": "Je, data yangu ya kibinafsi ni salama na ya faragha?",
-          "a": "Kabisa. Tunatumia usimbaji fani wa kiwango cha benki kulinda data yako na kamwe hatushiriki taarifa zako za kibinafsi na wahusika wengine bila idhini yako. Unadhibiti taarifa gani unashiriki na washauri na waajiri."
-        },
-        "mentors": {
-          "q": "Je, ni aina gani ya washauri ninaweza kuunganisha nao?",
-          "a": "Washauri wetu ni wataalamu mafanikio katika sekta mbalimbali Tanzania na ulimwenguni. Ni wataalamu waliokaguliwa wanaotoa muda wao kuongoza vijana kupitia maendeleo ya kazi na changamoto za ulimwengu halisi."
-        },
-        "results": {
-          "q": "Je, inachukua muda gani kuona matokeo?",
-          "a": "Watumiaji wengi wanaripoti uwazi juu ya mwelekeo wao wa kazi ndani ya wiki ya kwanza. Maendeleo halisi ya kazi yanatofautiana, lakini mtumiaji wetu wa wastani anaona maendeleo muhimu ya kazi ndani ya miezi 6-8 ya matumizi makubwa ya jukwaa."
-        },
-        "jobPlacement": {
-          "q": "Je, mnasaidia na uwekaji wa kazi?",
-          "a": "Ingawa hatuhakikishi uwekaji wa kazi, tunakuunganisha na mashirika ya ushirikiano, tunatoa maandalizi ya mahojiano, na tunakujulisha fursa zinazohusika. Watumiaji wengi wanapata ajira kupitia mtandao wetu."
-        }
-      }
-    },
-    "partners": {
-      "title": "Tunaaminika na Mashirika Makuu"
-    },
-    "cta": {
-      "title": "Je, Uko Tayari Kuunda Mustakbal Wako?",
-      "subtitle": "Jiunge na maelfu ya vijana wa Kitanzania wanaoshawahi kujenga kazi za ndoto zao.",
-      "getStarted": "Anza Bure Leo",
-      "trustBadges": {
-        "secure": "Salama",
-        "instantSetup": "Usanidi wa Papo Hapo",
-        "support": "Msaada wa Saa 24/7"
+      "privacy": {
+        "q": "Is my personal data safe and private?",
+        "a": "Absolutely. We use bank-level encryption to protect your data and never share your personal information with third parties without your consent. You control what information you share with mentors and employers."
+      },
+      "mentors": {
+        "q": "What kind of mentors can I connect with?",
+        "a": "Our mentors are successful professionals across various industries in Tanzania and globally. They're vetted experts who volunteer their time to guide young people through career development and real-world challenges."
+      },
+      "results": {
+        "q": "How long does it take to see results?",
+        "a": "Many users report clarity on their career direction within the first week. Actual career progress varies, but our average user sees meaningful career advancement within 6-8 months of active platform use."
+      },
+      "jobPlacement": {
+        "q": "Do you help with job placement?",
+        "a": "While we don't guarantee job placement, we connect you with partner organizations, provide interview preparation, and alert you to relevant opportunities. Many users find employment through our network."
       }
     }
   },
-  "fr_home.json": {
-    "hero": {
-      "title": "Découvrez Votre",
-      "titleHighlight": "Carrière de Rêve",
-      "subtitle": "Plateforme de développement de carrière alimentée par l'IA permettant aux jeunes tanzaniens de construire des carrières réussies grâce à des conseils personnalisés et un mentorat.",
-      "startJourney": "Commencez Votre Parcours"
-    },
-    "howItWorks": {
-      "title": "Comment Ça Marche",
-      "subtitle": "Commencez en seulement 3 étapes simples et entamez votre parcours vers le succès professionnel",
-      "steps": {
-        "signUp": {
-          "title": "S'inscrire",
-          "description": "Créez votre compte gratuit et complétez notre évaluation de carrière complète pour comprendre vos forces et intérêts."
-        },
-        "getInsights": {
-          "title": "Obtenez des Insights IA",
-          "description": "Notre IA analyse votre profil et génère des recommandations de carrière personnalisées avec des feuilles de route détaillées adaptées au marché du travail tanzanien."
-        },
-        "connect": {
-          "title": "Connectez-vous et Grandissez",
-          "description": "Trouvez des mentors, accédez aux ressources d'apprentissage et connectez-vous avec de vraies opportunités pour lancer la carrière de vos rêves."
-        }
-      }
-    },
-    "stats": {
-      "youthImpacted": "Jeunes Impactés",
-      "successRate": "Taux de Réussite de Carrière",
-      "partnerOrganizations": "Organisations Partenaires",
-      "aiSupport": "Support IA Disponible"
-    },
-    "features": {
-      "title": "Propulsé par l'IA, Guidé par un",
-      "titleHighlight": "Objectif",
-      "subtitle": "Notre plateforme intelligente combine une IA de pointe avec une expertise locale pour créer des parcours de carrière personnalisés pour chaque jeune tanzanien.",
-      "aiAssessment": {
-        "title": "Évaluation de Carrière IA",
-        "description": "Découvrez vos forces, intérêts et correspondances de carrière idéales grâce à notre analyse avancée de la personnalité."
-      },
-      "smartRoadmap": {
-        "title": "Générateur de Feuille de Route Intelligente",
-        "description": "Obtenez des parcours de carrière étape par étape adaptés à vos objectifs, compétences et opportunités locales."
-      },
-      "mentorship": {
-        "title": "Mentorat Expert",
-        "description": "Connectez-vous avec des professionnels prospères qui vous guident à travers les défis de carrière du monde réel."
-      }
-    },
-    "testimonials": {
-      "title": "Histoires de Réussite",
-      "subtitle": "Vraies histoires de jeunes qui ont transformé leur carrière avec Career na Mimi"
-    },
-    "faq": {
-      "title": "Questions Fréquemment Posées",
-      "subtitle": "Tout ce que vous devez savoir sur Career na Mimi",
-      "questions": {
-        "free": {
-          "q": "Career na Mimi est-il vraiment gratuit à utiliser?",
-          "a": "Oui! Nos fonctionnalités principales incluant l'évaluation de carrière IA, les feuilles de route personnalisées et l'appariement de mentorat de base sont entièrement gratuits. Nous offrons également des fonctionnalités premium pour un coaching avancé et des opportunités exclusives."
-        },
-        "ai": {
-          "q": "Comment fonctionne votre appariement de carrière IA?",
-          "a": "Notre IA analyse vos compétences, intérêts, personnalité et données du marché local pour suggérer des carrières avec un haut potentiel de réussite. Elle considère les opportunités spécifiques à la Tanzanie et crée des parcours étape par étape pour atteindre vos objectifs."
-        },
-        "privacy": {
-          "q": "Mes données personnelles sont-elles sûres et privées?",
-          "a": "Absolument. Nous utilisons un chiffrement de niveau bancaire pour protéger vos données et ne partageons jamais vos informations personnelles avec des tiers sans votre consentement. Vous contrôlez quelles informations vous partagez avec les mentors et employeurs."
-        },
-        "mentors": {
-          "q": "Avec quel type de mentors puis-je me connecter?",
-          "a": "Nos mentors sont des professionnels prospères dans diverses industries en Tanzanie et à l'échelle mondiale. Ce sont des experts vérifiés qui donnent bénévolement de leur temps pour guider les jeunes dans le développement de carrière et les défis du monde réel."
-        },
-        "results": {
-          "q": "Combien de temps faut-il pour voir des résultats?",
-          "a": "De nombreux utilisateurs rapportent une clarté sur leur direction de carrière dans la première semaine. Les progrès de carrière réels varient, mais notre utilisateur moyen voit un avancement de carrière significatif dans les 6-8 mois d'utilisation active de la plateforme."
-        },
-        "jobPlacement": {
-          "q": "Aidez-vous avec le placement professionnel?",
-          "a": "Bien que nous ne garantissions pas le placement professionnel, nous vous connectons avec des organisations partenaires, fournissons une préparation aux entretiens et vous alertons sur les opportunités pertinentes. De nombreux utilisateurs trouvent un emploi grâce à notre réseau."
-        }
-      }
-    },
-    "partners": {
-      "title": "Approuvé par les Principales Organisations"
-    },
-    "cta": {
-      "title": "Prêt à Façonner Votre Avenir?",
-      "subtitle": "Rejoignez des milliers de jeunes tanzaniens qui construisent déjà leur carrière de rêve.",
-      "getStarted": "Commencez Gratuitement Aujourd'hui",
-      "trustBadges": {
-        "secure": "Sécurisé",
-        "instantSetup": "Configuration Instantanée",
-        "support": "Support 24/7"
-      }
+  "partners": {
+    "title": "Trusted by Leading Organizations"
+  },
+  "cta": {
+    "title": "Ready to Shape Your Future?",
+    "subtitle": "Join thousands of young Tanzanians who are already building their dream careers.",
+    "getStarted": "Get Started Free Today",
+    "trustBadges": {
+      "secure": "Secure",
+      "instantSetup": "Instant Setup",
+      "support": "24/7 Support"
     }
   }
 }
