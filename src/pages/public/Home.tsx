@@ -84,7 +84,7 @@ export default function Home() {
   }, []);
 
   const stats = [
-    { number: "42,000+", label: "Youth Impacted", icon: Users },
+    { number: "200+", label: "Youth Empowered", icon: Users },
     { number: "89%", label: "Career Success Rate", icon: TrendingUp },
     { number: "150+", label: "Partner Organizations", icon: Award },
     { number: "24/7", label: "AI Support Available", icon: Sparkles },
@@ -489,30 +489,28 @@ export default function Home() {
 
           <div
             ref={statsRef}
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto'>
             {stats.map((stat, index) => (
-              <Card
+              <div
                 key={stat.label}
-                className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900'>
-                {/* Gradient accent - alternating colors */}
-                <div className={`absolute top-0 left-0 right-0 h-1 ${index % 2 === 0 ? 'bg-[#FE047F]' : 'bg-[#00690D]'}`}></div>
+                className='flex flex-col items-center group'>
+                {/* Circular Badge with Icon */}
+                <div className='relative mb-6'>
+                  {/* Outer glow ring */}
+                  <div className={`absolute inset-0 rounded-full ${index % 2 === 0 ? 'bg-[#FE047F]' : 'bg-[#00690D]'} opacity-20 blur-xl group-hover:opacity-40 transition-opacity animate-pulse-scale`}></div>
 
-                <CardContent className='p-8 text-center relative'>
-                  {/* Icon with glow effect */}
-                  <div className='relative inline-block mb-6'>
-                    <div className={`absolute inset-0 ${index % 2 === 0 ? 'bg-[#FE047F]' : 'bg-[#00690D]'} opacity-20 blur-xl group-hover:opacity-40 transition-opacity`}></div>
-                    <stat.icon className={`relative h-14 w-14 ${index % 2 === 0 ? 'text-[#FE047F]' : 'text-[#00690D]'} mx-auto`} />
+                  {/* Main circular badge */}
+                  <div className={`relative w-32 h-32 rounded-full ${index % 2 === 0 ? 'bg-[#FE047F]' : 'bg-[#00690D]'} flex flex-col items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300`}>
+                    {/* Icon */}
+                    <stat.icon className='h-8 w-8 text-white mb-2' />
+                    {/* Number */}
+                    <span className='text-2xl font-bold text-white'>{stat.number}</span>
                   </div>
+                </div>
 
-                  {/* Number */}
-                  <div className='text-4xl md:text-5xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300'>
-                    {stat.number}
-                  </div>
-
-                  {/* Label */}
-                  <div className='text-muted-foreground font-medium'>{stat.label}</div>
-                </CardContent>
-              </Card>
+                {/* Label below */}
+                <p className='text-center text-foreground font-semibold text-lg'>{stat.label}</p>
+              </div>
             ))}
           </div>
         </div>
