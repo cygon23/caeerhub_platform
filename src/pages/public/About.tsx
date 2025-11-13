@@ -119,7 +119,7 @@ export default function About() {
       title: "Purpose-Driven",
       description:
         "Everything we do is focused on empowering young Tanzanians to achieve their career dreams.",
-      gradient: "from-blue-500/20 to-cyan-500/20",
+      gradient: "from-[#FE047F]/10 to-[#FE047F]/5",
       iconColor: "text-[#FE047F]",
     },
     {
@@ -127,7 +127,7 @@ export default function About() {
       title: "Locally Rooted",
       description:
         "We understand the unique challenges and opportunities within the Tanzanian context.",
-      gradient: "from-pink-500/20 to-rose-500/20",
+      gradient: "from-[#FE047F]/10 to-[#FE047F]/5",
       iconColor: "text-[#FE047F]",
     },
     {
@@ -135,7 +135,7 @@ export default function About() {
       title: "Community-Centered",
       description:
         "We believe in the power of mentorship, collaboration, and peer-to-peer learning.",
-      gradient: "from-green-500/20 to-emerald-500/20",
+      gradient: "from-[#00690D]/10 to-[#00690D]/5",
       iconColor: "text-[#00690D]",
     },
     {
@@ -143,7 +143,7 @@ export default function About() {
       title: "Excellence-Focused",
       description:
         "We strive for the highest quality in everything we deliver to our youth community.",
-      gradient: "from-purple-500/20 to-pink-500/20",
+      gradient: "from-[#00690D]/10 to-[#00690D]/5",
       iconColor: "text-[#00690D]",
     },
   ];
@@ -182,7 +182,7 @@ export default function About() {
       description:
         "Revolutionary algorithm that analyzes personality, skills, and market trends to find perfect career fits.",
       year: "2024",
-      gradient: "from-blue-500/20 to-cyan-500/20",
+      gradient: "from-[#FE047F]/10 to-[#FE047F]/5",
       iconColor: "text-[#FE047F]",
     },
     {
@@ -191,7 +191,7 @@ export default function About() {
       description:
         "AI-driven mentor matching system connecting youth with industry professionals based on compatibility.",
       year: "2025",
-      gradient: "from-purple-500/20 to-pink-500/20",
+      gradient: "from-[#00690D]/10 to-[#00690D]/5",
       iconColor: "text-[#00690D]",
     },
     {
@@ -200,7 +200,7 @@ export default function About() {
       description:
         "Secure, verifiable digital credentials and achievements stored on blockchain technology.",
       year: "2025",
-      gradient: "from-green-500/20 to-emerald-500/20",
+      gradient: "from-[#00690D]/10 to-[#00690D]/5",
       iconColor: "text-[#00690D]",
     },
   ];
@@ -245,7 +245,7 @@ export default function About() {
       </section>
 
       {/* Mission & Vision - Redesigned */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900'>
+      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div
             ref={missionRef}
@@ -313,7 +313,7 @@ export default function About() {
           <div className='text-center mb-16'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-4'>
               Our{" "}
-              <span className='bg-gradient-to-r from-[#FE047F] to-[#00690D] bg-clip-text text-transparent'>
+              <span className='text-[#FE047F]'>
                 Impact Story
               </span>
             </h2>
@@ -362,12 +362,12 @@ export default function About() {
       </section>
 
       {/* Innovation Section - Redesigned */}
-      <section className='py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-blue-950 dark:to-slate-900'>
+      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               Innovation at{" "}
-              <span className='bg-gradient-to-r from-[#FE047F] via-purple-600 to-[#FE047F] bg-clip-text text-transparent'>
+              <span className='text-[#FE047F]'>
                 Our Core
               </span>
             </h2>
@@ -493,12 +493,12 @@ export default function About() {
       </section>
 
       {/* Team - Redesigned */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900'>
+      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               Meet the{" "}
-              <span className='bg-gradient-to-r from-[#FE047F] to-[#00690D] bg-clip-text text-transparent'>
+              <span className='text-[#FE047F]'>
                 Visionaries
               </span>
             </h2>
@@ -558,7 +558,7 @@ export default function About() {
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               Our{" "}
-              <span className='bg-gradient-to-r from-[#FE047F] to-[#FE047F] bg-clip-text text-transparent'>
+              <span className='text-[#FE047F]'>
                 Values
               </span>
             </h2>
@@ -606,7 +606,7 @@ export default function About() {
       </section>
 
       {/* CTA - Redesigned */}
-      <section className='relative py-32 bg-gradient-to-br from-[#FE047F] via-[#00690D] to-[#FE047F] overflow-hidden'>
+      <section className='relative py-32 bg-[#00690D] overflow-hidden'>
         {/* Animated background */}
         <div className='absolute inset-0'>
           <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
