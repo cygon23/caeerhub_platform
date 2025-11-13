@@ -150,28 +150,28 @@ export default function About() {
 
   const impactStats = [
     {
-      number: "42,000+",
+      number: "200+",
       label: "Youth Empowered",
       icon: Users,
-      gradient: "from-[#FE047F] to-[#FE047F]/80",
+      color: "bg-[#FE047F]",
     },
     {
-      number: "10+",
+      number: "2+",
       label: "Regions Covered",
       icon: MapPin,
-      gradient: "from-[#00690D] to-[#00690D]/80",
+      color: "bg-[#00690D]",
     },
     {
       number: "89%",
       label: "Success Rate",
       icon: TrendingUp,
-      gradient: "from-[#00690D] to-[#00690D]/80",
+      color: "bg-[#00690D]",
     },
     {
-      number: "150+",
+      number: "5+",
       label: "Corporate Partners",
       icon: Award,
-      gradient: "from-[#FE047F] to-[#FE047F]/80",
+      color: "bg-[#FE047F]",
     },
   ];
 
@@ -244,20 +244,46 @@ export default function About() {
         </div>
       </section>
 
-      {/* Mission & Vision - Redesigned */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
+      {/* Mission & Vision - Flipped Modern Design */}
+      <section className='py-24 bg-white dark:bg-slate-950'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div
             ref={missionRef}
             className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
-            <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
-              {/* Gradient accent */}
-              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#FE047F] to-[#FE047F]/80'></div>
-
+            {/* Vision First (Flipped) */}
+            <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 border-[#00690D]/20 bg-white dark:bg-slate-900'>
               <CardContent className='p-10'>
-                <div className='relative mb-8'>
-                  <div className='absolute inset-0 text-[#FE047F] opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
-                  <Target className='relative h-16 w-16 text-[#FE047F]' />
+                {/* Circular Icon Badge */}
+                <div className='relative inline-block mb-8'>
+                  <div className='w-20 h-20 rounded-full bg-[#00690D]/10 flex items-center justify-center group-hover:scale-110 transition-transform'>
+                    <Eye className='h-10 w-10 text-[#00690D]' />
+                  </div>
+                </div>
+
+                <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
+                  Our Vision
+                </h2>
+
+                <p className='text-lg text-muted-foreground leading-relaxed'>
+                  A Tanzania where every young person has the knowledge, skills,
+                  and support network needed to pursue meaningful careers that
+                  contribute to both personal fulfillment and national development,
+                  creating a generation of empowered leaders and innovators.
+                </p>
+
+                {/* Bottom accent line */}
+                <div className='mt-8 h-1 w-full bg-[#00690D]/20 rounded-full'></div>
+              </CardContent>
+            </Card>
+
+            {/* Mission Second */}
+            <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 border-[#FE047F]/20 bg-white dark:bg-slate-900'>
+              <CardContent className='p-10'>
+                {/* Circular Icon Badge */}
+                <div className='relative inline-block mb-8'>
+                  <div className='w-20 h-20 rounded-full bg-[#FE047F]/10 flex items-center justify-center group-hover:scale-110 transition-transform'>
+                    <Target className='h-10 w-10 text-[#FE047F]' />
+                  </div>
                 </div>
 
                 <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
@@ -272,44 +298,17 @@ export default function About() {
                   prosperity.
                 </p>
 
-                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-[#FE047F] to-[#FE047F]/80 rounded-full'></div>
-              </CardContent>
-            </Card>
-
-            <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
-              {/* Gradient accent */}
-              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#00690D] to-[#00690D]/80'></div>
-
-              <CardContent className='p-10'>
-                <div className='relative mb-8'>
-                  <div className='absolute inset-0 text-[#00690D] opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
-                  <Eye className='relative h-16 w-16 text-[#00690D]' />
-                </div>
-
-                <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
-                  Our Vision
-                </h2>
-
-                <p className='text-lg text-muted-foreground leading-relaxed'>
-                  A Tanzania where every young person has the knowledge, skills,
-                  and support network needed to pursue meaningful careers that
-                  contribute to both personal fulfillment and national development,
-                  creating a generation of empowered leaders and innovators.
-                </p>
-
-                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-[#00690D] to-[#00690D]/80 rounded-full'></div>
+                {/* Bottom accent line */}
+                <div className='mt-8 h-1 w-full bg-[#FE047F]/20 rounded-full'></div>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Impact Stats - Redesigned */}
-      <section className='py-24 bg-white dark:bg-slate-950 relative overflow-hidden'>
-        {/* Background decoration */}
-        <div className='absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,black,rgba(0,0,0,0.6))]'></div>
-
-        <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      {/* Impact Stats - Circular Badge Design */}
+      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-4'>
               Our{" "}
@@ -325,37 +324,28 @@ export default function About() {
 
           <div
             ref={impactRef}
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto'>
             {impactStats.map((stat, index) => (
-              <Card
+              <div
                 key={stat.label}
-                className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 hover:-translate-y-2'>
-                {/* Gradient accent */}
-                <div
-                  className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`}></div>
+                className='flex flex-col items-center group'>
+                {/* Circular Badge with Icon */}
+                <div className='relative mb-6'>
+                  {/* Outer glow ring */}
+                  <div className={`absolute inset-0 rounded-full ${stat.color} opacity-20 blur-xl group-hover:opacity-40 transition-opacity animate-pulse-scale`}></div>
 
-                <CardContent className='p-8 text-center relative'>
-                  {/* Icon with glow */}
-                  <div className='relative inline-block mb-6'>
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-r ${stat.gradient} opacity-20 blur-xl group-hover:opacity-40 transition-opacity`}></div>
-                    <div
-                      className={`relative p-4 rounded-2xl bg-gradient-to-r ${stat.gradient} bg-opacity-10`}>
-                      <stat.icon className='h-10 w-10 text-white' />
-                    </div>
+                  {/* Main circular badge */}
+                  <div className={`relative w-32 h-32 rounded-full ${stat.color} flex flex-col items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300`}>
+                    {/* Icon */}
+                    <stat.icon className='h-8 w-8 text-white mb-2' />
+                    {/* Number */}
+                    <span className='text-2xl font-bold text-white'>{stat.number}</span>
                   </div>
+                </div>
 
-                  {/* Number */}
-                  <div className='text-4xl md:text-5xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300'>
-                    {stat.number}
-                  </div>
-
-                  {/* Label */}
-                  <div className='text-muted-foreground font-medium'>
-                    {stat.label}
-                  </div>
-                </CardContent>
-              </Card>
+                {/* Label below */}
+                <p className='text-center text-foreground font-semibold text-lg'>{stat.label}</p>
+              </div>
             ))}
           </div>
         </div>

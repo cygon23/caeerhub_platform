@@ -189,7 +189,7 @@ export default function ModernFooter() {
                   <div>Youth Helped</div>
                 </div>
                 <div className='text-center'>
-                  <div className='font-bold text-primary text-lg'>10+</div>
+                  <div className='font-bold text-primary text-lg'>5+</div>
                   <div>Partners</div>
                 </div>
                 <div className='text-center'>
