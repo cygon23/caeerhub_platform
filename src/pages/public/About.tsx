@@ -46,7 +46,7 @@ export default function About() {
       description:
         "Career na Mimi was founded with a mission to empower Tanzanian youth through career guidance and skills development.",
       icon: Rocket,
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: "from-[#FE047F] to-[#FE047F]/80",
     },
     {
       year: "2026",
@@ -54,7 +54,7 @@ export default function About() {
       description:
         "Expected to reach our first major milestone of supporting 10,000 young people across Tanzania.",
       icon: Users,
-      gradient: "from-purple-500 to-pink-500",
+      gradient: "from-[#00690D] to-[#00690D]/80",
     },
     {
       year: "2027",
@@ -62,7 +62,7 @@ export default function About() {
       description:
         "Expecting to launch our digital platform to reach youth in remote areas and scale our impact nationwide.",
       icon: Globe,
-      gradient: "from-green-500 to-emerald-500",
+      gradient: "from-[#00690D] to-[#00690D]/80",
     },
     {
       year: "2028",
@@ -70,7 +70,7 @@ export default function About() {
       description:
         "Expected to fully integrate advanced AI technology to provide personalized career recommendations and smart mentorship matching.",
       icon: Sparkles,
-      gradient: "from-amber-500 to-orange-500",
+      gradient: "from-[#FE047F] to-[#FE047F]/80",
     },
     {
       year: "2030",
@@ -78,7 +78,7 @@ export default function About() {
       description:
         "Expecting continued growth and the success stories of hundreds of thousands of young Tanzanians.",
       icon: Star,
-      gradient: "from-pink-500 to-rose-500",
+      gradient: "from-[#FE047F] to-[#FE047F]/80",
     },
   ];
 
@@ -88,28 +88,28 @@ export default function About() {
       role: "CEO & Founder",
       bio: "AI innovator and community leader driving career development solutions for Tanzanian youth.",
       initials: "RM",
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: "from-[#FE047F] to-[#FE047F]/80",
     },
     {
       name: "Abdulswad Azihar",
       role: "CTO",
       bio: "Tech entrepreneur and AI specialist, previously at Google and Microsoft, passionate about using technology for social impact.",
       initials: "AA",
-      gradient: "from-purple-500 to-pink-500",
+      gradient: "from-[#00690D] to-[#00690D]/80",
     },
     {
       name: "Godfrey Gozberty",
       role: "Head of Programs",
       bio: "Career counselor and mentor with expertise in youth psychology and workforce development.",
       initials: "GG",
-      gradient: "from-green-500 to-emerald-500",
+      gradient: "from-[#00690D] to-[#00690D]/80",
     },
     {
       name: "Karen Kamene",
       role: "Head of Partnerships",
       bio: "Partnership official specializing in public-private partnerships and organizational development.",
       initials: "KK",
-      gradient: "from-amber-500 to-orange-500",
+      gradient: "from-[#FE047F] to-[#FE047F]/80",
     },
   ];
 
@@ -120,7 +120,7 @@ export default function About() {
       description:
         "Everything we do is focused on empowering young Tanzanians to achieve their career dreams.",
       gradient: "from-blue-500/20 to-cyan-500/20",
-      iconColor: "text-blue-500",
+      iconColor: "text-[#FE047F]",
     },
     {
       icon: Heart,
@@ -128,7 +128,7 @@ export default function About() {
       description:
         "We understand the unique challenges and opportunities within the Tanzanian context.",
       gradient: "from-pink-500/20 to-rose-500/20",
-      iconColor: "text-pink-500",
+      iconColor: "text-[#FE047F]",
     },
     {
       icon: Users,
@@ -136,7 +136,7 @@ export default function About() {
       description:
         "We believe in the power of mentorship, collaboration, and peer-to-peer learning.",
       gradient: "from-green-500/20 to-emerald-500/20",
-      iconColor: "text-green-500",
+      iconColor: "text-[#00690D]",
     },
     {
       icon: Award,
@@ -144,7 +144,7 @@ export default function About() {
       description:
         "We strive for the highest quality in everything we deliver to our youth community.",
       gradient: "from-purple-500/20 to-pink-500/20",
-      iconColor: "text-purple-500",
+      iconColor: "text-[#00690D]",
     },
   ];
 
@@ -153,25 +153,25 @@ export default function About() {
       number: "42,000+",
       label: "Youth Empowered",
       icon: Users,
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: "from-[#FE047F] to-[#FE047F]/80",
     },
     {
       number: "10+",
       label: "Regions Covered",
       icon: MapPin,
-      gradient: "from-purple-500 to-pink-500",
+      gradient: "from-[#00690D] to-[#00690D]/80",
     },
     {
       number: "89%",
       label: "Success Rate",
       icon: TrendingUp,
-      gradient: "from-green-500 to-emerald-500",
+      gradient: "from-[#00690D] to-[#00690D]/80",
     },
     {
       number: "150+",
       label: "Corporate Partners",
       icon: Award,
-      gradient: "from-amber-500 to-orange-500",
+      gradient: "from-[#FE047F] to-[#FE047F]/80",
     },
   ];
 
@@ -183,7 +183,7 @@ export default function About() {
         "Revolutionary algorithm that analyzes personality, skills, and market trends to find perfect career fits.",
       year: "2024",
       gradient: "from-blue-500/20 to-cyan-500/20",
-      iconColor: "text-blue-500",
+      iconColor: "text-[#FE047F]",
     },
     {
       icon: Users,
@@ -192,7 +192,7 @@ export default function About() {
         "AI-driven mentor matching system connecting youth with industry professionals based on compatibility.",
       year: "2025",
       gradient: "from-purple-500/20 to-pink-500/20",
-      iconColor: "text-purple-500",
+      iconColor: "text-[#00690D]",
     },
     {
       icon: Shield,
@@ -201,14 +201,14 @@ export default function About() {
         "Secure, verifiable digital credentials and achievements stored on blockchain technology.",
       year: "2025",
       gradient: "from-green-500/20 to-emerald-500/20",
-      iconColor: "text-green-500",
+      iconColor: "text-[#00690D]",
     },
   ];
 
   return (
     <PublicLayout>
       {/* Hero Section - Redesigned */}
-      <section className='relative py-32 bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950 overflow-hidden'>
+      <section className='relative py-32 bg-gradient-to-br from-[#FE047F]/20 via-white to-[#00690D]/20 overflow-hidden'>
         {/* Animated background */}
         <div className='absolute inset-0'>
           <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
@@ -237,7 +237,7 @@ export default function About() {
             <h1 className='text-5xl md:text-7xl font-bold mb-6 leading-tight'>
               <span className='text-white'>Our Story,</span>
               <br />
-              <span className='bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#FE047F] to-[#FE047F] bg-clip-text text-transparent'>
                 Your Journey
               </span>
             </h1>
@@ -260,12 +260,12 @@ export default function About() {
             className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
             <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
               {/* Gradient accent */}
-              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 to-cyan-500'></div>
+              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#FE047F] to-[#FE047F]/80'></div>
 
               <CardContent className='p-10'>
                 <div className='relative mb-8'>
-                  <div className='absolute inset-0 text-blue-500 opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
-                  <Target className='relative h-16 w-16 text-blue-500' />
+                  <div className='absolute inset-0 text-[#FE047F] opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
+                  <Target className='relative h-16 w-16 text-[#FE047F]' />
                 </div>
 
                 <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
@@ -280,18 +280,18 @@ export default function About() {
                   prosperity.
                 </p>
 
-                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full'></div>
+                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-[#FE047F] to-[#FE047F]/80 rounded-full'></div>
               </CardContent>
             </Card>
 
             <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
               {/* Gradient accent */}
-              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 to-pink-500'></div>
+              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#00690D] to-[#00690D]/80'></div>
 
               <CardContent className='p-10'>
                 <div className='relative mb-8'>
-                  <div className='absolute inset-0 text-purple-500 opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
-                  <Eye className='relative h-16 w-16 text-purple-500' />
+                  <div className='absolute inset-0 text-[#00690D] opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
+                  <Eye className='relative h-16 w-16 text-[#00690D]' />
                 </div>
 
                 <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
@@ -305,7 +305,7 @@ export default function About() {
                   creating a generation of empowered leaders and innovators.
                 </p>
 
-                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full'></div>
+                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-[#00690D] to-[#00690D]/80 rounded-full'></div>
               </CardContent>
             </Card>
           </div>
@@ -321,7 +321,7 @@ export default function About() {
           <div className='text-center mb-16'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-4'>
               Our{" "}
-              <span className='bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#FE047F] to-[#00690D] bg-clip-text text-transparent'>
                 Impact Story
               </span>
             </h2>
@@ -375,7 +375,7 @@ export default function About() {
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               Innovation at{" "}
-              <span className='bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#FE047F] via-purple-600 to-[#FE047F] bg-clip-text text-transparent'>
                 Our Core
               </span>
             </h2>
@@ -435,7 +435,7 @@ export default function About() {
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               Our{" "}
-              <span className='bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#00690D] to-[#00690D] bg-clip-text text-transparent'>
                 Journey
               </span>
             </h2>
@@ -506,7 +506,7 @@ export default function About() {
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               Meet the{" "}
-              <span className='bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#FE047F] to-[#00690D] bg-clip-text text-transparent'>
                 Visionaries
               </span>
             </h2>
@@ -566,7 +566,7 @@ export default function About() {
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               Our{" "}
-              <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
+              <span className='bg-gradient-to-r from-[#FE047F] to-[#FE047F] bg-clip-text text-transparent'>
                 Values
               </span>
             </h2>
@@ -614,7 +614,7 @@ export default function About() {
       </section>
 
       {/* CTA - Redesigned */}
-      <section className='relative py-32 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 overflow-hidden'>
+      <section className='relative py-32 bg-gradient-to-br from-[#FE047F] via-[#00690D] to-[#FE047F] overflow-hidden'>
         {/* Animated background */}
         <div className='absolute inset-0'>
           <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
@@ -645,7 +645,7 @@ export default function About() {
 
             <h2 className='text-5xl md:text-6xl font-bold text-white mb-8 leading-tight'>
               Be Part of
-              <span className='block mt-2 bg-gradient-to-r from-blue-300 to-pink-300 bg-clip-text text-transparent'>
+              <span className='block mt-2 bg-gradient-to-r from-white to-white bg-clip-text text-transparent'>
                 Something Greater
               </span>
             </h2>
