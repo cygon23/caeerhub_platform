@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useGSAP, useGSAPStagger } from "@/hooks/useGSAP";
 import {
   Facebook,
   Twitter,
@@ -12,12 +11,9 @@ import {
   Phone,
   MapPin,
   ArrowRight,
-  Heart,
 } from "lucide-react";
 
 export default function ModernFooter() {
-  const footerRef = useGSAP();
-  const staggerRef = useGSAPStagger(0.1);
 
   const navigation = {
     company: [
@@ -59,21 +55,9 @@ export default function ModernFooter() {
   ];
 
   return (
-    <footer
-      ref={footerRef}
-      className='bg-gradient-to-br from-background to-muted/30 border-t border-border/50 overflow-hidden relative'>
-      {/* Decorative background elements */}
-      <div className='absolute inset-0 opacity-5'>
-        <div className='absolute -top-24 -right-24 w-96 h-96 bg-primary rounded-full blur-3xl'></div>
-        <div className='absolute -bottom-24 -left-24 w-96 h-96 bg-secondary rounded-full blur-3xl'></div>
-      </div>
-
-      <div className='relative'>
-        {/* Main Footer Content */}
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
-          <div
-            ref={staggerRef}
-            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12'>
+    <footer className='bg-gradient-to-br from-background to-muted/30 border-t border-border/50'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12'>
             {/* Brand Section */}
             <div className='lg:col-span-2'>
               <Link to='/' className='flex items-center space-x-3 mb-6'>
@@ -118,7 +102,7 @@ export default function ModernFooter() {
                   <li key={item.name}>
                     <Link
                       to={item.href}
-                      className='text-muted-foreground hover:text-primary transition-colors duration-200 hover:translate-x-1 inline-block'>
+                      className='text-muted-foreground hover:text-primary transition-colors duration-200'>
                       {item.name}
                     </Link>
                   </li>
@@ -135,7 +119,7 @@ export default function ModernFooter() {
                   <li key={item.name}>
                     <Link
                       to={item.href}
-                      className='text-muted-foreground hover:text-primary transition-colors duration-200 hover:translate-x-1 inline-block'>
+                      className='text-muted-foreground hover:text-primary transition-colors duration-200'>
                       {item.name}
                     </Link>
                   </li>
@@ -152,7 +136,7 @@ export default function ModernFooter() {
                   <li key={item.name}>
                     <Link
                       to={item.href}
-                      className='text-muted-foreground hover:text-primary transition-colors duration-200 hover:translate-x-1 inline-block'>
+                      className='text-muted-foreground hover:text-primary transition-colors duration-200'>
                       {item.name}
                     </Link>
                   </li>
@@ -169,7 +153,7 @@ export default function ModernFooter() {
                   <li key={item.name}>
                     <Link
                       to={item.href}
-                      className='text-muted-foreground hover:text-primary transition-colors duration-200 hover:translate-x-1 inline-block'>
+                      className='text-muted-foreground hover:text-primary transition-colors duration-200'>
                       {item.name}
                     </Link>
                   </li>
@@ -191,7 +175,7 @@ export default function ModernFooter() {
                     <a
                       key={social.name}
                       href={social.href}
-                      className='text-muted-foreground hover:text-primary transition-all duration-200 hover:scale-110 hover:-translate-y-1'
+                      className='text-muted-foreground hover:text-primary transition-colors duration-200'
                       aria-label={social.name}>
                       <social.icon className='h-5 w-5' />
                     </a>
@@ -221,20 +205,17 @@ export default function ModernFooter() {
           <div className='border-t border-border/50 mt-8 pt-8'>
             <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
               <p className='text-muted-foreground text-center md:text-left'>
-                © 2024 Career na Mimi. All rights reserved. Built with{" "}
-                <Heart className='inline h-4 w-4 text-red-500 fill-current' />{" "}
-                in Tanzania.
+                © 2024 Career na Mimi. All rights reserved. Built in Tanzania.
               </p>
 
               <div className='flex items-center space-x-6 text-sm text-muted-foreground'>
-                <span>🌍 Available in Swahili & English</span>
+                <span>Available in Swahili & English</span>
                 <span>•</span>
-                <span>📱 Mobile Apps Coming Soon</span>
+                <span>Mobile Apps Coming Soon</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
     </footer>
   );
 }
