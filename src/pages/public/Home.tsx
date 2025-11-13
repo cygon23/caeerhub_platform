@@ -243,20 +243,18 @@ export default function Home() {
                 <span className='text-sm font-semibold text-[#FE047F]'>AI-Powered Career Platform</span>
               </div>
 
-              {/* Main Headline */}
+              {/* Main Headline - Powerful Slogan */}
               <h1 className='text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-[1.1]'>
-                Your Career,
+                <span className='text-[#FE047F]'>AI Drives It.</span>
                 <br />
-                <span className='text-[#FE047F]'>Powered by AI</span>
+                <span className='text-[#00690D]'>Experts Refine It.</span>
                 <br />
-                <span className='text-[#00690D]'>Guided by Experts</span>
+                <span className='text-foreground'>You Lead It.</span>
               </h1>
 
-              {/* Description - Powerful Slogan */}
+              {/* Description */}
               <p className='text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl'>
-                <span className='font-semibold text-foreground'>AI Drives It.</span>{" "}
-                <span className='font-semibold text-foreground'>Experts Refine It.</span>{" "}
-                <span className='font-semibold text-foreground'>You Lead It.</span>
+                Empowering Tanzanian youth with AI-driven career guidance and expert mentorship.
               </p>
 
               {/* Stats - Circular Badges */}
