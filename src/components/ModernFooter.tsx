@@ -61,12 +61,11 @@ export default function ModernFooter() {
             {/* Brand Section */}
             <div className='lg:col-span-2'>
               <Link to='/' className='flex items-center space-x-3 mb-6'>
-                <div className='w-12 h-12 bg-gradient-hero rounded-2xl flex items-center justify-center shadow-primary'>
-                  <span className='text-white font-bold text-lg'>C</span>
-                </div>
-                <span className='text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent'>
-                  Career na Mimi
-                </span>
+                <img
+                  src='/logo.png'
+                  alt='Career na Mimi Logo'
+                  className='h-12 w-auto object-contain'
+                />
               </Link>
 
               <p className='text-muted-foreground mb-6 leading-relaxed'>
@@ -79,7 +78,7 @@ export default function ModernFooter() {
               <div className='space-y-3'>
                 <div className='flex items-center text-muted-foreground'>
                   <MapPin className='h-4 w-4 mr-3 text-primary' />
-                  <span>Dar es Salaam, Tanzania</span>
+                  <span>Arusha, Tanzania</span>
                 </div>
                 <div className='flex items-center text-muted-foreground'>
                   <Mail className='h-4 w-4 mr-3 text-primary' />
