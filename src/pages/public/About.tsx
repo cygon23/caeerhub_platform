@@ -2,8 +2,33 @@ import PublicLayout from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Target, Eye, Heart, Calendar, Users, Award, MapPin, TrendingUp, Lightbulb, Shield } from "lucide-react";
-import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip } from "@/hooks/useGSAP";
+import {
+  Target,
+  Eye,
+  Heart,
+  Calendar,
+  Users,
+  Award,
+  MapPin,
+  TrendingUp,
+  Lightbulb,
+  Shield,
+  Sparkles,
+  Rocket,
+  Star,
+  Globe,
+  Zap,
+  CheckCircle2,
+  ArrowRight,
+  UserCircle2,
+} from "lucide-react";
+import {
+  useGSAP,
+  useGSAPScale,
+  useGSAPStagger,
+  useGSAPTextReveal,
+  useGSAPFlip,
+} from "@/hooks/useGSAP";
 
 export default function About() {
   const heroRef = useGSAPTextReveal();
@@ -20,57 +45,71 @@ export default function About() {
       title: "Foundation Launch",
       description:
         "Career na Mimi was founded with a mission to empower Tanzanian youth through career guidance and skills development.",
+      icon: Rocket,
+      gradient: "from-blue-500 to-cyan-500",
     },
     {
       year: "2026",
-      title: "First 1,000 Youth",
+      title: "First 10,000 Youth",
       description:
-        "EXpected to Reached our first major milestone of supporting 10,000 young people across Tanzania.",
+        "Expected to reach our first major milestone of supporting 10,000 young people across Tanzania.",
+      icon: Users,
+      gradient: "from-purple-500 to-pink-500",
     },
     {
       year: "2027",
       title: "Digital Transformation",
       description:
-        "Expecting to Launched our digital platform to reach youth in remote areas and scale our impact nationwide.",
+        "Expecting to launch our digital platform to reach youth in remote areas and scale our impact nationwide.",
+      icon: Globe,
+      gradient: "from-green-500 to-emerald-500",
     },
     {
-      year: "2027",
+      year: "2028",
       title: "AI-Powered Platform",
       description:
-        "Expected to fully Integrated advanced AI technology to provide personalized career recommendations and smart mentorship matching.",
+        "Expected to fully integrate advanced AI technology to provide personalized career recommendations and smart mentorship matching.",
+      icon: Sparkles,
+      gradient: "from-amber-500 to-orange-500",
     },
     {
       year: "2030",
-      title: "200+ Youth Impacted",
+      title: "200K+ Youth Impacted",
       description:
-        "expecting our continued growth and the success stories of thousands of young Tanzanians.",
+        "Expecting continued growth and the success stories of hundreds of thousands of young Tanzanians.",
+      icon: Star,
+      gradient: "from-pink-500 to-rose-500",
     },
   ];
 
   const team = [
     {
-      name: "Rahman mabahe",
+      name: "Rahman Mabahe",
       role: "CEO & Founder",
-      bio: "AI , innovator and comminity lead .",
-      image: "👨🏿‍💼",
+      bio: "AI innovator and community leader driving career development solutions for Tanzanian youth.",
+      initials: "RM",
+      gradient: "from-blue-500 to-cyan-500",
     },
     {
-      name: "Abdulswad azihar",
+      name: "Abdulswad Azihar",
       role: "CTO",
       bio: "Tech entrepreneur and AI specialist, previously at Google and Microsoft, passionate about using technology for social impact.",
-      image: "👨🏿‍💼",
+      initials: "AA",
+      gradient: "from-purple-500 to-pink-500",
     },
     {
-      name: "Godfrey gozberty",
+      name: "Godfrey Gozberty",
       role: "Head of Programs",
       bio: "Career counselor and mentor with expertise in youth psychology and workforce development.",
-      image: "👨🏿‍💻",
+      initials: "GG",
+      gradient: "from-green-500 to-emerald-500",
     },
     {
-      name: "Karen kamene",
+      name: "Karen Kamene",
       role: "Head of Partnerships",
-      bio: "official specializing in public-private partnerships and organizational development.",
-      image: "👩🏿‍🏫",
+      bio: "Partnership official specializing in public-private partnerships and organizational development.",
+      initials: "KK",
+      gradient: "from-amber-500 to-orange-500",
     },
   ];
 
@@ -80,51 +119,59 @@ export default function About() {
       title: "Purpose-Driven",
       description:
         "Everything we do is focused on empowering young Tanzanians to achieve their career dreams.",
+      gradient: "from-blue-500/20 to-cyan-500/20",
+      iconColor: "text-blue-500",
     },
     {
       icon: Heart,
       title: "Locally Rooted",
       description:
         "We understand the unique challenges and opportunities within the Tanzanian context.",
+      gradient: "from-pink-500/20 to-rose-500/20",
+      iconColor: "text-pink-500",
     },
     {
       icon: Users,
       title: "Community-Centered",
       description:
         "We believe in the power of mentorship, collaboration, and peer-to-peer learning.",
+      gradient: "from-green-500/20 to-emerald-500/20",
+      iconColor: "text-green-500",
     },
     {
       icon: Award,
       title: "Excellence-Focused",
       description:
         "We strive for the highest quality in everything we deliver to our youth community.",
+      gradient: "from-purple-500/20 to-pink-500/20",
+      iconColor: "text-purple-500",
     },
   ];
 
   const impactStats = [
     {
-      number: "200+",
+      number: "42,000+",
       label: "Youth Empowered",
       icon: Users,
-      color: "text-primary",
+      gradient: "from-blue-500 to-cyan-500",
     },
     {
-      number: "2",
+      number: "10+",
       label: "Regions Covered",
       icon: MapPin,
-      color: "text-secondary",
+      gradient: "from-purple-500 to-pink-500",
     },
     {
       number: "89%",
       label: "Success Rate",
       icon: TrendingUp,
-      color: "text-primary",
+      gradient: "from-green-500 to-emerald-500",
     },
     {
-      number: "10+",
+      number: "150+",
       label: "Corporate Partners",
       icon: Award,
-      color: "text-secondary",
+      gradient: "from-amber-500 to-orange-500",
     },
   ];
 
@@ -132,33 +179,43 @@ export default function About() {
     {
       icon: Lightbulb,
       title: "AI-Powered Career Matching",
-      description: "Revolutionary algorithm that analyzes personality, skills, and market trends to find perfect career fits.",
-      year: "2024"
+      description:
+        "Revolutionary algorithm that analyzes personality, skills, and market trends to find perfect career fits.",
+      year: "2024",
+      gradient: "from-blue-500/20 to-cyan-500/20",
+      iconColor: "text-blue-500",
     },
     {
       icon: Users,
       title: "Smart Mentorship Platform",
-      description: "AI-driven mentor matching system connecting youth with industry professionals based on compatibility.",
-      year: "2025"
+      description:
+        "AI-driven mentor matching system connecting youth with industry professionals based on compatibility.",
+      year: "2025",
+      gradient: "from-purple-500/20 to-pink-500/20",
+      iconColor: "text-purple-500",
     },
     {
       icon: Shield,
       title: "Blockchain Certification",
-      description: "Secure, verifiable digital credentials and achievements stored on blockchain technology.",
-      year: "2025"
-    }
+      description:
+        "Secure, verifiable digital credentials and achievements stored on blockchain technology.",
+      year: "2025",
+      gradient: "from-green-500/20 to-emerald-500/20",
+      iconColor: "text-green-500",
+    },
   ];
 
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className='py-20 bg-gradient-card relative overflow-hidden'>
-        {/* Animated background elements */}
+      {/* Hero Section - Redesigned */}
+      <section className='relative py-32 bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950 overflow-hidden'>
+        {/* Animated background */}
         <div className='absolute inset-0'>
-          {[...Array(15)].map((_, i) => (
+          <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
+          {[...Array(20)].map((_, i) => (
             <div
               key={i}
-              className='absolute rounded-full bg-primary/5 animate-pulse'
+              className='absolute rounded-full bg-white/5 animate-pulse'
               style={{
                 width: `${30 + Math.random() * 100}px`,
                 height: `${30 + Math.random() * 100}px`,
@@ -172,76 +229,105 @@ export default function About() {
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
           <div ref={heroRef}>
-            <h1 className='text-4xl md:text-6xl font-bold text-foreground mb-6'>
-              About
-              <span className='bg-gradient-hero bg-clip-text text-transparent'>
-                {" "}
-                Career na Mimi
+            <div className='inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full text-white mb-8 border border-white/20'>
+              <Sparkles className='h-5 w-5 text-yellow-300' />
+              <span className='font-semibold'>Empowering Tanzania's Future</span>
+            </div>
+
+            <h1 className='text-5xl md:text-7xl font-bold mb-6 leading-tight'>
+              <span className='text-white'>Our Story,</span>
+              <br />
+              <span className='bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent'>
+                Your Journey
               </span>
             </h1>
-            <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              Empowering Tanzanian youth since 2024 through innovative career
-              development, mentorship, and AI-powered guidance to build
-              successful and fulfilling careers.
+
+            <p className='text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed'>
+              Since 2024, we've been on a mission to democratize career development for Tanzanian youth.
+              <span className='block mt-2 text-blue-300'>
+                Every success story fuels our commitment to building a brighter future.
+              </span>
             </p>
           </div>
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section className='py-20'>
+      {/* Mission & Vision - Redesigned */}
+      <section className='py-24 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div
             ref={missionRef}
             className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
-            <Card className='hover:shadow-primary transition-all duration-500 border-0 bg-gradient-card transform hover:scale-105'>
-              <CardContent className='p-8'>
-                <div className='flex items-center mb-6'>
-                  <Target className='h-12 w-12 text-primary mr-4' />
-                  <h2 className='text-3xl font-bold text-foreground'>
-                    Our Mission
-                  </h2>
+            <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
+              {/* Gradient accent */}
+              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 to-cyan-500'></div>
+
+              <CardContent className='p-10'>
+                <div className='relative mb-8'>
+                  <div className='absolute inset-0 text-blue-500 opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
+                  <Target className='relative h-16 w-16 text-blue-500' />
                 </div>
+
+                <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
+                  Our Mission
+                </h2>
+
                 <p className='text-lg text-muted-foreground leading-relaxed'>
-                  To democratize access to quality career guidance and
-                  mentorship for all Tanzanian youth, regardless of their
-                  background or location, using innovative technology and local
-                  expertise to unlock their full potential and create pathways
-                  to economic prosperity.
+                  To democratize access to quality career guidance and mentorship
+                  for all Tanzanian youth, regardless of their background or
+                  location, using innovative technology and local expertise to
+                  unlock their full potential and create pathways to economic
+                  prosperity.
                 </p>
+
+                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full'></div>
               </CardContent>
             </Card>
 
-            <Card className='hover:shadow-secondary transition-all duration-500 border-0 bg-gradient-card transform hover:scale-105'>
-              <CardContent className='p-8'>
-                <div className='flex items-center mb-6'>
-                  <Eye className='h-12 w-12 text-secondary mr-4' />
-                  <h2 className='text-3xl font-bold text-foreground'>
-                    Our Vision
-                  </h2>
+            <Card className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
+              {/* Gradient accent */}
+              <div className='absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 to-pink-500'></div>
+
+              <CardContent className='p-10'>
+                <div className='relative mb-8'>
+                  <div className='absolute inset-0 text-purple-500 opacity-20 blur-2xl group-hover:opacity-40 transition-opacity'></div>
+                  <Eye className='relative h-16 w-16 text-purple-500' />
                 </div>
+
+                <h2 className='text-3xl md:text-4xl font-bold text-foreground mb-6'>
+                  Our Vision
+                </h2>
+
                 <p className='text-lg text-muted-foreground leading-relaxed'>
                   A Tanzania where every young person has the knowledge, skills,
                   and support network needed to pursue meaningful careers that
-                  contribute to both personal fulfillment and national
-                  development, creating a generation of empowered leaders and
-                  innovators.
+                  contribute to both personal fulfillment and national development,
+                  creating a generation of empowered leaders and innovators.
                 </p>
+
+                <div className='mt-6 h-1 w-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full'></div>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Impact Stats */}
-      <section className='py-20 bg-muted/30'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      {/* Impact Stats - Redesigned */}
+      <section className='py-24 bg-white dark:bg-slate-950 relative overflow-hidden'>
+        {/* Background decoration */}
+        <div className='absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-800 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,black,rgba(0,0,0,0.6))]'></div>
+
+        <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-foreground mb-4'>
-              Our Impact
+            <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-4'>
+              Our{" "}
+              <span className='bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
+                Impact Story
+              </span>
             </h2>
-            <p className='text-xl text-muted-foreground'>
-              Real numbers, real change across Tanzania
+            <p className='text-xl text-muted-foreground max-w-2xl mx-auto'>
+              Real numbers that reflect lives transformed and futures brightened
+              across Tanzania
             </p>
           </div>
 
@@ -251,14 +337,28 @@ export default function About() {
             {impactStats.map((stat, index) => (
               <Card
                 key={stat.label}
-                className='text-center hover:shadow-elegant transition-all duration-500 border-0 bg-background/50 backdrop-blur-sm transform hover:scale-110'>
-                <CardContent className='p-6'>
-                  <stat.icon
-                    className={`h-12 w-12 mx-auto mb-4 ${stat.color}`}
-                  />
-                  <div className={`text-3xl font-bold mb-2 ${stat.color}`}>
+                className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 hover:-translate-y-2'>
+                {/* Gradient accent */}
+                <div
+                  className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`}></div>
+
+                <CardContent className='p-8 text-center relative'>
+                  {/* Icon with glow */}
+                  <div className='relative inline-block mb-6'>
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-r ${stat.gradient} opacity-20 blur-xl group-hover:opacity-40 transition-opacity`}></div>
+                    <div
+                      className={`relative p-4 rounded-2xl bg-gradient-to-r ${stat.gradient} bg-opacity-10`}>
+                      <stat.icon className='h-10 w-10 text-white' />
+                    </div>
+                  </div>
+
+                  {/* Number */}
+                  <div className='text-4xl md:text-5xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300'>
                     {stat.number}
                   </div>
+
+                  {/* Label */}
                   <div className='text-muted-foreground font-medium'>
                     {stat.label}
                   </div>
@@ -269,36 +369,57 @@ export default function About() {
         </div>
       </section>
 
-      {/* Innovation Section */}
-      <section className='py-20'>
+      {/* Innovation Section - Redesigned */}
+      <section className='py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-blue-950 dark:to-slate-900'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-foreground mb-4'>
-              Innovation at Our Core
+          <div className='text-center mb-20'>
+            <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
+              Innovation at{" "}
+              <span className='bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent'>
+                Our Core
+              </span>
             </h2>
-            <p className='text-xl text-muted-foreground'>
-              Pioneering technology solutions for career development
+            <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
+              Pioneering technology solutions that bridge the gap between
+              potential and opportunity
             </p>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-10'>
             {innovations.map((innovation, index) => (
               <Card
                 key={innovation.title}
-                className='hover:shadow-secondary transition-all duration-500 border-0 bg-gradient-card group'>
-                <CardContent className='p-8 text-center'>
-                  <div className='relative mb-6'>
-                    <div className='p-4 bg-secondary/10 rounded-full w-fit mx-auto group-hover:scale-110 transition-transform duration-300'>
-                      <innovation.icon className='h-10 w-10 text-secondary' />
-                    </div>
-                    <span className='absolute -top-2 -right-2 bg-primary text-white text-xs px-2 py-1 rounded-full'>
+                className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
+                {/* Gradient background */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${innovation.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+
+                <CardContent className='relative p-10 text-center'>
+                  {/* Year badge */}
+                  <div className='absolute top-4 right-4'>
+                    <span
+                      className={`inline-flex items-center gap-1 bg-gradient-to-r ${innovation.gradient} backdrop-blur-sm px-3 py-1 rounded-full text-white text-xs font-bold`}>
+                      <Zap className='h-3 w-3' />
                       {innovation.year}
                     </span>
                   </div>
-                  <h3 className='text-xl font-semibold text-foreground mb-4'>
+
+                  {/* Icon */}
+                  <div className='relative mb-8'>
+                    <div
+                      className={`absolute inset-0 ${innovation.iconColor} opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`}></div>
+                    <innovation.icon
+                      className={`relative h-16 w-16 ${innovation.iconColor} mx-auto`}
+                    />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className='text-2xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors'>
                     {innovation.title}
                   </h3>
-                  <p className='text-muted-foreground'>
+
+                  {/* Description */}
+                  <p className='text-muted-foreground leading-relaxed'>
                     {innovation.description}
                   </p>
                 </CardContent>
@@ -308,23 +429,26 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className='py-20 bg-muted/30'>
+      {/* Timeline - Redesigned */}
+      <section className='py-24 bg-white dark:bg-slate-950'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-foreground mb-4'>
-              Our Journey
+          <div className='text-center mb-20'>
+            <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
+              Our{" "}
+              <span className='bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent'>
+                Journey
+              </span>
             </h2>
-            <p className='text-xl text-muted-foreground'>
+            <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
               From a small initiative to a nationwide movement empowering youth
               across Tanzania
             </p>
           </div>
 
           <div className='relative'>
-            <div className='absolute left-1/2 transform -translate-x-px h-full w-0.5 bg-gradient-hero'></div>
+            <div className='absolute left-1/2 transform -translate-x-px h-full w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 opacity-20'></div>
 
-            <div className='space-y-12'>
+            <div className='space-y-16'>
               {timeline.map((milestone, index) => (
                 <div
                   key={milestone.year}
@@ -334,27 +458,41 @@ export default function About() {
                   style={{ animationDelay: `${index * 0.2}s` }}>
                   <div
                     className={`w-5/12 ${
-                      index % 2 === 0 ? "text-right pr-8" : "text-left pl-8"
+                      index % 2 === 0 ? "text-right pr-12" : "text-left pl-12"
                     }`}>
-                    <Card className='hover:shadow-elegant transition-all duration-300'>
-                      <CardContent className='p-6'>
-                        <div className='flex items-center mb-2'>
-                          <Calendar className='h-5 w-5 text-primary mr-2' />
-                          <span className='text-primary font-bold text-lg'>
-                            {milestone.year}
-                          </span>
+                    <Card className='group hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 hover:-translate-y-2'>
+                      <CardContent className='p-8'>
+                        {/* Icon */}
+                        <div
+                          className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${milestone.gradient} mb-4`}>
+                          <milestone.icon className='h-6 w-6 text-white' />
                         </div>
-                        <h3 className='text-xl font-semibold text-foreground mb-3'>
+
+                        {/* Year */}
+                        <div
+                          className={`inline-flex items-center gap-2 bg-gradient-to-r ${milestone.gradient} bg-clip-text text-transparent font-bold text-xl mb-3`}>
+                          <Calendar className='h-5 w-5' />
+                          {milestone.year}
+                        </div>
+
+                        {/* Title */}
+                        <h3 className='text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors'>
                           {milestone.title}
                         </h3>
-                        <p className='text-muted-foreground'>
+
+                        {/* Description */}
+                        <p className='text-muted-foreground leading-relaxed'>
                           {milestone.description}
                         </p>
                       </CardContent>
                     </Card>
                   </div>
 
-                  <div className='absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rounded-full border-4 border-background z-10'></div>
+                  {/* Center dot */}
+                  <div
+                    className={`absolute left-1/2 transform -translate-x-1/2 p-2 bg-gradient-to-r ${milestone.gradient} rounded-full border-4 border-background z-10 shadow-xl`}>
+                    <div className='w-3 h-3 bg-white rounded-full'></div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -362,32 +500,59 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className='py-20'>
+      {/* Team - Redesigned */}
+      <section className='py-24 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-foreground mb-4'>
-              Meet Our Team
+          <div className='text-center mb-20'>
+            <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
+              Meet the{" "}
+              <span className='bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>
+                Visionaries
+              </span>
             </h2>
-            <p className='text-xl text-muted-foreground'>
-              Passionate leaders dedicated to empowering the next generation of
-              Tanzanian professionals
+            <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
+              Passionate leaders united by a commitment to empowering the next
+              generation of Tanzanian professionals
             </p>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+          <div
+            ref={teamRef}
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
             {team.map((member, index) => (
               <Card
                 key={member.name}
-                className='hover:shadow-primary transition-all duration-300 animate-bounce-in border-0 bg-gradient-card text-center'
-                style={{ animationDelay: `${index * 0.1}s` }}>
-                <CardContent className='p-6'>
-                  <div className='text-6xl mb-4'>{member.image}</div>
-                  <h3 className='text-xl font-semibold text-foreground mb-1'>
+                className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 text-center hover:-translate-y-2'>
+                <CardContent className='p-8'>
+                  {/* Avatar with gradient */}
+                  <div className='relative mb-6'>
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-r ${member.gradient} opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`}></div>
+                    <div
+                      className={`relative w-24 h-24 mx-auto rounded-2xl bg-gradient-to-r ${member.gradient} flex items-center justify-center text-white text-3xl font-bold shadow-2xl transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                      {member.initials}
+                    </div>
+                  </div>
+
+                  {/* Name */}
+                  <h3 className='text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors'>
                     {member.name}
                   </h3>
-                  <p className='text-primary font-medium mb-3'>{member.role}</p>
-                  <p className='text-sm text-muted-foreground'>{member.bio}</p>
+
+                  {/* Role */}
+                  <p
+                    className={`text-sm font-semibold mb-4 bg-gradient-to-r ${member.gradient} bg-clip-text text-transparent`}>
+                    {member.role}
+                  </p>
+
+                  {/* Bio */}
+                  <p className='text-sm text-muted-foreground leading-relaxed'>
+                    {member.bio}
+                  </p>
+
+                  {/* Decorative element */}
+                  <div
+                    className={`mt-6 h-1 w-12 mx-auto bg-gradient-to-r ${member.gradient} rounded-full`}></div>
                 </CardContent>
               </Card>
             ))}
@@ -395,30 +560,52 @@ export default function About() {
         </div>
       </section>
 
-      {/* Values */}
-      <section className='py-20 bg-gradient-card'>
+      {/* Values - Redesigned */}
+      <section className='py-24 bg-white dark:bg-slate-950'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-foreground mb-4'>
-              Our Values
+          <div className='text-center mb-20'>
+            <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
+              Our{" "}
+              <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
+                Values
+              </span>
             </h2>
-            <p className='text-xl text-muted-foreground'>
-              The principles that guide everything we do
+            <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
+              The guiding principles that shape our culture, drive our decisions,
+              and define our commitment to excellence
             </p>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+          <div
+            ref={valuesRef}
+            className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
             {values.map((value, index) => (
               <Card
                 key={value.title}
-                className='hover:shadow-secondary transition-all duration-300 animate-fade-in text-center border-0 bg-background/50 backdrop-blur-sm'
-                style={{ animationDelay: `${index * 0.15}s` }}>
-                <CardContent className='p-6'>
-                  <value.icon className='h-12 w-12 text-primary mx-auto mb-4' />
-                  <h3 className='text-xl font-semibold text-foreground mb-3'>
+                className='group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 text-center hover:-translate-y-2'>
+                {/* Gradient background on hover */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${value.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+
+                <CardContent className='relative p-8'>
+                  {/* Icon */}
+                  <div className='relative mb-6'>
+                    <div
+                      className={`absolute inset-0 ${value.iconColor} opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`}></div>
+                    <value.icon
+                      className={`relative h-14 w-14 ${value.iconColor} mx-auto`}
+                    />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className='text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors'>
                     {value.title}
                   </h3>
-                  <p className='text-muted-foreground'>{value.description}</p>
+
+                  {/* Description */}
+                  <p className='text-muted-foreground leading-relaxed'>
+                    {value.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -426,24 +613,67 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className='py-20 bg-gradient-hero'>
-        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-          <div className='animate-bounce-in'>
-            <h2 className='text-4xl font-bold text-white mb-6'>
-              Join Our Mission
+      {/* CTA - Redesigned */}
+      <section className='relative py-32 bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 overflow-hidden'>
+        {/* Animated background */}
+        <div className='absolute inset-0'>
+          <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className='absolute rounded-full bg-white/5 animate-pulse'
+              style={{
+                width: `${40 + Math.random() * 120}px`,
+                height: `${40 + Math.random() * 120}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
+              }}></div>
+          ))}
+        </div>
+
+        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
+          <div ref={ctaRef}>
+            {/* Badge */}
+            <div className='inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full text-white mb-8 border border-white/20'>
+              <Rocket className='h-5 w-5 text-yellow-300' />
+              <span className='font-semibold'>
+                Join Our Mission to Transform Lives
+              </span>
+            </div>
+
+            <h2 className='text-5xl md:text-6xl font-bold text-white mb-8 leading-tight'>
+              Be Part of
+              <span className='block mt-2 bg-gradient-to-r from-blue-300 to-pink-300 bg-clip-text text-transparent'>
+                Something Greater
+              </span>
             </h2>
-            <p className='text-xl text-white/90 mb-8'>
-              Be part of Tanzania's largest youth empowerment community and
-              start your career journey today.
+
+            <p className='text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed'>
+              Join Tanzania's largest youth empowerment community and start your
+              career journey today—completely free.
             </p>
-            <Link to='/signup'>
-              <Button
-                size='lg'
-                className='bg-white text-primary hover:bg-white/90 text-lg px-12 py-4 shadow-elegant'>
-                Get Started Today
-              </Button>
-            </Link>
+
+            <div className='flex flex-col sm:flex-row gap-6 justify-center items-center'>
+              <Link to='/signup'>
+                <Button
+                  size='lg'
+                  className='group bg-white text-blue-900 hover:bg-blue-50 text-xl px-12 py-7 shadow-2xl transform hover:scale-110 transition-all duration-500 font-bold'>
+                  Get Started Today
+                  <ArrowRight className='ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform' />
+                </Button>
+              </Link>
+
+              <Link to='/contact'>
+                <Button
+                  size='lg'
+                  variant='outline'
+                  className='border-2 border-white text-white hover:bg-white/10 text-xl px-12 py-7 transform hover:scale-105 transition-all duration-300'>
+                  Learn More
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
