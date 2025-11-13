@@ -1,134 +1,152 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export const useSystemSettings = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
 
-  // Profile Data
-  const [displayName, setDisplayName] = useState("");
-  const [bio, setBio] = useState("");
-  const [tagline, setTagline] = useState("");
-  const [phone, setPhone] = useState("");
-  const [location, setLocation] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  // Profile states
+  const [displayName, setDisplayName] = useState('');
+  const [tagline, setTagline] = useState('');
+  const [bio, setBio] = useState('');
+  const [phone, setPhone] = useState('');
+  const [location, setLocation] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [avatarPreview, setAvatarPreview] = useState('');
 
-  // User Preferences
-  const [theme, setTheme] = useState("light");
-  const [accentColor, setAccentColor] = useState("blue");
-  const [language, setLanguage] = useState("en");
-  const [profileDiscoverable, setProfileDiscoverable] = useState(true);
-  const [showOnlineStatus, setShowOnlineStatus] = useState(true);
-  const [allowMessagesFrom, setAllowMessagesFrom] = useState("everyone");
+  // Billing states (NEW)
+  const [planType, setPlanType] = useState('free');
+  const [aiCreditsRemaining, setAiCreditsRemaining] = useState(0);
 
-  // Notifications
+  // Notification states
   const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [smsNotifications, setSmsNotifications] = useState(false);
   const [jobAlerts, setJobAlerts] = useState(true);
   const [weeklyDigest, setWeeklyDigest] = useState(true);
-  const [digestFrequency, setDigestFrequency] = useState("weekly");
+  const [pushNotifications, setPushNotifications] = useState(true);
+  const [smsNotifications, setSmsNotifications] = useState(false);
+  const [digestFrequency, setDigestFrequency] = useState('weekly');
 
-  // Security
+  // Security states
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [apiEnabled, setApiEnabled] = useState(false);
   const [loginNotifications, setLoginNotifications] = useState(true);
 
-  // Billing
-  const [planType, setPlanType] = useState("free");
-  const [aiCreditsRemaining, setAiCreditsRemaining] = useState(100);
+  // Appearance states
+  const [theme, setTheme] = useState('light');
+  const [accentColor, setAccentColor] = useState('blue');
+  const [language, setLanguage] = useState('en');
 
-  // Password Change
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordLoading, setPasswordLoading] = useState(false);
+  // Privacy states
+  const [profileDiscoverable, setProfileDiscoverable] = useState(true);
+  const [showOnlineStatus, setShowOnlineStatus] = useState(true);
+  const [allowMessagesFrom, setAllowMessagesFrom] = useState('everyone');
 
-  // Avatar Upload
+  // Advanced states
+  const [apiEnabled, setApiEnabled] = useState(false);
+
+  // UI states
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [showAvatarDialog, setShowAvatarDialog] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState("");
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
+  // Load all settings on mount
   useEffect(() => {
-    if (user) loadSettings();
+    if (user) {
+      loadAllSettings();
+    }
   }, [user]);
 
-  const loadSettings = async () => {
+  const loadAllSettings = async () => {
     if (!user) return;
-    setLoading(true);
+
     try {
+      setLoading(true);
+
+      // Fetch profile
       const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
 
       if (profile) {
-        setDisplayName(profile.display_name || "");
-        setBio(profile.bio || "");
-        setPhone(profile.phone || "");
-        setLocation(profile.location || "");
-        setAvatarUrl(profile.avatar_url || "");
+        setDisplayName(profile.display_name || '');
+        setBio(profile.bio || '');
+        setPhone(profile.phone || '');
+        setLocation(profile.location || '');
+        setAvatarUrl(profile.avatar_url || '');
       }
 
-      const { data: prefs } = await supabase
-        .from("user_preferences")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (prefs) {
-        setTheme(prefs.theme || "light");
-        setAccentColor(prefs.accent_color || "blue");
-        setLanguage(prefs.language || "en");
-        setProfileDiscoverable(prefs.profile_discoverable ?? true);
-        setShowOnlineStatus(prefs.show_online_status ?? true);
-        setAllowMessagesFrom(prefs.allow_messages_from || "everyone");
-        setEmailNotifications(prefs.email_notifications ?? true);
-        setPushNotifications(prefs.push_notifications ?? true);
-        setSmsNotifications(prefs.sms_notifications ?? false);
-        setTwoFactorEnabled(prefs.two_factor_enabled ?? false);
-        setApiEnabled(prefs.api_access_enabled ?? false);
-      }
-
-      const { data: notifs } = await supabase
-        .from("notification_settings")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (notifs) {
-        setJobAlerts(notifs.email_job_recommendations ?? true);
-        setWeeklyDigest(notifs.email_weekly_digest ?? true);
-        setDigestFrequency(notifs.digest_frequency || "weekly");
-      }
-
-      const { data: security } = await supabase
-        .from("security_settings")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (security) {
-        setLoginNotifications(security.login_notification_email ?? true);
-      }
-
+      // Fetch billing settings (NEW)
       const { data: billing } = await supabase
-        .from("billing_settings")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        .from('billing_settings')
+        .select('plan_tier, ai_credits_remaining')
+        .eq('user_id', user.id)
+        .single();
 
       if (billing) {
-        setPlanType(billing.plan_type || "free");
-        setAiCreditsRemaining(billing.ai_credits_remaining || 100);
+        setPlanType(billing.plan_tier || 'free');
+        setAiCreditsRemaining(billing.ai_credits_remaining || 0);
       }
+
+      // Fetch preferences
+      const { data: prefs } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (prefs) {
+        setEmailNotifications(prefs.email_notifications);
+        setPushNotifications(prefs.push_notifications);
+        setTheme(prefs.theme);
+        setAccentColor(prefs.accent_color);
+        setLanguage(prefs.language);
+        setProfileDiscoverable(prefs.profile_discoverable);
+        setShowOnlineStatus(prefs.show_online_status);
+        setAllowMessagesFrom(prefs.allow_messages_from);
+        setApiEnabled(prefs.api_access_enabled);
+      }
+
+      // Fetch notification settings
+      const { data: notifSettings } = await supabase
+        .from('notification_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (notifSettings) {
+        setJobAlerts(notifSettings.email_job_recommendations);
+        setWeeklyDigest(notifSettings.email_weekly_digest);
+        setDigestFrequency(notifSettings.digest_frequency);
+      }
+
+      // Fetch security settings
+      const { data: security } = await supabase
+        .from('security_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (security) {
+        setTwoFactorEnabled(security.two_factor_enabled);
+        setLoginNotifications(security.login_notification_email);
+      }
+
     } catch (error) {
-      console.error("Error loading settings:", error);
+      console.error('Error loading settings:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load settings',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -136,57 +154,32 @@ export const useSystemSettings = () => {
 
   const saveProfile = async () => {
     if (!user) return;
-    setSaving(true);
-    try {
-      const { error } = await supabase.from("profiles").upsert(
-        {
-          user_id: user.id,
-          display_name: displayName,
-          bio,
-          phone,
-          location,
-          avatar_url: avatarUrl,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
-      if (error) throw error;
-      toast.success("Profile updated successfully!");
-    } catch (error) {
-      toast.error("Failed to update profile");
-      console.error(error);
-    } finally {
-      setSaving(false);
-    }
-  };
 
-  const savePreferences = async () => {
-    if (!user) return;
     setSaving(true);
     try {
-      const { error } = await supabase.from("user_preferences").upsert(
-        {
-          user_id: user.id,
-          theme,
-          accent_color: accentColor,
-          language,
-          profile_discoverable: profileDiscoverable,
-          show_online_status: showOnlineStatus,
-          allow_messages_from: allowMessagesFrom,
-          email_notifications: emailNotifications,
-          push_notifications: pushNotifications,
-          sms_notifications: smsNotifications,
-          two_factor_enabled: twoFactorEnabled,
-          api_access_enabled: apiEnabled,
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          display_name: displayName,
+          bio: bio,
+          phone: phone,
+          location: location,
           updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
+        })
+        .eq('user_id', user.id);
+
       if (error) throw error;
-      toast.success("Preferences saved!");
+
+      toast({
+        title: 'Success',
+        description: 'Profile updated successfully',
+      });
     } catch (error) {
-      toast.error("Failed to save preferences");
-      console.error(error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save profile',
+        variant: 'destructive',
+      });
     } finally {
       setSaving(false);
     }
@@ -194,25 +187,68 @@ export const useSystemSettings = () => {
 
   const saveNotifications = async () => {
     if (!user) return;
+
     setSaving(true);
     try {
-      const { error } = await supabase.from("notification_settings").upsert(
-        {
-          user_id: user.id,
+      const { error } = await supabase
+        .from('notification_settings')
+        .update({
           email_job_recommendations: jobAlerts,
           email_weekly_digest: weeklyDigest,
           digest_frequency: digestFrequency,
-          push_new_jobs: pushNotifications,
-          sms_urgent_alerts: smsNotifications,
           updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
+        })
+        .eq('user_id', user.id);
+
       if (error) throw error;
-      toast.success("Notification settings saved!");
+
+      toast({
+        title: 'Success',
+        description: 'Notification settings saved',
+      });
     } catch (error) {
-      toast.error("Failed to save notification settings");
-      console.error(error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save notifications',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const savePreferences = async () => {
+    if (!user) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .update({
+          theme: theme,
+          accent_color: accentColor,
+          language: language,
+          profile_discoverable: profileDiscoverable,
+          show_online_status: showOnlineStatus,
+          allow_messages_from: allowMessagesFrom,
+          email_notifications: emailNotifications,
+          push_notifications: pushNotifications,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Preferences saved',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save preferences',
+        variant: 'destructive',
+      });
     } finally {
       setSaving(false);
     }
@@ -220,78 +256,39 @@ export const useSystemSettings = () => {
 
   const handlePasswordChange = async () => {
     if (!user) return;
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error("Please fill in all password fields");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast.error("New passwords don't match");
-      return;
-    }
-    if (newPassword.length < 8) {
-      toast.error("Password must be at least 8 characters");
-      return;
-    }
 
     setPasswordLoading(true);
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: user.email!,
-        password: currentPassword,
-      });
-
-      if (signInError) {
-        toast.error("Current password is incorrect");
-        setPasswordLoading(false);
-        return;
-      }
-
-      const { error: updateError } = await supabase.auth.updateUser({
+      const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
 
-      if (updateError) throw updateError;
+      if (error) throw error;
 
-      await supabase.from("security_settings").upsert(
-        {
-          user_id: user.id,
-          last_password_change: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      );
+      toast({
+        title: 'Success',
+        description: 'Password changed successfully',
+      });
 
-      toast.success("Password changed successfully!");
       setShowPasswordDialog(false);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
     } catch (error: any) {
-      toast.error(error.message || "Failed to change password");
-      console.error(error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to change password',
+        variant: 'destructive',
+      });
     } finally {
       setPasswordLoading(false);
     }
   };
 
-  // AVATAR UPLOAD LOGIC
-  const handleAvatarSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      toast.error("Please upload a valid image (JPEG, PNG, or WebP)");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
-      return;
-    }
-
-    // Show preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setAvatarPreview(reader.result as string);
@@ -305,55 +302,40 @@ export const useSystemSettings = () => {
 
     setUploading(true);
     try {
-      // Convert base64 to blob
-      const response = await fetch(avatarPreview);
-      const blob = await response.blob();
+      const fileName = `${user.id}-${Date.now()}.png`;
+      const blob = await fetch(avatarPreview).then((r) => r.blob());
 
-      const fileExt = blob.type.split("/")[1];
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      // Delete old avatar if exists
-      if (avatarUrl) {
-        const oldFileName = avatarUrl.split("/").pop();
-        if (oldFileName) {
-          await supabase.storage.from("avatars").remove([oldFileName]);
-        }
-      }
-
-      // Upload new avatar
       const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, blob, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+        .from('avatars')
+        .upload(fileName, blob);
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("avatars").getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
 
-      // Update profile
       const { error: updateError } = await supabase
-        .from("profiles")
-        .update({
-          avatar_url: publicUrl,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', user.id);
 
       if (updateError) throw updateError;
 
       setAvatarUrl(publicUrl);
       setShowAvatarDialog(false);
-      setAvatarPreview("");
-      toast.success("Avatar updated successfully!");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to upload avatar");
-      console.error(error);
+      setAvatarPreview('');
+
+      toast({
+        title: 'Success',
+        description: 'Avatar updated successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to upload avatar',
+        variant: 'destructive',
+      });
     } finally {
       setUploading(false);
     }
@@ -364,98 +346,74 @@ export const useSystemSettings = () => {
 
     setUploading(true);
     try {
-      if (avatarUrl) {
-        const fileName = avatarUrl.split("/").pop();
-        if (fileName) {
-          await supabase.storage.from("avatars").remove([fileName]);
-        }
-      }
-
       const { error } = await supabase
-        .from("profiles")
-        .update({
-          avatar_url: null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
+        .from('profiles')
+        .update({ avatar_url: null })
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
-      setAvatarUrl("");
-      toast.success("Avatar removed");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to remove avatar");
-      console.error(error);
+      setAvatarUrl('');
+      toast({
+        title: 'Success',
+        description: 'Avatar removed',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to remove avatar',
+        variant: 'destructive',
+      });
     } finally {
       setUploading(false);
     }
   };
 
   return {
-    // State
+    user,
     loading,
     saving,
-    user,
     uploading,
-    showAvatarDialog,
-    setShowAvatarDialog,
-    avatarPreview,
-
+    passwordLoading,
+    
     // Profile
     displayName,
     setDisplayName,
-    bio,
-    setBio,
     tagline,
     setTagline,
+    bio,
+    setBio,
     phone,
     setPhone,
     location,
     setLocation,
     avatarUrl,
-    setAvatarUrl,
-
-    // Preferences
-    theme,
-    setTheme,
-    accentColor,
-    setAccentColor,
-    language,
-    setLanguage,
-    profileDiscoverable,
-    setProfileDiscoverable,
-    showOnlineStatus,
-    setShowOnlineStatus,
-    allowMessagesFrom,
-    setAllowMessagesFrom,
-
+    avatarPreview,
+    setAvatarPreview,
+    
+    // Billing (NEW)
+    planType,
+    aiCreditsRemaining,
+    
     // Notifications
     emailNotifications,
     setEmailNotifications,
-    pushNotifications,
-    setPushNotifications,
-    smsNotifications,
-    setSmsNotifications,
     jobAlerts,
     setJobAlerts,
     weeklyDigest,
     setWeeklyDigest,
+    pushNotifications,
+    setPushNotifications,
+    smsNotifications,
+    setSmsNotifications,
     digestFrequency,
     setDigestFrequency,
-
+    
     // Security
     twoFactorEnabled,
     setTwoFactorEnabled,
-    apiEnabled,
-    setApiEnabled,
     loginNotifications,
     setLoginNotifications,
-
-    // Billing
-    planType,
-    aiCreditsRemaining,
-
-    // Password
     showPasswordDialog,
     setShowPasswordDialog,
     currentPassword,
@@ -464,12 +422,35 @@ export const useSystemSettings = () => {
     setNewPassword,
     confirmPassword,
     setConfirmPassword,
-    passwordLoading,
-
+    
+    // Appearance
+    theme,
+    setTheme,
+    accentColor,
+    setAccentColor,
+    language,
+    setLanguage,
+    
+    // Privacy
+    profileDiscoverable,
+    setProfileDiscoverable,
+    showOnlineStatus,
+    setShowOnlineStatus,
+    allowMessagesFrom,
+    setAllowMessagesFrom,
+    
+    // Advanced
+    apiEnabled,
+    setApiEnabled,
+    
+    // Dialogs
+    showAvatarDialog,
+    setShowAvatarDialog,
+    
     // Actions
     saveProfile,
-    savePreferences,
     saveNotifications,
+    savePreferences,
     handlePasswordChange,
     handleAvatarSelect,
     uploadAvatar,

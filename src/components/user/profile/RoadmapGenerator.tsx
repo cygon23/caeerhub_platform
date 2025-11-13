@@ -27,6 +27,7 @@ import {
   generateAIRoadmap,
   generateFallbackRoadmap,
 } from "@/services/aiRoadmapService";
+import { PaywallModal } from "../../dashboard/PaywallModal";
 
 interface RoadmapPhase {
   timeline: string;
@@ -63,6 +64,9 @@ export default function RoadmapGenerator() {
   const [roadmapData, setRoadmapData] = useState<OnboardingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false); 
+  const [paywallData, setPaywallData] = useState({ credits: 0, balance: 0 });
+
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -102,22 +106,99 @@ export default function RoadmapGenerator() {
     }
   };
 
-  const regenerateRoadmap = async () => {
-    if (!roadmapData || !user) return;
+  // const regenerateRoadmap = async () => {
+  //   if (!roadmapData || !user) return;
 
-    setIsRegenerating(true);
+  //   setIsRegenerating(true);
+
+  //   try {
+  //     toast({
+  //       title: "Regenerating Your Roadmap...",
+  //       description: "AI is creating a fresh personalized roadmap for you.",
+  //     });
+
+  //     let aiResponse;
+  //     let aiGenerationStatus = "completed";
+
+  //     try {
+  //       aiResponse = await generateAIRoadmap({
+  //         educationLevel: roadmapData.education_level,
+  //         strongestSubjects: roadmapData.strongest_subjects,
+  //         industriesOfInterest: roadmapData.interests,
+  //         dreamCareer: roadmapData.dream_career,
+  //         preferredPath: roadmapData.preferred_path,
+  //         focusLevel: roadmapData.habits?.focus_level || 5,
+  //         timeManagement: roadmapData.habits?.time_management || 5,
+  //         studySupport: roadmapData.support_preferences,
+  //       });
+  //     } catch (aiError) {
+  //       console.error("AI regeneration failed, using fallback:", aiError);
+  //       aiResponse = generateFallbackRoadmap({
+  //         educationLevel: roadmapData.education_level,
+  //         strongestSubjects: roadmapData.strongest_subjects,
+  //         industriesOfInterest: roadmapData.interests,
+  //         dreamCareer: roadmapData.dream_career,
+  //         preferredPath: roadmapData.preferred_path,
+  //         focusLevel: roadmapData.habits?.focus_level || 5,
+  //         timeManagement: roadmapData.habits?.time_management || 5,
+  //         studySupport: roadmapData.support_preferences,
+  //       });
+  //       aiGenerationStatus = "failed";
+  //     }
+
+  //     const { error } = await supabase
+  //       .from("onboarding_responses")
+  //       .update({
+  //         ai_personality_summary: aiResponse.personality_summary,
+  //         ai_learning_style: aiResponse.learning_style,
+  //         ai_strengths: aiResponse.strengths,
+  //         ai_challenges: aiResponse.challenges,
+  //         ai_recommended_path: aiResponse.recommended_path,
+  //         ai_roadmap: aiResponse.recommendation_reasoning,
+  //         ai_roadmap_json: aiResponse.roadmap,
+  //         ai_generation_status: aiGenerationStatus,
+  //         updated_at: new Date().toISOString(),
+  //       })
+  //       .eq("user_id", user.id);
+
+  //     if (error) throw error;
+
+  //     toast({
+  //       title: "Roadmap Regenerated! ✨",
+  //       description: "Your new personalized roadmap is ready.",
+  //     });
+
+  //     await fetchRoadmap();
+  //   } catch (error) {
+  //     console.error("Error regenerating roadmap:", error);
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to regenerate roadmap. Please try again.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setIsRegenerating(false);
+  //   }
+  // };
+
+const regenerateRoadmap = async () => {
+  if (!roadmapData || !user) return;
+
+  setIsRegenerating(true);
+
+  try {
+    toast({
+      title: "Regenerating Your Roadmap...",
+      description: "AI is creating a fresh personalized roadmap for you.",
+    });
+
+    let aiResponse;
+    let aiGenerationStatus = "completed";
 
     try {
-      toast({
-        title: "Regenerating Your Roadmap...",
-        description: "AI is creating a fresh personalized roadmap for you.",
-      });
-
-      let aiResponse;
-      let aiGenerationStatus = "completed";
-
-      try {
-        aiResponse = await generateAIRoadmap({
+      // MODIFIED: Pass userId to generateAIRoadmap
+      aiResponse = await generateAIRoadmap(
+        {
           educationLevel: roadmapData.education_level,
           strongestSubjects: roadmapData.strongest_subjects,
           industriesOfInterest: roadmapData.interests,
@@ -126,56 +207,71 @@ export default function RoadmapGenerator() {
           focusLevel: roadmapData.habits?.focus_level || 5,
           timeManagement: roadmapData.habits?.time_management || 5,
           studySupport: roadmapData.support_preferences,
+        },
+        user.id  // ADDED: Pass user ID
+      );
+    } catch (aiError: any) {
+      // ADDED: Check if it's a credit error
+      if (aiError.message.startsWith('INSUFFICIENT_CREDITS')) {
+        const [, reason, required, available] = aiError.message.split(':');
+        setPaywallData({ 
+          credits: parseInt(required), 
+          balance: parseInt(available) 
         });
-      } catch (aiError) {
-        console.error("AI regeneration failed, using fallback:", aiError);
-        aiResponse = generateFallbackRoadmap({
-          educationLevel: roadmapData.education_level,
-          strongestSubjects: roadmapData.strongest_subjects,
-          industriesOfInterest: roadmapData.interests,
-          dreamCareer: roadmapData.dream_career,
-          preferredPath: roadmapData.preferred_path,
-          focusLevel: roadmapData.habits?.focus_level || 5,
-          timeManagement: roadmapData.habits?.time_management || 5,
-          studySupport: roadmapData.support_preferences,
-        });
-        aiGenerationStatus = "failed";
+        setShowPaywall(true);
+        setIsRegenerating(false);
+        return; // Stop execution
       }
 
-      const { error } = await supabase
-        .from("onboarding_responses")
-        .update({
-          ai_personality_summary: aiResponse.personality_summary,
-          ai_learning_style: aiResponse.learning_style,
-          ai_strengths: aiResponse.strengths,
-          ai_challenges: aiResponse.challenges,
-          ai_recommended_path: aiResponse.recommended_path,
-          ai_roadmap: aiResponse.recommendation_reasoning,
-          ai_roadmap_json: aiResponse.roadmap,
-          ai_generation_status: aiGenerationStatus,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Roadmap Regenerated! ✨",
-        description: "Your new personalized roadmap is ready.",
+      // Fallback for other errors
+      console.error("AI regeneration failed, using fallback:", aiError);
+      aiResponse = generateFallbackRoadmap({
+        educationLevel: roadmapData.education_level,
+        strongestSubjects: roadmapData.strongest_subjects,
+        industriesOfInterest: roadmapData.interests,
+        dreamCareer: roadmapData.dream_career,
+        preferredPath: roadmapData.preferred_path,
+        focusLevel: roadmapData.habits?.focus_level || 5,
+        timeManagement: roadmapData.habits?.time_management || 5,
+        studySupport: roadmapData.support_preferences,
       });
-
-      await fetchRoadmap();
-    } catch (error) {
-      console.error("Error regenerating roadmap:", error);
-      toast({
-        title: "Error",
-        description: "Failed to regenerate roadmap. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsRegenerating(false);
+      aiGenerationStatus = "failed";
     }
-  };
+
+    const { error } = await supabase
+      .from("onboarding_responses")
+      .update({
+        ai_personality_summary: aiResponse.personality_summary,
+        ai_learning_style: aiResponse.learning_style,
+        ai_strengths: aiResponse.strengths,
+        ai_challenges: aiResponse.challenges,
+        ai_recommended_path: aiResponse.recommended_path,
+        ai_roadmap: aiResponse.recommendation_reasoning,
+        ai_roadmap_json: aiResponse.roadmap,
+        ai_generation_status: aiGenerationStatus,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("user_id", user.id);
+
+    if (error) throw error;
+
+    toast({
+      title: "Roadmap Regenerated! ✨",
+      description: "Your new personalized roadmap is ready.",
+    });
+
+    await fetchRoadmap();
+  } catch (error) {
+    console.error("Error regenerating roadmap:", error);
+    toast({
+      title: "Error",
+      description: "Failed to regenerate roadmap. Please try again.",
+      variant: "destructive",
+    });
+  } finally {
+    setIsRegenerating(false);
+  }
+};
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-TZ", {
@@ -537,6 +633,15 @@ export default function RoadmapGenerator() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Paywall Modal */}
+       <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        featureName="AI Career Roadmap Generator"
+        creditsRequired={paywallData.credits}
+        currentBalance={paywallData.balance}
+      />
     </div>
   );
 }
