@@ -1,0 +1,95 @@
+{
+  "hero": {
+    "title": "Get in",
+    "titleHighlight": "Touch",
+    "subtitle": "Have questions about our platform? Want to explore partnership opportunities? We're here to help and would love to hear from you."
+  },
+  "contactInfo": {
+    "office": {
+      "title": "Our Office",
+      "location1": "Njiro",
+      "location2": "Arusha, Tanzania"
+    },
+    "phone": {
+      "title": "Phone Numbers",
+      "number1": "+255 628 055 646",
+      "number2": "+255 673 045 414",
+      "hours": "Available 8 AM - 6 PM EAT"
+    },
+    "email": {
+      "title": "Email Addresses",
+      "info": "info@careernamimi.org",
+      "support": "support@careernamimi.org"
+    },
+    "businessHours": {
+      "title": "Business Hours",
+      "weekdays": "Monday - Friday: 8:00 AM - 6:00 PM",
+      "saturday": "Saturday: 9:00 AM - 2:00 PM",
+      "sunday": "Sunday: Closed"
+    }
+  },
+  "form": {
+    "title": "Send us a Message",
+    "subtitle": "Fill out the form below and we'll get back to you within 24 hours.",
+    "fields": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "type": "Inquiry Type",
+      "subject": "Subject",
+      "message": "Message",
+      "namePlaceholder": "Your full name",
+      "emailPlaceholder": "your.email@example.com",
+      "subjectPlaceholder": "Brief description of your inquiry",
+      "messagePlaceholder": "Please provide details about your inquiry..."
+    },
+    "types": {
+      "general": "General Inquiry",
+      "youth": "Youth Programs",
+      "partnership": "Partnership",
+      "support": "Technical Support",
+      "media": "Media & Press"
+    },
+    "button": "Send Message",
+    "required": "*"
+  },
+  "map": {
+    "title": "Visit Our Office",
+    "location": "Njiro",
+    "city": "Arusha, Tanzania",
+    "button": "Get Directions"
+  },
+  "quickContact": {
+    "title": "Quick Contact Options",
+    "call": {
+      "title": "Call Us Now",
+      "number": "+255 628 055 646 / 673 045 414"
+    },
+    "email": {
+      "title": "Email Support",
+      "address": "info@careernamimi.org"
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "number": "+255 628 055 646 / 673 045 414"
+    }
+  },
+  "specialized": {
+    "title": "Specialized Support",
+    "subtitle": "Get the right help for your specific needs",
+    "youth": {
+      "title": "For Youth & Students",
+      "description": "Questions about our career development programs, assessments, and mentorship opportunities.",
+      "email": "info@careernamimi.org"
+    },
+    "organizations": {
+      "title": "For Organizations",
+      "description": "Partnership inquiries, corporate programs, and bulk assessment services.",
+      "email": "info@careernamimi.org"
+    },
+    "technical": {
+      "title": "Technical Support",
+      "description": "Platform issues, account problems, and technical assistance.",
+      "email": "support@careernamimi.org"
+    }
+  }
+}

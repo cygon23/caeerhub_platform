@@ -1,0 +1,48 @@
+{
+  "hero": {
+    "title": "Our",
+    "titleHighlight": "Services",
+    "subtitle": "Comprehensive career development solutions tailored for Tanzanian youth and partner organizations."
+  },
+  "individual": {
+    "title": "For Individuals",
+    "aiAssessment": {
+      "title": "AI Career Assessment",
+      "description": "Discover your strengths, interests, and ideal career paths through advanced personality analysis."
+    },
+    "roadmap": {
+      "title": "Personalized Roadmap",
+      "description": "Get step-by-step guidance tailored to your goals and local job market opportunities."
+    },
+    "mentorship": {
+      "title": "1-on-1 Mentorship",
+      "description": "Connect with experienced professionals for personalized career guidance and support."
+    },
+    "resources": {
+      "title": "Learning Resources",
+      "description": "Access curated content, courses, and materials to develop in-demand skills."
+    }
+  },
+  "organizations": {
+    "title": "For Organizations",
+    "subtitle": "Partner with us to empower youth at scale",
+    "talent": {
+      "title": "Talent Pipeline Access",
+      "description": "Connect with skilled, career-ready youth for your organization's needs."
+    },
+    "assessment": {
+      "title": "Bulk Assessment Services",
+      "description": "Evaluate large groups of candidates efficiently with our AI-powered tools."
+    },
+    "training": {
+      "title": "Custom Training Programs",
+      "description": "Design and deliver tailored career development programs for your beneficiaries."
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Career Journey?",
+    "subtitle": "Choose the service that's right for you",
+    "buttonIndividual": "Get Started as Individual",
+    "buttonOrganization": "Partner with Us"
+  }
+}

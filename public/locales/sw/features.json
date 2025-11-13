@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "title": "Vipengele vya",
+    "titleHighlight": "Jukwaa",
+    "subtitle": "Gundua zana zenye nguvu na vipengele vilivyoundwa kubadilisha safari yako ya kazi kutoka uchunguzi hadi mafanikio."
+  },
+  "howItWorks": {
+    "title": "Jinsi Inavyofanya Kazi",
+    "subtitle": "Safari yako ya mafanikio ya kazi kwa hatua nne rahisi",
+    "step1": {
+      "title": "Jisajili na Tathmini",
+      "description": "Fungua akaunti yako na ukamilishe tathmini yetu ya kazi inayotumia AI"
+    },
+    "step2": {
+      "title": "Pata Ramani Yako",
+      "description": "Pokea njia za kazi za kibinafsi zilizobinafsishwa kwa malengo yako"
+    },
+    "step3": {
+      "title": "Unganisha na Washauri",
+      "description": "Patana na wataalamu wenye uzoefu katika uwanja wako"
+    },
+    "step4": {
+      "title": "Fuatilia na Ukue",
+      "description": "Fuatilia maendeleo na ufikie hatua muhimu za kazi yako"
+    }
+  },
+  "results": {
+    "title": "Matokeo Yaliyothibitishwa",
+    "subtitle": "Matokeo halisi kutoka kwa jukwaa letu",
+    "completionRate": "Kiwango cha Ukamilishaji wa Tathmini",
+    "satisfactionScore": "Alama ya Kuridhika kwa Mtumiaji",
+    "careerClarity": "Uboreshaji wa Uwazi wa Kazi",
+    "rating": "Wastani wa Ukadiriaji wa Jukwaa"
+  },
+  "cta": {
+    "title": "Uko Tayari Kupata Uzoefu wa Mustakabali wa Maendeleo ya Kazi?",
+    "subtitle": "Jiunge na maelfu ya vijana wanaojenga kazi zenye mafanikio kwa mwongozo unaotumia AI",
+    "button": "Anza Safari Yako Bure"
+  }
+}

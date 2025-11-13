@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "title": "Kuhusu",
+    "titleHighlight": "Sisi",
+    "subtitle": "Kuwawezesha vijana wa Tanzania kwa mwongozo wa kazi unaotumia AI na ushauri kujenga kazi zenye mafanikio na zenye kuridhisha."
+  },
+  "mission": {
+    "title": "Dhamira Yetu",
+    "content": "Kudemokrasia ufikiaji wa rasilimali za maendeleo ya kazi na fursa kwa vijana wote wa Tanzania, bila kujali asili au eneo lao. Tunaamini kila kijana anastahili zana, mwongozo, na msaada wa kugundua na kufuata kazi ya ndoto yao."
+  },
+  "vision": {
+    "title": "Dira Yetu",
+    "content": "Tanzania ambapo kila kijana ana njia wazi za kazi, ufikiaji wa ushauri, na ujuzi unaohitajika kustawi katika nguvu za kazi za kisasa. Tunaona mustakabali ambapo zana zinazotumia AI na utaalamu wa kibinadamu huchanganya kufungua fursa za kazi zisizowahi kutokea nchini kote."
+  },
+  "stats": {
+    "youth": "Vijana Waliowezesha",
+    "regions": "Mikoa Inayotumikiwa",
+    "successRate": "Kiwango cha Mafanikio",
+    "partners": "Washirika wa Sasa"
+  },
+  "values": {
+    "title": "Maadili Yetu Muhimu",
+    "subtitle": "Kanuni zinazotongoza kila kinachofanya",
+    "innovation": {
+      "title": "Ubunifu",
+      "description": "Tunatumia teknolojia ya AI ya kisasa kuunda njia za kazi za kibinafsi."
+    },
+    "accessibility": {
+      "title": "Ufikiaji",
+      "description": "Mwongozo wa ubora wa kazi unapaswa kupatikana kwa kila kijana wa Kitanzania, kila mahali."
+    },
+    "empowerment": {
+      "title": "Uwezeshaji",
+      "description": "Tunawapa vijana zana na maarifa ya kuchukua udhibiti wa mustakabali wao."
+    },
+    "community": {
+      "title": "Jumuiya",
+      "description": "Mafanikio yanajengwa kupitia miunganisho yenye maana kati ya washauri na wanafunzi."
+    }
+  },
+  "story": {
+    "title": "Hadithi Yetu",
+    "content": "Career na Mimi ilizaliwa kutoka kwa uchunguzi rahisi: vijana wenye vipaji wa Kitanzania mara nyingi hawana ufikiaji wa mwongozo wa kazi na ushauri. Ilianzishwa na timu ya waalimu, wateknolojia, na wataalam wa maendeleo ya kazi, tulianza kuunganisha pengo hili kwa kutumia teknolojia ya AI na msaada unaotolewa na jamii. Leo, tunajivunia kutumikia maelfu ya vijana kote Tanzania."
+  },
+  "team": {
+    "title": "Kutana na Timu Yetu",
+    "subtitle": "Wataalamu wenye shauku waliojitoa kwa uwezeshaji wa vijana"
+  }
+}

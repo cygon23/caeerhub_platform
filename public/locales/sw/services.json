@@ -1,0 +1,48 @@
+{
+  "hero": {
+    "title": "Huduma",
+    "titleHighlight": "Zetu",
+    "subtitle": "Suluhisho kamili za maendeleo ya kazi zilizobinafsishwa kwa vijana wa Tanzania na mashirika ya washirika."
+  },
+  "individual": {
+    "title": "Kwa Watu Binafsi",
+    "aiAssessment": {
+      "title": "Tathmini ya Kazi ya AI",
+      "description": "Gundua nguvu zako, vipengele vyako, na njia bora za kazi kupitia uchambuzi wa hali ya juu wa utu."
+    },
+    "roadmap": {
+      "title": "Ramani ya Kibinafsi",
+      "description": "Pata mwongozo wa hatua kwa hatua uliobinafsishwa kwa malengo yako na fursa za soko la kazi la ndani."
+    },
+    "mentorship": {
+      "title": "Ushauri wa 1-kwa-1",
+      "description": "Unganisha na wataalamu wenye uzoefu kwa mwongozo wa kazi wa kibinafsi na msaada."
+    },
+    "resources": {
+      "title": "Rasilimali za Kujifunza",
+      "description": "Pata maudhui yaliyochaguliwa, kozi, na nyenzo za kuendeleza ujuzi unaohitajika."
+    }
+  },
+  "organizations": {
+    "title": "Kwa Mashirika",
+    "subtitle": "Shirikiana nasi kuwawezesha vijana kwa kiwango kikubwa",
+    "talent": {
+      "title": "Ufikiaji wa Bomba la Talanta",
+      "description": "Unganisha na vijana wenye ujuzi, tayari kwa kazi kwa mahitaji ya shirika lako."
+    },
+    "assessment": {
+      "title": "Huduma za Tathmini kwa Wingi",
+      "description": "Tathmini vikundi vikubwa vya wagombea kwa ufanisi kwa zana zetu zinazotumia AI."
+    },
+    "training": {
+      "title": "Programu za Mafunzo Maalum",
+      "description": "Buni na toa programu za maendeleo ya kazi zilizobinafsishwa kwa wanufaika wako."
+    }
+  },
+  "cta": {
+    "title": "Uko Tayari Kubadilisha Safari Yako ya Kazi?",
+    "subtitle": "Chagua huduma inayokufaa wewe",
+    "buttonIndividual": "Anza kama Mtu Binafsi",
+    "buttonOrganization": "Shirikiana Nasi"
+  }
+}
