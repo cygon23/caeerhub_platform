@@ -21,9 +21,11 @@ import {
   Star
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useGSAPStagger } from "@/hooks/useGSAP";
 
 export default function Features() {
   const { t } = useTranslation('features');
+  const featuresRef = useGSAPStagger(0.15);
 
   const features = [
     {
@@ -187,7 +189,7 @@ export default function Features() {
       {/* Features Grid */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div ref={featuresRef} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card 
                 key={feature.title}
