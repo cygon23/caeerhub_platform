@@ -296,7 +296,6 @@ export default function About() {
           </div>
 
           <div
-            ref={impactRef}
             className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto'>
             {impactStats.map((stat, index) => (
               <div
@@ -577,7 +576,7 @@ export default function About() {
         </div>
 
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
-          <div ref={ctaRef}>
+          <div>
             {/* Badge */}
             <div className='inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full text-white mb-8 border border-white/20'>
               <Rocket className='h-5 w-5 text-yellow-300' />
