@@ -750,7 +750,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA Section */}
-      <section className='relative py-32 bg-gradient-to-r from-[#FE047F] to-[#00690D] overflow-hidden'>
+      <section className='relative py-32 bg-[#FE047F] overflow-hidden'>
         {/* Animated background */}
         <div className='absolute inset-0'>
           <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
