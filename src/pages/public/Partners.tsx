@@ -18,7 +18,10 @@ import {
   CreditCard,
   Search,
   GraduationCap,
-  Rocket
+  Rocket,
+  Sparkles,
+  DollarSign,
+  MapPin
 } from "lucide-react";
 import { useGSAP, useGSAPScale, useGSAPStagger, useGSAPTextReveal, useGSAPFlip } from "@/hooks/useGSAP";
 
@@ -117,45 +120,76 @@ export default function Partners() {
   ];
 
   const stats = [
-    { number: "10+", label: "Active Partners" },
-    { number: "200+", label: "Youth Reached Through Partnerships" },
-    { number: "TZS 3M+", label: "Partnership Investment Value" },
-    { number: "1+", label: "Countries Represented" },
+    { number: "5+", label: "Active Partners", icon: Handshake, color: "bg-[#FE047F]", ready: true },
+    { number: "200+", label: "Youth Reached Through Partnerships", icon: Users, color: "bg-[#00690D]", ready: true },
+    { number: "Be First", label: "Partnership Investment - Join Us", icon: DollarSign, color: "bg-[#FE047F]", ready: false },
+    { number: "Join Us", label: "Expand to New Regions", icon: MapPin, color: "bg-[#00690D]", ready: false },
   ];
 
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-fade-in">
+      {/* Hero Section - Clean & Consistent */}
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          {[...Array(25)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-[#FE047F]/10 animate-float"
+              style={{
+                width: `${20 + Math.random() * 60}px`,
+                height: `${20 + Math.random() * 60}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${4 + Math.random() * 4}s`
+              }}
+            ></div>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div ref={heroRef}>
             <div className="flex items-center justify-center mb-6">
-              <Handshake className="h-8 w-8 text-primary mr-3" />
+              <Sparkles className="h-8 w-8 text-[#FE047F] mr-3 animate-pulse-scale" />
               <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-                Our 
-                <span className="bg-gradient-hero bg-clip-text text-transparent"> Partners</span>
+                Our{" "}
+                <span className="text-[#FE047F]">Partners</span>
               </h1>
             </div>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Collaborating with leading organizations to create opportunities and drive 
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Collaborating with leading organizations to create opportunities and drive
               sustainable career development for Tanzanian youth.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Partnership Stats */}
-      <section className="py-16 bg-background">
+      {/* Partnership Stats - Circular Badge Design */}
+      <section className="py-20 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {stats.map((stat, index) => (
-              <div 
+              <div
                 key={stat.label}
-                className="text-center animate-bounce-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="flex flex-col items-center group"
               >
-                <div className="text-4xl font-bold text-primary mb-2">{stat.number}</div>
-                <div className="text-muted-foreground font-medium">{stat.label}</div>
+                {/* Circular Badge */}
+                <div className="relative mb-6">
+                  {/* Outer glow ring */}
+                  <div className={`absolute inset-0 rounded-full ${stat.color} opacity-20 blur-xl group-hover:opacity-40 transition-opacity animate-pulse-scale`}></div>
+
+                  {/* Main circular badge */}
+                  <div className={`relative w-32 h-32 rounded-full ${stat.color} flex flex-col items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300 ${!stat.ready ? 'border-4 border-dashed border-white/50' : ''}`}>
+                    {/* Icon */}
+                    <stat.icon className="h-8 w-8 text-white mb-2" />
+                    {/* Number */}
+                    <span className={`${stat.ready ? 'text-2xl' : 'text-lg'} font-bold text-white`}>{stat.number}</span>
+                  </div>
+                </div>
+
+                {/* Label below */}
+                <p className="text-center text-foreground font-semibold text-sm leading-tight">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -248,89 +282,68 @@ export default function Partners() {
         </div>
       </section>
 
-      {/* Success Stories */}
-      <section className="py-20 bg-gradient-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+      {/* Partnership Success Stories - Be The First */}
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-foreground mb-4">Partnership Success Stories</h2>
             <p className="text-xl text-muted-foreground">
-              Real impact achieved through strategic collaborations
+              Be among the first to create impact stories with us
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="border-0 bg-background/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="flex items-start mb-4">
-                  <div className="p-3 bg-primary/10 rounded-lg mr-4">
-                    <GraduationCap className="h-8 w-8 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      Vodacom Foundation Digital Skills Program
-                    </h3>
-                    <p className="text-primary font-medium mb-3">2023 Partnership Initiative</p>
-                  </div>
+          <Card className="border-2 border-[#FE047F]/20 bg-white dark:bg-slate-900 hover:shadow-2xl transition-all duration-500">
+            <CardContent className="p-12 text-center">
+              <div className="flex justify-center mb-6">
+                <div className="w-24 h-24 rounded-full bg-[#FE047F]/10 flex items-center justify-center">
+                  <Handshake className="h-12 w-12 text-[#FE047F]" />
                 </div>
-                <p className="text-muted-foreground mb-4">
-                  Launched comprehensive digital literacy program reaching 10,000 youth in rural areas, 
-                  with 85% completing certification and 67% securing digital economy jobs.
-                </p>
-                <div className="bg-gradient-accent p-4 rounded-lg">
-                  <div className="grid grid-cols-3 gap-4 text-center text-sm">
-                    <div>
-                      <div className="font-bold text-primary">10,000</div>
-                      <div className="text-muted-foreground">Youth Trained</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-secondary">85%</div>
-                      <div className="text-muted-foreground">Completion Rate</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-primary">67%</div>
-                      <div className="text-muted-foreground">Job Placement</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card className="border-0 bg-background/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="flex items-start mb-4">
-                  <div className="p-3 bg-secondary/10 rounded-lg mr-4">
-                    <Rocket className="h-8 w-8 text-secondary" />
+              <h3 className="text-3xl font-bold text-foreground mb-4">
+                Your Story Starts Here
+              </h3>
+
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+                We're building something special together. As we launch our platform, we're inviting forward-thinking
+                organizations to be founding partners. Your partnership will directly shape our impact and create the
+                first success stories that inspire others.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="p-6 bg-[#FE047F]/5 rounded-xl">
+                  <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center mx-auto mb-3">
+                    <Rocket className="h-6 w-6 text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      Mastercard Foundation Entrepreneurship Hub
-                    </h3>
-                    <p className="text-primary font-medium mb-3">2022-2024 Partnership</p>
-                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">Founding Partner Status</h4>
+                  <p className="text-sm text-muted-foreground">Recognition as one of our first strategic partners</p>
                 </div>
-                <p className="text-muted-foreground mb-4">
-                  Established entrepreneurship incubation program supporting young entrepreneurs to 
-                  start and scale businesses, creating over 3,000 direct and indirect jobs.
-                </p>
-                <div className="bg-gradient-accent p-4 rounded-lg">
-                  <div className="grid grid-cols-3 gap-4 text-center text-sm">
-                    <div>
-                      <div className="font-bold text-primary">500</div>
-                      <div className="text-muted-foreground">Startups Launched</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-secondary">3,000+</div>
-                      <div className="text-muted-foreground">Jobs Created</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-primary">TZS 2.1B</div>
-                      <div className="text-muted-foreground">Revenue Generated</div>
-                    </div>
+
+                <div className="p-6 bg-[#00690D]/5 rounded-xl">
+                  <div className="w-12 h-12 rounded-full bg-[#00690D] flex items-center justify-center mx-auto mb-3">
+                    <Users className="h-6 w-6 text-white" />
                   </div>
+                  <h4 className="font-semibold text-foreground mb-2">Direct Youth Impact</h4>
+                  <p className="text-sm text-muted-foreground">Help empower the next generation of Tanzanian leaders</p>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+
+                <div className="p-6 bg-[#FE047F]/5 rounded-xl">
+                  <div className="w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center mx-auto mb-3">
+                    <Award className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">Co-Create Solutions</h4>
+                  <p className="text-sm text-muted-foreground">Shape programs that align with your CSR goals</p>
+                </div>
+              </div>
+
+              <Link to="/contact">
+                <Button size="lg" className="bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20">
+                  Become a Founding Partner
+                  <ArrowRight className="ml-3 h-5 w-5" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
