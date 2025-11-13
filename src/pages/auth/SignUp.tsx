@@ -10,14 +10,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   Eye,
   EyeOff,
-  UserPlus,
   ArrowLeft,
-  CheckCircle,
   Check,
   WifiOff,
-  Sparkles,
   Shield,
-  Zap,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -41,15 +37,6 @@ export default function SignUp() {
   const { signup, isOffline } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const benefits = [
-    "AI-powered career personality assessment",
-    "Personalized career roadmap generation",
-    "Access to expert mentors and coaches",
-    "Smart CV builder and interview preparation",
-    "Real-time job market insights",
-    "Free access to learning resources",
-  ];
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -125,6 +112,13 @@ export default function SignUp() {
     }
   };
 
+  const handleSocialLogin = (provider: string) => {
+    toast({
+      title: "Coming Soon",
+      description: `${provider} login will be available soon. Please be patient and use email & password for now.`,
+    });
+  };
+
   if (success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
@@ -170,12 +164,9 @@ export default function SignUp() {
               </div>
 
               <div>
-                <div className="flex items-center justify-center mb-3">
-                  <Sparkles className="h-5 w-5 text-[#00690D] mr-2" />
-                  <h2 className="text-3xl font-bold text-foreground">
-                    Confirm Your Email
-                  </h2>
-                </div>
+                <h2 className="text-3xl font-bold text-foreground mb-3">
+                  Confirm Your Email
+                </h2>
                 <p className="text-muted-foreground text-base leading-relaxed">
                   We've sent a verification link to{" "}
                   <span className="font-semibold text-foreground">{formData.email}</span>.<br />
@@ -214,7 +205,7 @@ export default function SignUp() {
               {/* Security Badge */}
               <div className="flex items-center justify-center text-muted-foreground pt-2">
                 <Shield className="h-4 w-4 mr-2 text-[#00690D]" />
-                <span className="text-xs font-medium">🔒 Your data is encrypted and protected</span>
+                <span className="text-xs font-medium">Your data is encrypted and protected</span>
               </div>
             </CardContent>
           </Card>
@@ -277,20 +268,21 @@ export default function SignUp() {
           {/* Sign Up Form */}
           <Card className="border-2 border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900 backdrop-blur-sm">
             <CardHeader className="text-center pb-6 pt-8">
-              {/* Logo/Icon */}
+              {/* Logo */}
               <div className="relative inline-block mx-auto mb-6">
                 <div className="absolute inset-0 rounded-full bg-[#FE047F] opacity-20 blur-xl animate-pulse-scale"></div>
-                <div className="relative w-20 h-20 bg-gradient-to-br from-[#FE047F] to-[#FE047F]/80 rounded-full flex items-center justify-center shadow-xl">
-                  <UserPlus className="h-10 w-10 text-white" />
+                <div className="relative w-24 h-24 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-xl">
+                  <img
+                    src="/logo.png"
+                    alt="Career na Mimi Logo"
+                    className="w-20 h-20 object-contain"
+                  />
                 </div>
               </div>
 
-              <div className="flex items-center justify-center mb-3">
-                <Sparkles className="h-5 w-5 text-[#FE047F] mr-2" />
-                <CardTitle className="text-3xl font-bold text-foreground">
-                  Join Career na Mimi
-                </CardTitle>
-              </div>
+              <CardTitle className="text-3xl font-bold text-foreground mb-3">
+                Join Career na Mimi
+              </CardTitle>
               <p className="text-muted-foreground text-base">
                 Start your journey to career success today
               </p>
@@ -478,6 +470,57 @@ export default function SignUp() {
                 </Button>
               </form>
 
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t-2 border-slate-200 dark:border-slate-800"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white dark:bg-slate-900 text-muted-foreground font-medium">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              {/* Social Login Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-12 border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300"
+                  onClick={() => handleSocialLogin("Google")}
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                  </svg>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-12 border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300"
+                  onClick={() => handleSocialLogin("Facebook")}
+                >
+                  <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-12 border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300"
+                  onClick={() => handleSocialLogin("Twitter")}
+                >
+                  <svg className="w-5 h-5" fill="#1DA1F2" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                </Button>
+              </div>
+
               <div className="text-center text-sm text-muted-foreground pt-2">
                 Already have an account?{" "}
                 <Link
@@ -490,63 +533,124 @@ export default function SignUp() {
             </CardContent>
           </Card>
 
-          {/* Benefits */}
-          <div className="space-y-8 lg:sticky lg:top-8">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border-2 border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-sm">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#FE047F] to-[#FE047F]/80 rounded-full flex items-center justify-center mr-4 shadow-lg">
-                  <Zap className="h-6 w-6 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-foreground">
-                  Unlock Your Career Potential
-                </h2>
-              </div>
-              <p className="text-muted-foreground text-base leading-relaxed mb-6">
-                Join thousands of Tanzanian youth who are already building
-                successful careers with our AI-powered platform.
-              </p>
+          {/* Animated Benefits Diagrams */}
+          <div className="space-y-6 lg:sticky lg:top-8">
+            {/* AI Assessment Diagram */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-sm overflow-hidden relative group hover:border-[#FE047F]/30 transition-all duration-300">
+              <svg className="w-full h-32" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                {/* AI Brain */}
+                <circle cx="60" cy="60" r="35" fill="#FE047F" fillOpacity="0.1" className="animate-pulse"/>
+                <path d="M 50 50 Q 60 30, 70 50 T 90 50" stroke="#FE047F" strokeWidth="3" fill="none" className="animate-pulse"/>
+                <circle cx="55" cy="55" r="3" fill="#FE047F"/>
+                <circle cx="65" cy="55" r="3" fill="#FE047F"/>
+                <path d="M 55 65 Q 60 70, 65 65" stroke="#FE047F" strokeWidth="2" fill="none"/>
 
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground flex items-center">
-                  <span className="text-2xl mr-2">✨</span>
-                  What you'll get:
-                </h3>
-                <div className="space-y-3">
-                  {benefits.map((benefit, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:border-[#FE047F]/50 hover:bg-[#FE047F]/5"
-                    >
-                      <CheckCircle className="h-5 w-5 text-[#00690D] mt-0.5 flex-shrink-0" />
-                      <span className="text-foreground font-medium text-sm">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                {/* Arrow */}
+                <line x1="100" y1="60" x2="150" y2="60" stroke="#00690D" strokeWidth="2" className="animate-pulse">
+                  <animate attributeName="x2" values="140;150;140" dur="2s" repeatCount="indefinite"/>
+                </line>
+                <polygon points="150,60 145,55 145,65" fill="#00690D"/>
+
+                {/* Results */}
+                <rect x="170" y="30" width="200" height="15" rx="7" fill="#00690D" fillOpacity="0.2"/>
+                <rect x="170" y="30" width="160" height="15" rx="7" fill="#00690D" fillOpacity="0.3" className="animate-pulse"/>
+                <rect x="170" y="55" width="180" height="15" rx="7" fill="#FE047F" fillOpacity="0.2"/>
+                <rect x="170" y="55" width="140" height="15" rx="7" fill="#FE047F" fillOpacity="0.3" className="animate-pulse"/>
+                <rect x="170" y="80" width="160" height="15" rx="7" fill="#00690D" fillOpacity="0.2"/>
+                <rect x="170" y="80" width="120" height="15" rx="7" fill="#00690D" fillOpacity="0.3" className="animate-pulse"/>
+              </svg>
+              <p className="text-center text-sm font-semibold text-foreground mt-2">AI-Powered Assessment</p>
             </div>
 
-            {/* Free Access Badge */}
-            <div className="bg-gradient-to-br from-[#00690D] to-[#00690D]/90 rounded-2xl p-6 shadow-xl text-white">
-              <div className="flex items-center mb-3">
-                <div className="text-4xl mr-3">🎯</div>
-                <div>
-                  <h4 className="font-bold text-lg">Free to Start</h4>
-                  <p className="text-white/90 text-sm">
-                    All students get free access to our core features
-                  </p>
-                </div>
-              </div>
+            {/* Career Roadmap Diagram */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-sm overflow-hidden relative group hover:border-[#00690D]/30 transition-all duration-300">
+              <svg className="w-full h-32" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                {/* Path */}
+                <path d="M 30 100 Q 100 20, 200 60 T 370 40" stroke="#FE047F" strokeWidth="4" fill="none" strokeDasharray="8,4"/>
+
+                {/* Milestones */}
+                <circle cx="30" cy="100" r="12" fill="#00690D" className="animate-bounce" style={{animationDelay: '0s', animationDuration: '2s'}}/>
+                <circle cx="30" cy="100" r="18" fill="#00690D" fillOpacity="0.2" className="animate-ping"/>
+
+                <circle cx="130" cy="40" r="10" fill="#FE047F" className="animate-bounce" style={{animationDelay: '0.5s', animationDuration: '2s'}}/>
+                <circle cx="130" cy="40" r="15" fill="#FE047F" fillOpacity="0.2" className="animate-ping" style={{animationDelay: '0.5s'}}/>
+
+                <circle cx="260" cy="70" r="10" fill="#00690D" className="animate-bounce" style={{animationDelay: '1s', animationDuration: '2s'}}/>
+                <circle cx="260" cy="70" r="15" fill="#00690D" fillOpacity="0.2" className="animate-ping" style={{animationDelay: '1s'}}/>
+
+                <circle cx="370" cy="40" r="12" fill="#FE047F" className="animate-bounce" style={{animationDelay: '1.5s', animationDuration: '2s'}}/>
+                <circle cx="370" cy="40" r="18" fill="#FE047F" fillOpacity="0.2" className="animate-ping" style={{animationDelay: '1.5s'}}/>
+
+                {/* Flag at end */}
+                <line x1="370" y1="40" x2="370" y2="15" stroke="#FE047F" strokeWidth="2"/>
+                <polygon points="370,15 385,20 370,25" fill="#FE047F"/>
+              </svg>
+              <p className="text-center text-sm font-semibold text-foreground mt-2">Personalized Career Roadmap</p>
             </div>
 
-            {/* Security Footer */}
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center text-muted-foreground">
-                <Shield className="h-5 w-5 mr-2 text-[#00690D]" />
-                <span className="text-sm font-medium">Secure & Encrypted</span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                🔒 Your information is protected | 📱 Available on all devices
-              </p>
+            {/* Mentorship Network Diagram */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-sm overflow-hidden relative group hover:border-[#FE047F]/30 transition-all duration-300">
+              <svg className="w-full h-32" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                {/* Center User */}
+                <circle cx="200" cy="60" r="25" fill="#FE047F" fillOpacity="0.2"/>
+                <circle cx="200" cy="60" r="20" fill="#FE047F"/>
+                <circle cx="200" cy="55" r="8" fill="white"/>
+                <path d="M 185 75 Q 200 85, 215 75" stroke="white" strokeWidth="3" fill="none"/>
+
+                {/* Mentors */}
+                <circle cx="80" cy="30" r="15" fill="#00690D" className="animate-pulse" style={{animationDelay: '0s'}}/>
+                <circle cx="80" cy="30" r="7" fill="white"/>
+
+                <circle cx="320" cy="30" r="15" fill="#00690D" className="animate-pulse" style={{animationDelay: '0.5s'}}/>
+                <circle cx="320" cy="30" r="7" fill="white"/>
+
+                <circle cx="80" cy="90" r="15" fill="#00690D" className="animate-pulse" style={{animationDelay: '1s'}}/>
+                <circle cx="80" cy="90" r="7" fill="white"/>
+
+                <circle cx="320" cy="90" r="15" fill="#00690D" className="animate-pulse" style={{animationDelay: '1.5s'}}/>
+                <circle cx="320" cy="90" r="7" fill="white"/>
+
+                {/* Connection Lines */}
+                <line x1="95" y1="35" x2="180" y2="55" stroke="#FE047F" strokeWidth="2" strokeDasharray="4,4" className="animate-pulse"/>
+                <line x1="305" y1="35" x2="220" y2="55" stroke="#FE047F" strokeWidth="2" strokeDasharray="4,4" className="animate-pulse"/>
+                <line x1="95" y1="85" x2="180" y2="65" stroke="#FE047F" strokeWidth="2" strokeDasharray="4,4" className="animate-pulse"/>
+                <line x1="305" y1="85" x2="220" y2="65" stroke="#FE047F" strokeWidth="2" strokeDasharray="4,4" className="animate-pulse"/>
+              </svg>
+              <p className="text-center text-sm font-semibold text-foreground mt-2">Expert Mentors & Coaches</p>
+            </div>
+
+            {/* CV & Job Market Diagram */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border-2 border-slate-200 dark:border-slate-800 shadow-xl backdrop-blur-sm overflow-hidden relative group hover:border-[#00690D]/30 transition-all duration-300">
+              <svg className="w-full h-32" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                {/* CV Document */}
+                <rect x="30" y="20" width="120" height="80" rx="8" fill="#FE047F" fillOpacity="0.1" stroke="#FE047F" strokeWidth="2"/>
+                <rect x="45" y="35" width="90" height="8" rx="4" fill="#FE047F" fillOpacity="0.3"/>
+                <rect x="45" y="50" width="70" height="6" rx="3" fill="#00690D" fillOpacity="0.3"/>
+                <rect x="45" y="62" width="80" height="6" rx="3" fill="#00690D" fillOpacity="0.3"/>
+                <rect x="45" y="74" width="60" height="6" rx="3" fill="#00690D" fillOpacity="0.3"/>
+
+                {/* Arrow */}
+                <line x1="160" y1="60" x2="210" y2="60" stroke="#FE047F" strokeWidth="2">
+                  <animate attributeName="x2" values="200;210;200" dur="2s" repeatCount="indefinite"/>
+                </line>
+                <polygon points="210,60 205,55 205,65" fill="#FE047F"/>
+
+                {/* Chart */}
+                <line x1="240" y1="100" x2="360" y2="100" stroke="#00690D" strokeWidth="2"/>
+                <line x1="240" y1="100" x2="240" y2="30" stroke="#00690D" strokeWidth="2"/>
+
+                <rect x="255" y="70" width="20" height="30" fill="#FE047F" className="animate-pulse" style={{animationDelay: '0s'}}/>
+                <rect x="285" y="55" width="20" height="45" fill="#00690D" className="animate-pulse" style={{animationDelay: '0.3s'}}/>
+                <rect x="315" y="45" width="20" height="55" fill="#FE047F" className="animate-pulse" style={{animationDelay: '0.6s'}}/>
+              </svg>
+              <p className="text-center text-sm font-semibold text-foreground mt-2">Smart CV & Market Insights</p>
+            </div>
+
+            {/* Free Badge */}
+            <div className="bg-gradient-to-br from-[#00690D] to-[#00690D]/90 rounded-2xl p-6 shadow-xl text-white text-center">
+              <div className="text-5xl mb-2">🎯</div>
+              <h4 className="font-bold text-xl mb-1">Free to Start</h4>
+              <p className="text-white/90 text-sm">All students get free access</p>
             </div>
           </div>
         </div>
