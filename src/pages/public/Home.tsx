@@ -676,16 +676,6 @@ export default function Home() {
                   {/* Quote mark */}
                   <MessageSquare className={`h-10 w-10 ${index % 2 === 0 ? 'text-[#FE047F]/20' : 'text-[#00690D]/20'} mb-6`} />
 
-                  {/* Rating */}
-                  <div className='flex mb-6'>
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className='h-5 w-5 text-[#FE047F] fill-[#FE047F]'
-                      />
-                    ))}
-                  </div>
-
                   {/* Content */}
                   <p className='text-muted-foreground mb-6 leading-relaxed text-base italic'>
                     "{testimonial.content}"
@@ -836,73 +826,139 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className='relative py-32 bg-[#FE047F] overflow-hidden'>
-        {/* Animated background */}
+      {/* Final CTA Section - Creative Dual-Tone Design */}
+      <section className='relative py-32 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden'>
+        {/* Creative Background Elements */}
         <div className='absolute inset-0'>
-          <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className='absolute rounded-full bg-white/5 animate-pulse'
-              style={{
-                width: `${50 + Math.random() * 150}px`,
-                height: `${50 + Math.random() * 150}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${2 + Math.random() * 3}s`,
-              }}></div>
-          ))}
+          {/* Subtle Grid Pattern */}
+          <div className='absolute inset-0 opacity-[0.03]'>
+            <svg className='w-full h-full' xmlns='http://www.w3.org/2000/svg'>
+              <defs>
+                <pattern id='cta-grid' width='40' height='40' patternUnits='userSpaceOnUse'>
+                  <circle cx='20' cy='20' r='1' fill='currentColor' className='text-foreground' />
+                </pattern>
+              </defs>
+              <rect width='100%' height='100%' fill='url(#cta-grid)' />
+            </svg>
+          </div>
+
+          {/* Left Accent - Pink Gradient Orb */}
+          <div className='absolute -left-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#FE047F]/20 rounded-full blur-3xl'></div>
+
+          {/* Right Accent - Green Gradient Orb */}
+          <div className='absolute -right-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#00690D]/20 rounded-full blur-3xl'></div>
+
+          {/* Animated Floating Shapes */}
+          <div className='absolute top-20 left-20 w-16 h-16 border-2 border-[#FE047F]/20 rounded-full animate-float' style={{ animationDuration: '8s' }}></div>
+          <div className='absolute bottom-20 right-20 w-12 h-12 border-2 border-[#00690D]/20 rounded-lg animate-float' style={{ animationDuration: '6s', animationDelay: '1s' }}></div>
+          <div className='absolute top-1/3 right-1/4 w-8 h-8 border-2 border-[#FE047F]/20 rotate-45 animate-pulse' style={{ animationDuration: '4s' }}></div>
         </div>
 
-        <div className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
+        <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
           <div ref={ctaRef}>
-            {/* Badge */}
-            <div className='inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full text-white mb-8 border border-white/20'>
-              <Sparkles className='h-5 w-5' />
-              <span className='font-semibold'>Join 42,000+ Youth Already Succeeding</span>
-            </div>
+            {/* Split Layout Container */}
+            <div className='grid lg:grid-cols-2 gap-12 items-center'>
+              {/* Left Column - Content */}
+              <div className='text-left'>
+                {/* Badge */}
+                <div className='inline-flex items-center gap-2 bg-[#FE047F]/10 px-6 py-3 rounded-full mb-8 border border-[#FE047F]/20'>
+                  <Sparkles className='h-5 w-5 text-[#FE047F]' />
+                  <span className='font-semibold text-[#FE047F]'>Join 200+ Youth Already Succeeding</span>
+                </div>
 
-            <h2 className='text-5xl md:text-6xl font-bold text-white mb-8 leading-tight'>
-              Your Future is Waiting.
-              <span className='block mt-2'>
-                Let's Build It Together.
-              </span>
-            </h2>
+                <h2 className='text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight'>
+                  Your Future is Waiting.
+                  <span className='block mt-2 text-[#00690D]'>
+                    Let's Build It Together.
+                  </span>
+                </h2>
 
-            <p className='text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed'>
-              Every success story started with a single step. Take yours today—completely free, no credit card required.
-            </p>
+                <p className='text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed'>
+                  Every success story started with a single step. Take yours today—completely free, no credit card required.
+                </p>
 
-            <div className='flex flex-col sm:flex-row gap-6 justify-center items-center mb-12'>
-              <Link to='/signup'>
-                <Button
-                  size='lg'
-                  className='group bg-white text-[#FE047F] hover:bg-white/90 text-xl px-16 py-8 shadow-2xl transform hover:scale-110 transition-all duration-500 font-bold'>
-                  Start Free Now
-                  <ArrowRight className='ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform' />
-                </Button>
-              </Link>
-            </div>
+                <div className='flex flex-col sm:flex-row gap-4 mb-8'>
+                  <Link to='/signup'>
+                    <Button
+                      size='lg'
+                      className='group bg-[#FE047F] hover:bg-[#FE047F]/90 text-white text-lg px-12 py-6 shadow-xl shadow-[#FE047F]/20 transform hover:scale-105 transition-all duration-300 font-semibold'>
+                      Start Free Now
+                      <ArrowRight className='ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform' />
+                    </Button>
+                  </Link>
+                  <Link to='/features'>
+                    <Button
+                      size='lg'
+                      variant='outline'
+                      className='border-2 border-[#00690D] text-[#00690D] hover:bg-[#00690D] hover:text-white text-lg px-12 py-6 font-semibold transition-all duration-300'>
+                      Learn More
+                    </Button>
+                  </Link>
+                </div>
 
-            {/* Trust badges */}
-            <div className='flex flex-wrap justify-center items-center gap-8 text-white/90 text-sm'>
-              <div className='flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full'>
-                <Shield className='h-5 w-5' />
-                <span>Bank-Level Security</span>
+                {/* Trust badges - Compact */}
+                <div className='flex flex-wrap gap-4 text-sm text-muted-foreground'>
+                  <div className='flex items-center gap-2'>
+                    <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
+                    <span>2-Minute Setup</span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
+                    <span>No Credit Card</span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <CheckCircle2 className='h-4 w-4 text-[#00690D]' />
+                    <span>24/7 Support</span>
+                  </div>
+                </div>
               </div>
-              <div className='flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full'>
-                <Zap className='h-5 w-5' />
-                <span>2-Minute Setup</span>
-              </div>
-              <div className='flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full'>
-                <Clock className='h-5 w-5' />
-                <span>24/7 Support</span>
-              </div>
-              <div className='flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full'>
-                <CheckCircle2 className='h-5 w-5' />
-                <span>No Credit Card</span>
+
+              {/* Right Column - Visual Element */}
+              <div className='relative hidden lg:block'>
+                {/* Decorative Card with Stats */}
+                <div className='relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl p-8 border border-slate-200 dark:border-slate-800'>
+                  {/* Accent Corner */}
+                  <div className='absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FE047F]/20 to-[#00690D]/20 rounded-bl-3xl rounded-tr-3xl'></div>
+
+                  <div className='relative space-y-6'>
+                    <h3 className='text-2xl font-bold text-foreground mb-6'>Platform Highlights</h3>
+
+                    <div className='flex items-center gap-4 p-4 bg-[#FE047F]/5 rounded-xl'>
+                      <div className='w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center'>
+                        <Users className='h-6 w-6 text-white' />
+                      </div>
+                      <div>
+                        <p className='font-bold text-foreground'>200+</p>
+                        <p className='text-sm text-muted-foreground'>Youth Empowered</p>
+                      </div>
+                    </div>
+
+                    <div className='flex items-center gap-4 p-4 bg-[#00690D]/5 rounded-xl'>
+                      <div className='w-12 h-12 rounded-full bg-[#00690D] flex items-center justify-center'>
+                        <TrendingUp className='h-6 w-6 text-white' />
+                      </div>
+                      <div>
+                        <p className='font-bold text-foreground'>89%</p>
+                        <p className='text-sm text-muted-foreground'>Success Rate</p>
+                      </div>
+                    </div>
+
+                    <div className='flex items-center gap-4 p-4 bg-[#FE047F]/5 rounded-xl'>
+                      <div className='w-12 h-12 rounded-full bg-[#FE047F] flex items-center justify-center'>
+                        <Clock className='h-6 w-6 text-white' />
+                      </div>
+                      <div>
+                        <p className='font-bold text-foreground'>24/7</p>
+                        <p className='text-sm text-muted-foreground'>AI Support</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Badge */}
+                <div className='absolute -bottom-6 -right-6 bg-[#00690D] text-white px-6 py-4 rounded-2xl shadow-xl transform rotate-3 hover:rotate-0 transition-transform'>
+                  <p className='text-sm font-medium'>🎉 Free to Start</p>
+                </div>
               </div>
             </div>
           </div>
