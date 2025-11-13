@@ -18,6 +18,7 @@ import Contact from "./pages/public/Contact";
 // Auth Pages
 import Login from "./pages/auth/Login";
 import SignUp from "./pages/auth/SignUp";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 // Dashboard Pages
 import YouthDashboard from "./pages/dashboard/YouthDashboard";
@@ -65,6 +66,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireAuth={false}>
                   <SignUp />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/forgot-password'
+              element={
+                <ProtectedRoute requireAuth={false}>
+                  <ForgotPassword />
                 </ProtectedRoute>
               }
             />

@@ -645,13 +645,6 @@ export default function SignUp() {
               </svg>
               <p className="text-center text-sm font-semibold text-foreground mt-2">Smart CV & Market Insights</p>
             </div>
-
-            {/* Free Badge */}
-            <div className="bg-gradient-to-br from-[#00690D] to-[#00690D]/90 rounded-2xl p-6 shadow-xl text-white text-center">
-              <div className="text-5xl mb-2">🎯</div>
-              <h4 className="font-bold text-xl mb-1">Free to Start</h4>
-              <p className="text-white/90 text-sm">All students get free access</p>
-            </div>
           </div>
         </div>
       </div>

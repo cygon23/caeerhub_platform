@@ -5,6 +5,7 @@ import { Menu, X, Sun, Moon, Languages, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ModernFooter from "@/components/ModernFooter";
+import PageLoader from "@/components/PageLoader";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,7 @@ const languages = [
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const { t, i18n } = useTranslation('common');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState(() => {
     // Check localStorage first, then system preference
     if (typeof window !== "undefined") {
@@ -45,6 +47,15 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     { name: t('navigation.partners'), href: "/partners" },
     { name: t('navigation.contact'), href: "/contact" },
   ];
+
+  // Initial loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500); // Show loader for 1.5 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Theme switching logic
   useEffect(() => {
@@ -74,6 +85,11 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       languages.find((lang) => lang.code === i18n.language) || languages[0]
     );
   };
+
+  // Show loader on initial page load
+  if (isLoading) {
+    return <PageLoader />;
+  }
 
   return (
     <div className='min-h-screen bg-background transition-colors duration-300'>
