@@ -465,3 +465,146 @@ export const backgroundAnimations = `
   animation: pulse-scale 4s ease-in-out infinite;
 }
 `;
+
+// ============================================
+// FOOTER - Connection & Achievement Theme
+// ============================================
+export const FooterBackground = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {/* Network Connection Lines - Horizontal */}
+    <svg className="absolute inset-0 w-full h-full opacity-[0.04] dark:opacity-[0.10]" viewBox="0 0 1000 400" preserveAspectRatio="none">
+      <g stroke="#FE047F" strokeWidth="1" opacity="0.6">
+        <line x1="0" y1="100" x2="1000" y2="100" strokeDasharray="8 4">
+          <animate attributeName="stroke-dashoffset" from="0" to="24" dur="4s" repeatCount="indefinite" />
+        </line>
+        <line x1="0" y1="200" x2="1000" y2="200" stroke="#00690D" strokeDasharray="6 3">
+          <animate attributeName="stroke-dashoffset" from="0" to="18" dur="3.5s" repeatCount="indefinite" />
+        </line>
+        <line x1="0" y1="300" x2="1000" y2="300" strokeDasharray="10 5">
+          <animate attributeName="stroke-dashoffset" from="0" to="30" dur="5s" repeatCount="indefinite" />
+        </line>
+      </g>
+    </svg>
+
+    {/* Achievement Stars - Top Left */}
+    <svg className="absolute top-10 left-10 w-24 h-24 opacity-10 dark:opacity-20" viewBox="0 0 100 100">
+      <polygon points="50,10 60,35 87,35 65,52 73,78 50,62 27,78 35,52 13,35 40,35" fill="#FE047F">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="50,20 57,38 75,38 60,49 65,67 50,56 35,67 40,49 25,38 43,38" fill="none" stroke="#FE047F" strokeWidth="1">
+        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="20s" repeatCount="indefinite" />
+      </polygon>
+    </svg>
+
+    {/* Achievement Stars - Top Right */}
+    <svg className="absolute top-20 right-20 w-20 h-20 opacity-10 dark:opacity-20 animate-pulse-scale" style={{ animationDuration: '4s', animationDelay: '1s' }} viewBox="0 0 100 100">
+      <polygon points="50,15 58,40 85,40 63,55 70,80 50,65 30,80 37,55 15,40 42,40" fill="#00690D" />
+    </svg>
+
+    {/* Communication Icons - Message Bubbles */}
+    <svg className="absolute bottom-1/4 left-1/4 w-28 h-28 opacity-10 dark:opacity-18 animate-float" style={{ animationDuration: '6s' }} viewBox="0 0 100 100">
+      <rect x="15" y="25" width="60" height="40" rx="8" fill="none" stroke="#FE047F" strokeWidth="2" />
+      <path d="M 35,65 L 40,75 L 50,65" fill="none" stroke="#FE047F" strokeWidth="2" strokeLinejoin="round" />
+      <circle cx="30" cy="40" r="2.5" fill="#FE047F" />
+      <circle cx="45" cy="40" r="2.5" fill="#FE047F" />
+      <circle cx="60" cy="40" r="2.5" fill="#FE047F" />
+    </svg>
+
+    {/* Growth Arrows - Bottom Right */}
+    <svg className="absolute bottom-10 right-16 w-32 h-32 opacity-10 dark:opacity-22" viewBox="0 0 100 100">
+      <g>
+        <path d="M 20,80 L 20,35 L 10,45 M 20,35 L 30,45" stroke="#00690D" strokeWidth="3" fill="none" strokeLinecap="round">
+          <animateTransform attributeName="transform" type="translate" values="0,0; 0,-10; 0,0" dur="2s" repeatCount="indefinite" />
+        </path>
+        <path d="M 50,80 L 50,45 L 40,55 M 50,45 L 60,55" stroke="#FE047F" strokeWidth="3" fill="none" strokeLinecap="round">
+          <animateTransform attributeName="transform" type="translate" values="0,0; 0,-10; 0,0" dur="2.2s" repeatCount="indefinite" />
+        </path>
+        <path d="M 80,80 L 80,55 L 70,65 M 80,55 L 90,65" stroke="#00690D" strokeWidth="3" fill="none" strokeLinecap="round">
+          <animateTransform attributeName="transform" type="translate" values="0,0; 0,-10; 0,0" dur="2.4s" repeatCount="indefinite" />
+        </path>
+      </g>
+    </svg>
+
+    {/* Network Nodes - Center Pattern */}
+    <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 opacity-8 dark:opacity-14" viewBox="0 0 200 200">
+      {/* Central hub */}
+      <circle cx="100" cy="100" r="8" fill="#FE047F">
+        <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Surrounding nodes */}
+      {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+        const x = 100 + 50 * Math.cos((angle * Math.PI) / 180);
+        const y = 100 + 50 * Math.sin((angle * Math.PI) / 180);
+        return (
+          <g key={i}>
+            <line x1="100" y1="100" x2={x} y2={y} stroke={i % 2 === 0 ? '#FE047F' : '#00690D'} strokeWidth="1" opacity="0.6" strokeDasharray="3 2">
+              <animate attributeName="stroke-dashoffset" from="0" to="10" dur={`${2 + i * 0.2}s`} repeatCount="indefinite" />
+            </line>
+            <circle cx={x} cy={y} r="4" fill={i % 2 === 0 ? '#00690D' : '#FE047F'}>
+              <animate attributeName="r" values="4;6;4" dur={`${2.5 + i * 0.3}s`} repeatCount="indefinite" />
+            </circle>
+          </g>
+        );
+      })}
+    </svg>
+
+    {/* Tech Hexagons - Scattered */}
+    <svg className="absolute top-1/3 right-1/3 w-20 h-20 opacity-10 dark:opacity-16 animate-float" style={{ animationDuration: '7s', animationDelay: '2s' }} viewBox="0 0 100 100">
+      <polygon points="50,10 85,30 85,70 50,90 15,70 15,30" fill="none" stroke="#FE047F" strokeWidth="2" />
+      <polygon points="50,25 70,37 70,63 50,75 30,63 30,37" fill="none" stroke="#FE047F" strokeWidth="1.5" opacity="0.6" />
+    </svg>
+
+    <svg className="absolute bottom-1/3 left-1/5 w-16 h-16 opacity-10 dark:opacity-16 animate-float" style={{ animationDuration: '8s', animationDelay: '3s' }} viewBox="0 0 100 100">
+      <polygon points="50,15 80,32 80,68 50,85 20,68 20,32" fill="none" stroke="#00690D" strokeWidth="2" />
+    </svg>
+
+    {/* Social Connection Icons */}
+    <svg className="absolute top-1/4 right-1/5 w-24 h-24 opacity-10 dark:opacity-18" viewBox="0 0 100 100">
+      {/* Overlapping circles representing connections */}
+      <circle cx="35" cy="50" r="18" fill="none" stroke="#FE047F" strokeWidth="2" opacity="0.6">
+        <animate attributeName="r" values="18;20;18" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="65" cy="50" r="18" fill="none" stroke="#00690D" strokeWidth="2" opacity="0.6">
+        <animate attributeName="r" values="18;20;18" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="50" cy="35" r="18" fill="none" stroke="#FE047F" strokeWidth="2" opacity="0.6">
+        <animate attributeName="r" values="18;20;18" dur="3.2s" repeatCount="indefinite" />
+      </circle>
+    </svg>
+
+    {/* Email/Contact Symbol */}
+    <svg className="absolute bottom-1/4 right-1/4 w-20 h-16 opacity-10 dark:opacity-20 animate-pulse" viewBox="0 0 100 80">
+      <rect x="10" y="20" width="80" height="50" rx="5" fill="none" stroke="#00690D" strokeWidth="2" />
+      <path d="M 10,20 L 50,50 L 90,20" fill="none" stroke="#00690D" strokeWidth="2" strokeLinejoin="round">
+        <animate attributeName="stroke-dasharray" values="0 200; 200 0" dur="3s" repeatCount="indefinite" />
+      </path>
+    </svg>
+
+    {/* Trophy/Achievement Badge */}
+    <svg className="absolute top-16 left-1/3 w-22 h-22 opacity-10 dark:opacity-20" viewBox="0 0 100 100">
+      <path d="M 35,35 L 35,50 L 30,58 L 70,58 L 65,50 L 65,35 Z" fill="none" stroke="#FE047F" strokeWidth="2" />
+      <rect x="40" y="58" width="20" height="18" fill="none" stroke="#FE047F" strokeWidth="2" />
+      <line x1="28" y1="76" x2="72" y2="76" stroke="#FE047F" strokeWidth="3" />
+      <path d="M 35,35 Q 22,30 22,20" stroke="#FE047F" strokeWidth="2" fill="none" />
+      <path d="M 65,35 Q 78,30 78,20" stroke="#FE047F" strokeWidth="2" fill="none" />
+      <circle cx="22" cy="20" r="3" fill="#FE047F">
+        <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="78" cy="20" r="3" fill="#FE047F">
+        <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
+      </circle>
+    </svg>
+
+    {/* Gradient Orbs for Depth */}
+    <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#FE047F]/10 dark:bg-[#FE047F]/20 rounded-full blur-3xl animate-pulse-scale" style={{ animationDuration: '8s' }}></div>
+    <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#00690D]/10 dark:bg-[#00690D]/20 rounded-full blur-3xl animate-pulse-scale" style={{ animationDuration: '10s', animationDelay: '2s' }}></div>
+
+    {/* Floating Sparkles */}
+    <svg className="absolute top-1/4 left-1/6 w-12 h-12 opacity-12 dark:opacity-24 animate-pulse" viewBox="0 0 100 100">
+      <path d="M 50,10 L 52,48 L 90,50 L 52,52 L 50,90 L 48,52 L 10,50 L 48,48 Z" fill="#FE047F">
+        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="15s" repeatCount="indefinite" />
+      </path>
+    </svg>
+  </div>
+);
