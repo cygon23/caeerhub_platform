@@ -196,7 +196,7 @@ export default function UploadMaterials() {
 
   const uploadFile = async (file: File) => {
     const fileId = Date.now().toString() + Math.random();
-    
+
     const newFile: UploadedFile = {
       id: fileId,
       name: file.name,
@@ -212,13 +212,16 @@ export default function UploadMaterials() {
     setUploadedFiles((prev) => [newFile, ...prev]);
 
     try {
-      // Step 1: Upload to Supabase Storage
-      //const fileExt = file.name.split(".").pop();
-      // const fileName = `${user.id}/${Date.now()}-${file.name}`;
-      //const filePath = `${user.id}/${fileName}`; 
-    
-     const fileName = `${Date.now()}-${file.name}`;
-     const filePath = `${user.id}/${fileName}`;
+      // Step 1: Upload to Supabase Storage with progress tracking
+      const fileName = `${Date.now()}-${file.name}`;
+      const filePath = `${user.id}/${fileName}`;
+
+      // Update progress as uploading starts
+      setUploadedFiles((prev) =>
+        prev.map((f) =>
+          f.id === fileId ? { ...f, progress: 5 } : f
+        )
+      );
 
       const { error: uploadError } = await supabase.storage
         .from("study-materials")
@@ -229,15 +232,22 @@ export default function UploadMaterials() {
 
       if (uploadError) throw uploadError;
 
+      // Update progress after successful storage upload
+      setUploadedFiles((prev) =>
+        prev.map((f) =>
+          f.id === fileId ? { ...f, progress: 50 } : f
+        )
+      );
+
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from("study-materials")
         .getPublicUrl(filePath);
 
-      // Update progress
+      // Update to processing status
       setUploadedFiles((prev) =>
         prev.map((f) =>
-          f.id === fileId ? { ...f, status: "processing", progress: 50 } : f
+          f.id === fileId ? { ...f, status: "processing", progress: 55 } : f
         )
       );
 
@@ -263,7 +273,7 @@ export default function UploadMaterials() {
 
       if (dbError) throw dbError;
 
-      // Update with database ID
+      // Update with database ID and progress
       setUploadedFiles((prev) =>
         prev.map((f) =>
           f.id === fileId
@@ -271,7 +281,7 @@ export default function UploadMaterials() {
                 ...f,
                 id: dbData.id,
                 file_url: publicUrl,
-                progress: 60,
+                progress: 65,
               }
             : f
         )
@@ -574,6 +584,8 @@ const handleDelete = async (id: string) => {
                 <br />
                 <Sparkles className="h-3 w-3 inline mr-1" />
                 AI will automatically analyze your materials
+                <br />
+                <span className="text-primary">⬆ Real-time progress tracking for all uploads</span>
               </p>
             </div>
           </div>
@@ -648,12 +660,38 @@ const handleDelete = async (id: string) => {
                         </p>
                       )}
                       {file.status === "uploading" && (
-                        <Progress value={file.progress} className="mt-2 h-1" />
+                        <div className="mt-2 space-y-1">
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>
+                              {file.progress < 10
+                                ? "Starting upload..."
+                                : file.progress < 50
+                                ? "Uploading to storage..."
+                                : "Upload complete"}
+                            </span>
+                            <span className="font-medium">{file.progress}%</span>
+                          </div>
+                          <Progress value={file.progress} className="h-2" />
+                        </div>
                       )}
                       {file.status === "processing" && (
-                        <div className="flex items-center mt-2 text-xs text-muted-foreground">
-                          <RefreshCw className="h-3 w-3 animate-spin mr-1" />
-                          AI is analyzing your material...
+                        <div className="mt-2 space-y-1">
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <div className="flex items-center">
+                              <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                              <span>
+                                {file.progress < 60
+                                  ? "Saving to database..."
+                                  : file.progress < 70
+                                  ? "Preparing AI analysis..."
+                                  : file.progress < 85
+                                  ? "AI is analyzing content..."
+                                  : "Finalizing..."}
+                              </span>
+                            </div>
+                            <span className="font-medium">{file.progress}%</span>
+                          </div>
+                          <Progress value={file.progress} className="h-2" />
                         </div>
                       )}
                     </div>
