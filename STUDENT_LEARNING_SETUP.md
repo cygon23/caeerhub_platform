@@ -211,11 +211,15 @@ Display in "My Materials" with AI badge
 2. Verify the user_id matches the authenticated user
 3. Try clicking the refresh button
 
-### AI Processing fails
+### AI Processing fails (CORS Error)
 **Solution:**
-1. This is expected if the Edge Function `process-study-material` isn't deployed yet
-2. Files will still be uploaded and usable, just without AI summary
-3. You can deploy the Edge Function later
+1. The Edge Function `process-study-material` needs to be deployed
+2. See **EDGE_FUNCTION_DEPLOYMENT.md** for complete deployment instructions
+3. Quick fix: Add `GROQ_API_KEY` to Supabase environment variables, then deploy:
+   ```bash
+   supabase functions deploy process-study-material
+   ```
+4. Files will still upload successfully, just without AI analysis until function is deployed
 
 ## File Organization
 

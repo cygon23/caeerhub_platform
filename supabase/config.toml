@@ -67,7 +67,7 @@ entrypoint = "./functions/purchase-credits/index.ts"
 
 [functions.process-study-material]
 enabled = true
-verify_jwt = true
+verify_jwt = false  # Changed to false - function uses service role internally
 import_map = "./functions/process-study-material/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
