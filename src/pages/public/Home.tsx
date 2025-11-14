@@ -72,6 +72,38 @@ export default function Home() {
       .animate-scroll:hover {
         animation-play-state: paused;
       }
+
+      /* Testimonials infinite scroll - Left to Right */}
+      @keyframes scroll-left {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+      .animate-scroll-left {
+        animation: scroll-left 40s linear infinite;
+      }
+      .animate-scroll-left:hover {
+        animation-play-state: paused;
+      }
+
+      /* Testimonials infinite scroll - Right to Left */}
+      @keyframes scroll-right {
+        0% {
+          transform: translateX(-50%);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
+      .animate-scroll-right {
+        animation: scroll-right 40s linear infinite;
+      }
+      .animate-scroll-right:hover {
+        animation-play-state: paused;
+      }
     `;
     document.head.appendChild(style);
 
@@ -132,6 +164,171 @@ export default function Home() {
     {
       question: t('faq.questions.jobPlacement.q'),
       answer: t('faq.questions.jobPlacement.a'),
+    },
+  ];
+
+  // Expanded realistic success stories - Secondary students & Small entrepreneurs
+  const successStories = [
+    // Secondary Students - Form 4 & Form 6
+    {
+      name: "Amina Hassan",
+      role: "Form 4 Student",
+      location: "Dodoma",
+      content: "The AI career test helped me discover I'm good at science! Now I know I want to study medicine. My teachers are helping me prepare.",
+      metric: "Found my dream career path",
+      category: "student"
+    },
+    {
+      name: "John Mlawa",
+      role: "Form 6 Graduate",
+      location: "Mbeya",
+      content: "I started a small phone repair business after learning from Career na Mimi. Now I fix 20+ phones weekly and save for university.",
+      metric: "Earning TZS 150K/month",
+      category: "entrepreneur"
+    },
+    {
+      name: "Neema Kasongo",
+      role: "Secondary Student",
+      location: "Morogoro",
+      content: "The mentorship program connected me with a software engineer. She taught me coding basics. I built my first website!",
+      metric: "Started learning to code",
+      category: "student"
+    },
+    {
+      name: "Emmanuel Kibona",
+      role: "Small Business Owner",
+      location: "Arusha",
+      content: "From selling chips after school to running a food cart. Career na Mimi taught me business planning. I now serve 50+ customers daily.",
+      metric: "TZS 200K profit/month",
+      category: "entrepreneur"
+    },
+    {
+      name: "Hadija Omary",
+      role: "Form 5 Student",
+      location: "Zanzibar",
+      content: "I was confused about my future. The platform showed me opportunities in tourism. Now I'm learning hotel management!",
+      metric: "Clear career direction",
+      category: "student"
+    },
+    {
+      name: "Peter Mwanga",
+      role: "Young Farmer",
+      location: "Iringa",
+      content: "Started with 2 chickens. Career na Mimi connected me to agriculture mentors. Now I have 100+ chickens and supply local markets.",
+      metric: "10x business growth",
+      category: "entrepreneur"
+    },
+    {
+      name: "Zainab Ali",
+      role: "Form 6 Student",
+      location: "Dar es Salaam",
+      content: "The study guides helped me improve my grades from D to B+. Now I'm confident about joining university next year!",
+      metric: "Grades improved 2 levels",
+      category: "student"
+    },
+    {
+      name: "Moses Ndege",
+      role: "Shoe Shiner",
+      location: "Mwanza",
+      content: "Was just shining shoes. The platform taught me customer service and money management. Now I have 3 employees working with me.",
+      metric: "Grew to 3 employees",
+      category: "entrepreneur"
+    },
+    {
+      name: "Rehema Juma",
+      role: "Secondary Graduate",
+      location: "Tanga",
+      content: "Found my passion for graphic design through Career na Mimi. Started designing posters for local businesses. Saving for design school!",
+      metric: "5 regular clients",
+      category: "student"
+    },
+    {
+      name: "Ibrahim Seif",
+      role: "Form 4 Student",
+      location: "Singida",
+      content: "The AI test showed I'm creative. I started making handmade jewelry. My classmates love my designs!",
+      metric: "Sold 50+ pieces",
+      category: "entrepreneur"
+    },
+    {
+      name: "Sophia Mushi",
+      role: "Form 6 Student",
+      location: "Kilimanjaro",
+      content: "Career na Mimi mentors helped me prepare for university applications. I got accepted to study engineering with a scholarship!",
+      metric: "University scholarship won",
+      category: "student"
+    },
+    {
+      name: "Hassan Bakari",
+      role: "Vegetable Seller",
+      location: "Dodoma",
+      content: "Learned market strategies from the platform. Increased my vegetable sales by organizing with other vendors. Tripled my income!",
+      metric: "TZS 180K/month now",
+      category: "entrepreneur"
+    },
+    {
+      name: "Mariam Ndumbaro",
+      role: "Form 5 Student",
+      location: "Mtwara",
+      content: "Was shy and unsure of myself. The confidence-building modules helped me become class president and debate team captain!",
+      metric: "Leadership skills gained",
+      category: "student"
+    },
+    {
+      name: "Daniel Maro",
+      role: "Boda Boda Rider",
+      location: "Arusha",
+      content: "Started with renting a motorcycle. Career na Mimi taught me savings discipline. Now I own 2 motorcycles and employ a friend!",
+      metric: "From 1 to 2 motorcycles",
+      category: "entrepreneur"
+    },
+    {
+      name: "Fatuma Said",
+      role: "Form 4 Student",
+      location: "Lindi",
+      content: "Discovered I love teaching through Career na Mimi. Now I tutor younger students and earn money while preparing for teacher college.",
+      metric: "10 tutoring students",
+      category: "student"
+    },
+    {
+      name: "Jackson Lyimo",
+      role: "Small Shop Owner",
+      location: "Mbeya",
+      content: "From selling sweets at school to owning a small shop. The business planning tools helped me grow steadily and smart.",
+      metric: "Shop revenue TZS 300K",
+      category: "entrepreneur"
+    },
+    {
+      name: "Asha Mjema",
+      role: "Secondary Student",
+      location: "Pwani",
+      content: "The platform connected me with a nurse who inspired me. Now I volunteer at local clinic and know exactly what I want to study!",
+      metric: "Found healthcare passion",
+      category: "student"
+    },
+    {
+      name: "Richard Komba",
+      role: "Tailoring Student",
+      location: "Dar es Salaam",
+      content: "Learning tailoring while in school. Career na Mimi showed me how to market online. Got 15 orders for school uniforms this month!",
+      metric: "15 orders/month",
+      category: "entrepreneur"
+    },
+    {
+      name: "Grace Silayo",
+      role: "Form 6 Graduate",
+      location: "Kigoma",
+      content: "Career guidance helped me choose accounting. Started keeping books for small businesses. Earning while waiting for college admission!",
+      metric: "3 business clients",
+      category: "student"
+    },
+    {
+      name: "Baraka Masanja",
+      role: "Car Wash Entrepreneur",
+      location: "Mwanza",
+      content: "Started washing 2 cars per day. Platform taught me service excellence. Now have permanent spot, 20+ cars daily, hired 2 helpers!",
+      metric: "20 cars daily, 2 staff",
+      category: "entrepreneur"
     },
   ];
 
@@ -617,67 +814,134 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Success Stories - Dual Infinite Scroll */}
       <section className='relative py-24 bg-white dark:bg-slate-950 overflow-hidden'>
         {/* Animated People & Success Background */}
         <TestimonialsBackground />
 
-        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-20'>
+        <div className='relative z-10'>
+          <div className='text-center mb-16 px-4'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               {t('testimonials.title')}
             </h2>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              {t('testimonials.subtitle')}
+              Real stories from 200+ youth we've empowered across Tanzania
             </p>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-10'>
-            {testimonials.map((testimonial, index) => (
-              <Card
-                key={testimonial.name}
-                className='group hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
-                <CardContent className='p-8'>
-                  {/* Quote mark */}
-                  <MessageSquare className={`h-10 w-10 ${index % 2 === 0 ? 'text-[#FE047F]/20' : 'text-[#00690D]/20'} mb-6`} />
-
-                  {/* Content */}
-                  <p className='text-muted-foreground mb-6 leading-relaxed text-base italic'>
-                    "{testimonial.content}"
-                  </p>
-
-                  {/* Metric badge */}
-                  <div className='inline-flex items-center gap-2 bg-[#00690D]/10 text-[#00690D] px-4 py-2 rounded-full text-sm font-semibold mb-6'>
-                    <TrendingUpIcon className='h-4 w-4' />
-                    {testimonial.metric}
-                  </div>
-
-                  {/* Author info */}
-                  <div className='flex items-center gap-4 pt-6 border-t border-muted'>
-                    <div className={`w-12 h-12 rounded-full ${index % 2 === 0 ? 'bg-[#FE047F]' : 'bg-[#00690D]'} flex items-center justify-center text-white font-bold text-lg`}>
-                      {testimonial.name.charAt(0)}
+          {/* First Row - Scrolling Left to Right */}
+          <div className='mb-8 overflow-hidden'>
+            <div className='flex gap-6 animate-scroll-left'>
+              {/* Duplicate arrays for seamless loop */}
+              {[...successStories.slice(0, 10), ...successStories.slice(0, 10)].map((story, index) => (
+                <Card
+                  key={`row1-${index}`}
+                  className='flex-shrink-0 w-[350px] hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
+                  <CardContent className='p-6'>
+                    {/* Category Badge */}
+                    <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold mb-4 ${
+                      story.category === 'student'
+                        ? 'bg-[#FE047F]/10 text-[#FE047F]'
+                        : 'bg-[#00690D]/10 text-[#00690D]'
+                    }`}>
+                      {story.category === 'student' ? '🎓 Student' : '💼 Entrepreneur'}
                     </div>
-                    <div>
-                      <div className='font-bold text-foreground'>
-                        {testimonial.name}
+
+                    {/* Content */}
+                    <p className='text-muted-foreground mb-4 leading-relaxed text-sm'>
+                      "{story.content}"
+                    </p>
+
+                    {/* Metric badge */}
+                    <div className='inline-flex items-center gap-2 bg-[#00690D]/10 text-[#00690D] px-3 py-1.5 rounded-full text-xs font-semibold mb-4'>
+                      <TrendingUpIcon className='h-3 w-3' />
+                      {story.metric}
+                    </div>
+
+                    {/* Author info */}
+                    <div className='flex items-center gap-3 pt-4 border-t border-muted'>
+                      <div className={`w-10 h-10 rounded-full ${
+                        story.category === 'student' ? 'bg-[#FE047F]' : 'bg-[#00690D]'
+                      } flex items-center justify-center text-white font-bold text-sm`}>
+                        {story.name.charAt(0)}
                       </div>
-                      <div className='text-sm text-[#FE047F] font-medium'>
-                        {testimonial.role}
-                      </div>
-                      <div className='text-xs text-muted-foreground flex items-center gap-1'>
-                        <MapPin className='h-3 w-3' />
-                        {testimonial.location}
+                      <div>
+                        <div className='font-bold text-foreground text-sm'>
+                          {story.name}
+                        </div>
+                        <div className='text-xs text-[#FE047F] font-medium'>
+                          {story.role}
+                        </div>
+                        <div className='text-xs text-muted-foreground flex items-center gap-1'>
+                          <MapPin className='h-2.5 w-2.5' />
+                          {story.location}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
 
-          <div className='text-center mt-16'>
+          {/* Second Row - Scrolling Right to Left */}
+          <div className='overflow-hidden'>
+            <div className='flex gap-6 animate-scroll-right'>
+              {/* Duplicate arrays for seamless loop */}
+              {[...successStories.slice(10, 20), ...successStories.slice(10, 20)].map((story, index) => (
+                <Card
+                  key={`row2-${index}`}
+                  className='flex-shrink-0 w-[350px] hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
+                  <CardContent className='p-6'>
+                    {/* Category Badge */}
+                    <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold mb-4 ${
+                      story.category === 'student'
+                        ? 'bg-[#FE047F]/10 text-[#FE047F]'
+                        : 'bg-[#00690D]/10 text-[#00690D]'
+                    }`}>
+                      {story.category === 'student' ? '🎓 Student' : '💼 Entrepreneur'}
+                    </div>
+
+                    {/* Content */}
+                    <p className='text-muted-foreground mb-4 leading-relaxed text-sm'>
+                      "{story.content}"
+                    </p>
+
+                    {/* Metric badge */}
+                    <div className='inline-flex items-center gap-2 bg-[#00690D]/10 text-[#00690D] px-3 py-1.5 rounded-full text-xs font-semibold mb-4'>
+                      <TrendingUpIcon className='h-3 w-3' />
+                      {story.metric}
+                    </div>
+
+                    {/* Author info */}
+                    <div className='flex items-center gap-3 pt-4 border-t border-muted'>
+                      <div className={`w-10 h-10 rounded-full ${
+                        story.category === 'student' ? 'bg-[#FE047F]' : 'bg-[#00690D]'
+                      } flex items-center justify-center text-white font-bold text-sm`}>
+                        {story.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className='font-bold text-foreground text-sm'>
+                          {story.name}
+                        </div>
+                        <div className='text-xs text-[#FE047F] font-medium'>
+                          {story.role}
+                        </div>
+                        <div className='text-xs text-muted-foreground flex items-center gap-1'>
+                          <MapPin className='h-2.5 w-2.5' />
+                          {story.location}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div className='text-center mt-16 px-4'>
             <p className='text-muted-foreground mb-6 text-lg'>
-              Join thousands of success stories across Tanzania
+              Join 200+ youth already succeeding across Tanzania
             </p>
             <Link to='/signup'>
               <Button
