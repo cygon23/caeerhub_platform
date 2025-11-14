@@ -12,6 +12,7 @@ import {
   MapPin,
   ArrowRight,
 } from "lucide-react";
+import { FooterBackground } from "@/components/backgrounds/SectionBackgrounds";
 
 export default function ModernFooter() {
 
@@ -55,8 +56,11 @@ export default function ModernFooter() {
   ];
 
   return (
-    <footer className='bg-gradient-to-br from-background to-muted/30 border-t border-border/50'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in'>
+    <footer className='relative bg-gradient-to-br from-background to-muted/30 dark:from-slate-950 dark:to-slate-900 border-t border-border/50 overflow-hidden'>
+      {/* Animated Footer Background */}
+      <FooterBackground />
+
+      <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12'>
             {/* Brand Section */}
             <div className='lg:col-span-2'>
