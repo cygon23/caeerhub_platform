@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.student_academic_levels (
     CONSTRAINT student_academic_levels_user_id_key UNIQUE (user_id)
 );
 
-CREATE INDEX idx_student_levels_user_id ON public.student_academic_levels(user_id);
+CREATE INDEX IF NOT EXISTS idx_student_levels_user_id ON public.student_academic_levels(user_id);
 
 -- 2. Uploaded Study Materials
 CREATE TABLE IF NOT EXISTS public.study_materials (
@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS public.study_materials (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_study_materials_user_id ON public.study_materials(user_id);
-CREATE INDEX idx_study_materials_subject ON public.study_materials(subject);
-CREATE INDEX idx_study_materials_category ON public.study_materials(user_id, category);
+CREATE INDEX IF NOT EXISTS idx_study_materials_user_id ON public.study_materials(user_id);
+CREATE INDEX IF NOT EXISTS idx_study_materials_subject ON public.study_materials(subject);
+CREATE INDEX IF NOT EXISTS idx_study_materials_category ON public.study_materials(user_id, category);
 
 -- 3. Generated Practice Questions
 CREATE TABLE IF NOT EXISTS public.practice_questions (
@@ -66,10 +66,10 @@ CREATE TABLE IF NOT EXISTS public.practice_questions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_practice_questions_user_id ON public.practice_questions(user_id);
-CREATE INDEX idx_practice_questions_subject ON public.practice_questions(user_id, subject);
-CREATE INDEX idx_practice_questions_difficulty ON public.practice_questions(user_id, difficulty_level);
-CREATE INDEX idx_practice_questions_material ON public.practice_questions(material_id);
+CREATE INDEX IF NOT EXISTS idx_practice_questions_user_id ON public.practice_questions(user_id);
+CREATE INDEX IF NOT EXISTS idx_practice_questions_subject ON public.practice_questions(user_id, subject);
+CREATE INDEX IF NOT EXISTS idx_practice_questions_difficulty ON public.practice_questions(user_id, difficulty_level);
+CREATE INDEX IF NOT EXISTS idx_practice_questions_material ON public.practice_questions(material_id);
 
 -- 4. Student Question Attempts (Performance Tracking)
 CREATE TABLE IF NOT EXISTS public.question_attempts (
@@ -82,9 +82,9 @@ CREATE TABLE IF NOT EXISTS public.question_attempts (
     attempted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_question_attempts_user_id ON public.question_attempts(user_id);
-CREATE INDEX idx_question_attempts_question_id ON public.question_attempts(question_id);
-CREATE INDEX idx_question_attempts_date ON public.question_attempts(user_id, attempted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_question_attempts_user_id ON public.question_attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_question_attempts_question_id ON public.question_attempts(question_id);
+CREATE INDEX IF NOT EXISTS idx_question_attempts_date ON public.question_attempts(user_id, attempted_at DESC);
 
 -- 5. AI-Generated Study Guides
 CREATE TABLE IF NOT EXISTS public.study_guides (
@@ -109,9 +109,9 @@ CREATE TABLE IF NOT EXISTS public.study_guides (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_study_guides_user_id ON public.study_guides(user_id);
-CREATE INDEX idx_study_guides_subject ON public.study_guides(user_id, subject);
-CREATE INDEX idx_study_guides_material ON public.study_guides(material_id);
+CREATE INDEX IF NOT EXISTS idx_study_guides_user_id ON public.study_guides(user_id);
+CREATE INDEX IF NOT EXISTS idx_study_guides_subject ON public.study_guides(user_id, subject);
+CREATE INDEX IF NOT EXISTS idx_study_guides_material ON public.study_guides(material_id);
 
 -- 6. Performance Metrics (Subject-wise tracking)
 CREATE TABLE IF NOT EXISTS public.student_performance (
@@ -132,8 +132,8 @@ CREATE TABLE IF NOT EXISTS public.student_performance (
     CONSTRAINT student_performance_user_subject_key UNIQUE (user_id, subject)
 );
 
-CREATE INDEX idx_student_performance_user_id ON public.student_performance(user_id);
-CREATE INDEX idx_student_performance_subject ON public.student_performance(user_id, subject);
+CREATE INDEX IF NOT EXISTS idx_student_performance_user_id ON public.student_performance(user_id);
+CREATE INDEX IF NOT EXISTS idx_student_performance_subject ON public.student_performance(user_id, subject);
 
 -- 7. Study Sessions (Time tracking)
 CREATE TABLE IF NOT EXISTS public.study_sessions (
@@ -148,8 +148,8 @@ CREATE TABLE IF NOT EXISTS public.study_sessions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_study_sessions_user_id ON public.study_sessions(user_id);
-CREATE INDEX idx_study_sessions_date ON public.study_sessions(user_id, started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_study_sessions_user_id ON public.study_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_study_sessions_date ON public.study_sessions(user_id, started_at DESC);
 
 -- =====================================================
 -- STORAGE BUCKET SETUP
@@ -163,6 +163,12 @@ ON CONFLICT (id) DO NOTHING;
 -- =====================================================
 -- STORAGE RLS POLICIES
 -- =====================================================
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can upload their own study materials" ON storage.objects;
+DROP POLICY IF EXISTS "Users can view their own study materials" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update their own study materials" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own study materials" ON storage.objects;
 
 -- Allow authenticated users to upload their own files
 CREATE POLICY "Users can upload their own study materials"

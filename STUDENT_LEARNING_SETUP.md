@@ -20,10 +20,14 @@ Upload error: StorageApiError: new row violates row-level security policy
 
 ### Step 1: Apply the Database Migration
 
+**IMPORTANT:** If you've already created the tables but uploads are still failing, skip to **Step 1B** below.
+
+#### Step 1A: Full Schema Setup (If you haven't run anything yet)
+
 The migration file has been created at:
 `supabase/migrations/20251114053957_student_learning_schema.sql`
 
-**Option A: Using Supabase Dashboard (Recommended)**
+**Using Supabase Dashboard:**
 
 1. Go to your Supabase Dashboard: https://supabase.com/dashboard
 2. Select your project: `pmcxanorldofcazuwefw`
@@ -33,18 +37,24 @@ The migration file has been created at:
 6. Paste into the SQL editor
 7. Click **Run** or press `Ctrl+Enter`
 
-**Option B: Using Supabase CLI (If you have it installed)**
+#### Step 1B: Storage Bucket Setup Only (If you already created the tables)
 
-```bash
-# Install Supabase CLI if not installed
-npm install -g supabase
+If you've already run the table creation SQL and only need the storage bucket setup:
 
-# Link your project
-supabase link --project-ref pmcxanorldofcazuwefw
+**Using Supabase Dashboard:**
 
-# Push the migration
-supabase db push
-```
+1. Go to your Supabase Dashboard: https://supabase.com/dashboard
+2. Select your project: `pmcxanorldofcazuwefw`
+3. Navigate to **SQL Editor** (left sidebar)
+4. Click **New Query**
+5. Copy the entire contents of `supabase/migrations/20251114054500_storage_bucket_setup.sql`
+6. Paste into the SQL editor
+7. Click **Run** or press `Ctrl+Enter`
+
+This will:
+- Create the `study-materials` storage bucket (safely, won't error if exists)
+- Drop and recreate all storage RLS policies (ensuring they're correct)
+- Fix your upload error without affecting existing tables
 
 ### Step 2: Verify Storage Bucket Creation
 
