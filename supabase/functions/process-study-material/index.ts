@@ -18,7 +18,29 @@ serve(async (req) => {
   }
 
   try {
-    const { material_id, content } = await req.json();
+    // Parse request body with error handling
+    let requestBody;
+    try {
+      const bodyText = await req.text();
+      if (!bodyText || bodyText.trim() === '') {
+        throw new Error('Request body is empty');
+      }
+      requestBody = JSON.parse(bodyText);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid request body: ' + parseError.message,
+          success: false
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const { material_id, content } = requestBody;
 
     if (!material_id || !content) {
       throw new Error('Missing material_id or content');
