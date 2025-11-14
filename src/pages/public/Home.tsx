@@ -73,33 +73,33 @@ export default function Home() {
         animation-play-state: paused;
       }
 
-      /* Testimonials infinite scroll - Left to Right */}
+      /* Testimonials infinite scroll - Left to Right */
       @keyframes scroll-left {
         0% {
           transform: translateX(0);
         }
         100% {
-          transform: translateX(-50%);
+          transform: translateX(-33.333%);
         }
       }
       .animate-scroll-left {
-        animation: scroll-left 40s linear infinite;
+        animation: scroll-left 60s linear infinite;
       }
       .animate-scroll-left:hover {
         animation-play-state: paused;
       }
 
-      /* Testimonials infinite scroll - Right to Left */}
+      /* Testimonials infinite scroll - Right to Left */
       @keyframes scroll-right {
         0% {
-          transform: translateX(-50%);
+          transform: translateX(-33.333%);
         }
         100% {
           transform: translateX(0);
         }
       }
       .animate-scroll-right {
-        animation: scroll-right 40s linear infinite;
+        animation: scroll-right 60s linear infinite;
       }
       .animate-scroll-right:hover {
         animation-play-state: paused;
@@ -831,9 +831,9 @@ export default function Home() {
 
           {/* First Row - Scrolling Left to Right */}
           <div className='mb-8 overflow-hidden'>
-            <div className='flex gap-6 animate-scroll-left'>
+            <div className='flex gap-6 animate-scroll-left' style={{ width: 'max-content' }}>
               {/* Duplicate arrays for seamless loop */}
-              {[...successStories.slice(0, 10), ...successStories.slice(0, 10)].map((story, index) => (
+              {[...successStories.slice(0, 10), ...successStories.slice(0, 10), ...successStories.slice(0, 10)].map((story, index) => (
                 <Card
                   key={`row1-${index}`}
                   className='flex-shrink-0 w-[350px] hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
@@ -886,9 +886,9 @@ export default function Home() {
 
           {/* Second Row - Scrolling Right to Left */}
           <div className='overflow-hidden'>
-            <div className='flex gap-6 animate-scroll-right'>
+            <div className='flex gap-6 animate-scroll-right' style={{ width: 'max-content' }}>
               {/* Duplicate arrays for seamless loop */}
-              {[...successStories.slice(10, 20), ...successStories.slice(10, 20)].map((story, index) => (
+              {[...successStories.slice(10, 20), ...successStories.slice(10, 20), ...successStories.slice(10, 20)].map((story, index) => (
                 <Card
                   key={`row2-${index}`}
                   className='flex-shrink-0 w-[350px] hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-slate-900 hover:-translate-y-2'>
