@@ -24,6 +24,13 @@ import {
   MapPin
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {
+  HeroBackground,
+  PartnersBackground,
+  StatsBackground,
+  TestimonialsBackground,
+  CTABackground,
+} from "@/components/backgrounds/SectionBackgrounds";
 import { useGSAPTextReveal, useGSAPStagger } from "@/hooks/useGSAP";
 
 export default function Partners() {
@@ -152,7 +159,8 @@ export default function Partners() {
   return (
     <PublicLayout>
       {/* Hero Section - Clean & Consistent */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden">
+      <section className="relative py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        <HeroBackground />
         {/* Animated background elements */}
         <div className="absolute inset-0">
           {[...Array(25)].map((_, i) => (
@@ -188,7 +196,8 @@ export default function Partners() {
       </section>
 
       {/* Partnership Stats - Circular Badge Design */}
-      <section className="py-20 bg-white dark:bg-slate-950">
+      <section className="relative py-20 bg-white dark:bg-slate-950 overflow-hidden">
+        <PartnersBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {stats.map((stat, index) => (
@@ -219,7 +228,8 @@ export default function Partners() {
       </section>
 
       {/* Featured Partners */}
-      <section className="py-20 bg-muted/30">
+      <section className="relative py-20 bg-muted/30 overflow-hidden">
+        <StatsBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">{t('featured.title')}</h2>
@@ -264,7 +274,8 @@ export default function Partners() {
       </section>
 
       {/* Partnership Types */}
-      <section className="py-20">
+      <section className="relative py-20 overflow-hidden">
+        <TestimonialsBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">{t('opportunities.title')}</h2>
@@ -391,7 +402,8 @@ export default function Partners() {
       </section>
 
       {/* How to Partner - Enhanced UX/UI */}
-      <section className="py-24 bg-white dark:bg-slate-950 relative overflow-hidden">
+      <section className="relative py-24 bg-white dark:bg-slate-950 overflow-hidden">
+        <CTABackground />
         {/* Background elements */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#FE047F]/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#00690D]/10 rounded-full blur-3xl"></div>

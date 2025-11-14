@@ -22,6 +22,12 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGSAPStagger } from "@/hooks/useGSAP";
+import {
+  HeroBackground,
+  StatsBackground,
+  FeaturesBackground,
+  CTABackground,
+} from "@/components/backgrounds/SectionBackgrounds";
 
 export default function Features() {
   const { t } = useTranslation('features');
@@ -144,6 +150,7 @@ export default function Features() {
     <PublicLayout>
       {/* Hero Section */}
       <section className="py-20 bg-gradient-card relative overflow-hidden">
+        <HeroBackground />
         {/* Animated background elements */}
         <div className="absolute inset-0">
           {[...Array(25)].map((_, i) => (
@@ -187,7 +194,8 @@ export default function Features() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20">
+      <section className="relative py-20 overflow-hidden">
+        <FeaturesBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div ref={featuresRef} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
@@ -226,7 +234,8 @@ export default function Features() {
       </section>
 
       {/* How It Works - Circular Connected Journey */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+      <section className="relative py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        <StatsBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">{t('howItWorks.title')}</h2>
@@ -318,7 +327,8 @@ export default function Features() {
       </section>
 
       {/* Proven Results - Circular Badge Design */}
-      <section className="py-20 bg-white dark:bg-slate-950">
+      <section className="relative py-20 bg-white dark:bg-slate-950 overflow-hidden">
+        <FeaturesBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -364,6 +374,7 @@ export default function Features() {
 
       {/* CTA Section - Creative Dual-Tone Design */}
       <section className="relative py-32 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        <CTABackground />
         {/* Creative Background Elements */}
         <div className="absolute inset-0">
           {/* Subtle Grid Pattern */}
