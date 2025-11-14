@@ -63,6 +63,7 @@ import JobOpportunities from "@/components/dashboard/JobOpportunities";
 import CVBuilder from "@/components/dashboard/CVBuilder";
 import Mentorship from "@/components/dashboard/Mentorship";
 import PerformanceTracker from "@/components/dashboard/PerformanceTracker";
+import ExamInsights from "@/components/dashboard/ExamInsights";
 import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
 import UploadMaterials from "@/components/dashboard/UploadMaterials";
 import PracticeQuestions from "@/components/dashboard/PracticeQuestions";
@@ -580,6 +581,7 @@ export default function YouthDashboard() {
     if (activeSection === "upload-materials") return <UploadMaterials />;
     if (activeSection === "practice-questions") return <PracticeQuestions />;
     if (activeSection === "study-guides") return <StudyGuides />;
+    if (activeSection === "exam-insights") return <ExamInsights />;
 
     // Placeholder for remaining sections
     return (
