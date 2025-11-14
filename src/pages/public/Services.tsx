@@ -20,6 +20,12 @@ import {
   Brain
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {
+  HeroBackground,
+  StatsBackground,
+  FeaturesBackground,
+  CTABackground,
+} from "@/components/backgrounds/SectionBackgrounds";
 import { useGSAPStagger } from "@/hooks/useGSAP";
 
 export default function Services() {
@@ -122,7 +128,8 @@ export default function Services() {
   return (
     <PublicLayout>
       {/* Hero Section - Clean & Consistent */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden">
+      <section className="relative py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        <HeroBackground />
         {/* Animated background elements */}
         <div className="absolute inset-0">
           {[...Array(25)].map((_, i) => (
@@ -158,7 +165,8 @@ export default function Services() {
       </section>
 
       {/* Services Tabs */}
-      <section className="py-20">
+      <section className="relative py-20 overflow-hidden">
+        <FeaturesBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue="youth" className="w-full">
             <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto mb-12 h-auto p-1">
@@ -317,7 +325,8 @@ export default function Services() {
       </section>
 
       {/* Additional Services */}
-      <section className="py-20 bg-muted/30">
+      <section className="relative py-20 bg-muted/30 overflow-hidden">
+        <StatsBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">{t('organizations.title')}</h2>
@@ -358,6 +367,7 @@ export default function Services() {
 
       {/* CTA Section - Creative Dual-Tone Design */}
       <section className="relative py-32 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        <CTABackground />
         {/* Creative Background Elements */}
         <div className="absolute inset-0">
           {/* Subtle Grid Pattern */}

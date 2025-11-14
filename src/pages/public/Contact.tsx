@@ -18,6 +18,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  HeroBackground,
+  FAQBackground,
+  CTABackground,
+} from "@/components/backgrounds/SectionBackgrounds";
 
 export default function Contact() {
   const { t } = useTranslation('contact');
@@ -101,7 +106,8 @@ export default function Contact() {
   return (
     <PublicLayout>
       {/* Hero Section - Consistent Style */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden">
+      <section className="relative py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        <HeroBackground />
         {/* Animated background elements */}
         <div className="absolute inset-0">
           {[...Array(25)].map((_, i) => (
@@ -137,7 +143,8 @@ export default function Contact() {
       </section>
 
       {/* Contact Information - Circular Badges */}
-      <section className="py-20 bg-white dark:bg-slate-950">
+      <section className="relative py-20 bg-white dark:bg-slate-950 overflow-hidden">
+        <FAQBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contactInfo.map((info, index) => (
@@ -173,7 +180,8 @@ export default function Contact() {
       </section>
 
       {/* Contact Form & Map */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+      <section className="relative py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
+        <CTABackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
@@ -372,7 +380,8 @@ export default function Contact() {
       </section>
 
       {/* Specialized Support - Improved Design */}
-      <section className="py-20 bg-white dark:bg-slate-950">
+      <section className="relative py-20 bg-white dark:bg-slate-950 overflow-hidden">
+        <FAQBackground />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">

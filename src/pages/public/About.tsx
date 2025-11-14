@@ -24,6 +24,14 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGSAPStagger, useGSAPScale } from "@/hooks/useGSAP";
+import {
+  HeroBackground,
+  StatsBackground,
+  JourneyBackground,
+  FeaturesBackground,
+  TestimonialsBackground,
+  CTABackground,
+} from "@/components/backgrounds/SectionBackgrounds";
 
 export default function About() {
   const { t } = useTranslation('about');
@@ -195,23 +203,9 @@ export default function About() {
   return (
     <PublicLayout>
       {/* Hero Section - Clean & Simple */}
-      <section className='py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 relative overflow-hidden'>
-        {/* Animated background elements */}
-        <div className='absolute inset-0'>
-          {[...Array(25)].map((_, i) => (
-            <div
-              key={i}
-              className='absolute rounded-full bg-[#FE047F]/10 animate-float'
-              style={{
-                width: `${20 + Math.random() * 60}px`,
-                height: `${20 + Math.random() * 60}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${4 + Math.random() * 4}s`,
-              }}></div>
-          ))}
-        </div>
+      <section className='relative py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden'>
+        {/* Animated AI & Technology Background */}
+        <HeroBackground />
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
           <div>
@@ -230,7 +224,8 @@ export default function About() {
       </section>
 
       {/* Mission & Vision - Flipped Modern Design */}
-      <section className='py-24 bg-white dark:bg-slate-950'>
+      <section className='relative py-24 bg-white dark:bg-slate-950 overflow-hidden'>
+        <FeaturesBackground />
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
             {/* Vision First (Flipped) */}
@@ -283,7 +278,8 @@ export default function About() {
       </section>
 
       {/* Impact Stats - Circular Badge Design */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
+      <section className='relative py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden'>
+        <StatsBackground />
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-4'>
@@ -328,7 +324,8 @@ export default function About() {
       </section>
 
       {/* Innovation Section - Redesigned */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950'>
+      <section className='relative py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 overflow-hidden'>
+        <FeaturesBackground />
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
@@ -388,7 +385,8 @@ export default function About() {
       </section>
 
       {/* Timeline - Redesigned */}
-      <section className='py-24 bg-white dark:bg-slate-950'>
+      <section className='relative py-24 bg-white dark:bg-slate-950 overflow-hidden'>
+        <JourneyBackground />
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
@@ -459,7 +457,8 @@ export default function About() {
       </section>
 
       {/* Team - Redesigned */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
+      <section className='relative py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden'>
+        <TestimonialsBackground />
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
@@ -513,7 +512,8 @@ export default function About() {
       </section>
 
       {/* Values - Redesigned */}
-      <section className='py-24 bg-white dark:bg-slate-950'>
+      <section className='relative py-24 bg-white dark:bg-slate-950 overflow-hidden'>
+        <FeaturesBackground />
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
@@ -561,23 +561,8 @@ export default function About() {
 
       {/* CTA - Redesigned */}
       <section className='relative py-32 bg-[#00690D] overflow-hidden'>
-        {/* Animated background */}
-        <div className='absolute inset-0'>
-          <div className='absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]'></div>
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={i}
-              className='absolute rounded-full bg-white/5 animate-pulse'
-              style={{
-                width: `${40 + Math.random() * 120}px`,
-                height: `${40 + Math.random() * 120}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${2 + Math.random() * 3}s`,
-              }}></div>
-          ))}
-        </div>
+        {/* Animated Success & Achievement Background */}
+        <CTABackground />
 
         <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
           <div ref={ctaRef}>
