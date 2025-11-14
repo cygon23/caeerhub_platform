@@ -37,6 +37,16 @@ import heroImage from "@/assets/hero-image.jpg";
 import { useTranslation } from "react-i18next";
 import { useGSAPTextReveal, useGSAPStagger } from "@/hooks/useGSAP";
 import { useEffect, useState } from "react";
+import {
+  HeroBackground,
+  StatsBackground,
+  JourneyBackground,
+  FeaturesBackground,
+  TestimonialsBackground,
+  FAQBackground,
+  PartnersBackground,
+  CTABackground,
+} from "@/components/backgrounds/SectionBackgrounds";
 
 export default function Home() {
   const { t } = useTranslation('home');
@@ -190,23 +200,8 @@ export default function Home() {
     <PublicLayout>
       {/* Modern Hero Section - AI + Experts = Success */}
       <section className='relative min-h-screen flex items-center bg-white dark:bg-slate-950 overflow-hidden'>
-        {/* Subtle Background Pattern */}
-        <div className='absolute inset-0 opacity-[0.03]'>
-          <svg className='w-full h-full' xmlns='http://www.w3.org/2000/svg'>
-            <defs>
-              <pattern id='grid' width='40' height='40' patternUnits='userSpaceOnUse'>
-                <circle cx='20' cy='20' r='1' fill='currentColor' className='text-[#FE047F]' />
-              </pattern>
-            </defs>
-            <rect width='100%' height='100%' fill='url(#grid)' />
-          </svg>
-        </div>
-
-        {/* Large Gradient Orb - Top Right */}
-        <div className='absolute -top-48 -right-48 w-96 h-96 bg-[#FE047F]/10 rounded-full blur-3xl'></div>
-
-        {/* Large Gradient Orb - Bottom Left */}
-        <div className='absolute -bottom-48 -left-48 w-96 h-96 bg-[#00690D]/10 rounded-full blur-3xl'></div>
+        {/* Animated AI & Technology Background */}
+        <HeroBackground />
 
         <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
           <div className='grid lg:grid-cols-2 gap-16 items-center'>
@@ -448,8 +443,11 @@ export default function Home() {
       </section>
 
       {/* Impact Stats Section */}
-      <section className='py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      <section className='relative py-20 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden'>
+        {/* Animated Data & Analytics Background */}
+        <StatsBackground />
+
+        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-4'>
               Real Impact, Real Results
@@ -487,8 +485,11 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className='py-24 bg-white dark:bg-slate-950 relative overflow-hidden'>
-        <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      <section className='relative py-24 bg-white dark:bg-slate-950 overflow-hidden'>
+        {/* Animated Journey/Process Background */}
+        <JourneyBackground />
+
+        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               {t('howItWorks.title')}
@@ -550,8 +551,11 @@ export default function Home() {
       </section>
 
       {/* Features Preview */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      <section className='relative py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 overflow-hidden'>
+        {/* Animated Innovation Background */}
+        <FeaturesBackground />
+
+        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               {t('features.title')}{" "}
@@ -614,8 +618,11 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className='py-24 bg-white dark:bg-slate-950'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      <section className='relative py-24 bg-white dark:bg-slate-950 overflow-hidden'>
+        {/* Animated People & Success Background */}
+        <TestimonialsBackground />
+
+        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-20'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               {t('testimonials.title')}
@@ -685,8 +692,11 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className='py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900'>
-        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
+      <section className='relative py-24 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden'>
+        {/* Animated Q&A Background */}
+        <FAQBackground />
+
+        <div className='relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-6'>
               {t('faq.title')}
@@ -745,8 +755,11 @@ export default function Home() {
       </section>
 
       {/* Partners */}
-      <section className='py-20 bg-white dark:bg-slate-950'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+      <section className='relative py-20 bg-white dark:bg-slate-950 overflow-hidden'>
+        {/* Animated Network Connections Background */}
+        <PartnersBackground />
+
+        <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
           <h3 className='text-2xl font-semibold text-muted-foreground mb-12'>
             {t('partners.title')}
           </h3>
@@ -783,31 +796,8 @@ export default function Home() {
 
       {/* Final CTA Section - Creative Dual-Tone Design */}
       <section className='relative py-32 bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden'>
-        {/* Creative Background Elements */}
-        <div className='absolute inset-0'>
-          {/* Subtle Grid Pattern */}
-          <div className='absolute inset-0 opacity-[0.03]'>
-            <svg className='w-full h-full' xmlns='http://www.w3.org/2000/svg'>
-              <defs>
-                <pattern id='cta-grid' width='40' height='40' patternUnits='userSpaceOnUse'>
-                  <circle cx='20' cy='20' r='1' fill='currentColor' className='text-foreground' />
-                </pattern>
-              </defs>
-              <rect width='100%' height='100%' fill='url(#cta-grid)' />
-            </svg>
-          </div>
-
-          {/* Left Accent - Pink Gradient Orb */}
-          <div className='absolute -left-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#FE047F]/20 rounded-full blur-3xl'></div>
-
-          {/* Right Accent - Green Gradient Orb */}
-          <div className='absolute -right-32 top-1/2 -translate-y-1/2 w-80 h-80 bg-[#00690D]/20 rounded-full blur-3xl'></div>
-
-          {/* Animated Floating Shapes */}
-          <div className='absolute top-20 left-20 w-16 h-16 border-2 border-[#FE047F]/20 rounded-full animate-float' style={{ animationDuration: '8s' }}></div>
-          <div className='absolute bottom-20 right-20 w-12 h-12 border-2 border-[#00690D]/20 rounded-lg animate-float' style={{ animationDuration: '6s', animationDelay: '1s' }}></div>
-          <div className='absolute top-1/3 right-1/4 w-8 h-8 border-2 border-[#FE047F]/20 rotate-45 animate-pulse' style={{ animationDuration: '4s' }}></div>
-        </div>
+        {/* Animated Success & Achievement Background */}
+        <CTABackground />
 
         <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
           <div>
