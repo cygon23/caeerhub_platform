@@ -51,12 +51,8 @@ export default function Login() {
     try {
       await login(email, password);
 
-      toast({
-        title: "Login Successful!",
-        description: "Welcome back to Career na Mimi",
-      });
-
-      // Navigation will be handled by the auth state change
+      // Toast will be shown after redirect happens
+      // Navigation will be handled by the useEffect above
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "An error occurred";
       setError(errorMessage);

@@ -114,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .eq("user_id", sessionUser.id)
               .maybeSingle(),
           ]),
-          10000
+          5000 // Reduced from 10s to 5s for faster UX
         );
 
       // Handle profile data
@@ -186,14 +186,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         fallbackRole = "mentor";
       }
 
-      // For youth, we don't know if they completed onboarding, so assume they haven't
-      // This is safer than assuming they have, as it won't skip onboarding incorrectly
+      // Check cache for isFirstLogin status to avoid showing onboarding incorrectly
+      const cachedData = getCachedUserData(sessionUser.id);
+      const isFirstLogin = cachedData
+        ? cachedData.isFirstLogin
+        : (fallbackRole === "admin" || fallbackRole === "mentor" ? false : false);
+
       const fallbackData: User = {
         id: sessionUser.id,
         email: sessionUser.email || "",
         name: sessionUser.user_metadata?.full_name || "User",
         role: fallbackRole,
-        isFirstLogin: fallbackRole === "youth",
+        isFirstLogin: isFirstLogin,
       };
       return fallbackData;
     } finally {
@@ -224,9 +228,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!cached || !timestamp) return null;
 
-      // Cache expires after 24 hours
+      // Cache expires after 1 hour for fresher data
       const age = Date.now() - parseInt(timestamp);
-      if (age > 24 * 60 * 60 * 1000) {
+      if (age > 60 * 60 * 1000) {
         localStorage.removeItem(`user_cache_${userId}`);
         localStorage.removeItem(`user_cache_timestamp_${userId}`);
         return null;
@@ -365,7 +369,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -373,17 +377,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         throw error;
       }
-      // Login successful - auth state change will handle user data and stop loading
-    } catch (error: any) {
-      // Set loading to false on error since auth state won't change
-      setIsLoading(false);
 
+      // Immediately fetch user data after successful login
+      if (data.user) {
+        const userData = await fetchUserData(data.user);
+        setUser(userData);
+        setSession(data.session);
+      }
+
+      // Login successful - user data loaded
+    } catch (error: any) {
       if (error.message?.includes("fetch")) {
         throw new Error(
           "Network error. Please check your connection and try again."
         );
       }
       throw error;
+    } finally {
+      // Always reset loading state
+      setIsLoading(false);
     }
   };
 
