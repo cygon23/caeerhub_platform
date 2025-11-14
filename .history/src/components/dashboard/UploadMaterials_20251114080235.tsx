@@ -213,12 +213,9 @@ export default function UploadMaterials() {
 
     try {
       // Step 1: Upload to Supabase Storage
-      //const fileExt = file.name.split(".").pop();
-      // const fileName = `${user.id}/${Date.now()}-${file.name}`;
-      //const filePath = `${user.id}/${fileName}`; 
-    
-     const fileName = `${Date.now()}-${file.name}`;
-     const filePath = `${user.id}/${fileName}`;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${user.id}/${Date.now()}-${file.name}`;
+      const filePath = `${user.id}/${fileName}`; 
 
       const { error: uploadError } = await supabase.storage
         .from("study-materials")

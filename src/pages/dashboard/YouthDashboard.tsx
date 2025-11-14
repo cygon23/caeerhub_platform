@@ -65,6 +65,8 @@ import Mentorship from "@/components/dashboard/Mentorship";
 import PerformanceTracker from "@/components/dashboard/PerformanceTracker";
 import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
 import UploadMaterials from "@/components/dashboard/UploadMaterials";
+import PracticeQuestions from "@/components/dashboard/PracticeQuestions";
+import StudyGuides from "@/components/dashboard/StudyGuides";
 import { supabase } from "@/integrations/supabase/client";
 
 // Lazy load dashboard components with proper named exports
@@ -209,23 +211,15 @@ export default function YouthDashboard() {
         { title: "Career Dashboard", icon: BarChart3, id: "career-dashboard" },
       ],
     },
-    {
-      title: "Examination Preparation",
-      items: [
-        { title: "Upload Materials", icon: Upload, id: "upload-materials" },
-        {
-          title: "Practice Questions",
-          icon: FileQuestion,
-          id: "practice-questions",
-        },
-        { title: "Study Guides", icon: BookMarked, id: "study-guides" },
-        {
-          title: "Performance Insights",
-          icon: TrendingUp,
-          id: "exam-insights",
-        },
-      ],
-    },
+   {
+  title: "Examination Preparation",
+  items: [
+    { title: "Upload Materials", icon: Upload, id: "upload-materials" },
+    { title: "Practice Questions", icon: FileQuestion, id: "practice-questions" },
+    { title: "Study Guides", icon: BookMarked, id: "study-guides" },
+    { title: "Performance Insights", icon: TrendingUp, id: "exam-insights" },
+  ],
+},
     {
       title: "Performance & Support",
       items: [
@@ -276,7 +270,6 @@ export default function YouthDashboard() {
     return group;
   });
 
-  // console.log("🧩 filteredSidebarItems", filteredSidebarItems);
 
   const quickStats = [
     {
@@ -336,7 +329,7 @@ export default function YouthDashboard() {
         <div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
           <div>
             <h1 className='text-2xl md:text-3xl font-bold mb-2'>
-              Habari {user?.name?.split(" ")[0] || "Amina"}! 👋
+              Habari {user?.name?.split(" ")[0] || "User"}! 👋
             </h1>
             <p className='text-white/90 text-base md:text-lg'>
               Ready to continue building your career journey today?
@@ -585,6 +578,8 @@ export default function YouthDashboard() {
 
     // Examination Preparation
     if (activeSection === "upload-materials") return <UploadMaterials />;
+    if (activeSection === "practice-questions") return <PracticeQuestions />;
+    if (activeSection === "study-guides") return <StudyGuides />;
 
     // Placeholder for remaining sections
     return (

@@ -213,12 +213,9 @@ export default function UploadMaterials() {
 
     try {
       // Step 1: Upload to Supabase Storage
-      //const fileExt = file.name.split(".").pop();
-      // const fileName = `${user.id}/${Date.now()}-${file.name}`;
-      //const filePath = `${user.id}/${fileName}`; 
-    
-     const fileName = `${Date.now()}-${file.name}`;
-     const filePath = `${user.id}/${fileName}`;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${user.id}/${Date.now()}-${file.name}`;
+      const filePath = `study-materials/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("study-materials")
@@ -385,48 +382,40 @@ export default function UploadMaterials() {
     });
   };
 
-const handleDelete = async (id: string) => {
-  try {
-    const file = uploadedFiles.find((f) => f.id === id);
-    if (!file?.file_url) return;
+  const handleDelete = async (id: string) => {
+    try {
+      const file = uploadedFiles.find((f) => f.id === id);
+      if (!file?.file_url) return;
 
-    //  Correct file path extraction
-    const urlParts = file.file_url.split('/study-materials/');
-    if (urlParts.length < 2) {
-      throw new Error('Invalid file URL');
+      // Delete from storage
+      const filePath = file.file_url.split("/study-materials/")[1];
+      await supabase.storage
+        .from("study-materials")
+        .remove([`study-materials/${filePath}`]);
+
+      // Delete from database (cascade will delete related questions/guides)
+      const { error } = await supabase
+        .from("study_materials")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setUploadedFiles((prev) => prev.filter((f) => f.id !== id));
+      
+      toast({
+        title: "File Deleted",
+        description: "Material and all related content removed successfully.",
+      });
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete file. Please try again.",
+        variant: "destructive",
+      });
     }
-    const filePath = urlParts[1];
-
-    // Delete from storage
-    const { error: storageError } = await supabase.storage
-      .from("study-materials")
-      .remove([filePath]);
-
-    if (storageError) throw storageError;
-
-    // Delete from database (cascade will delete related questions/guides)
-    const { error } = await supabase
-      .from("study_materials")
-      .delete()
-      .eq("id", id);
-
-    if (error) throw error;
-
-    setUploadedFiles((prev) => prev.filter((f) => f.id !== id));
-    
-    toast({
-      title: "File Deleted",
-      description: "Material and all related content removed successfully.",
-    });
-  } catch (error: any) {
-    console.error("Delete error:", error);
-    toast({
-      title: "Error",
-      description: error.message || "Failed to delete file. Please try again.",
-      variant: "destructive",
-    });
-  }
-};
+  };
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";

@@ -64,3 +64,36 @@ entrypoint = "./functions/purchase-credits/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/purchase-credits/*.html" ]
+
+[functions.process-study-material]
+enabled = true
+verify_jwt = true
+import_map = "./functions/process-study-material/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/process-study-material/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/process-study-material/*.html" ]
+
+[functions.generate-practice-questions]
+enabled = true
+verify_jwt = true
+import_map = "./functions/generate-practice-questions/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/generate-practice-questions/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/generate-practice-questions/*.html" ]
+
+[functions.generate-study-guide]
+enabled = true
+verify_jwt = true
+import_map = "./functions/generate-study-guide/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/generate-study-guide/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/generate-study-guide/*.html" ]
