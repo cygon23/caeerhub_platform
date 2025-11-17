@@ -282,65 +282,8 @@ CREATE POLICY "Admins can view all billing settings"
   FOR SELECT
   USING (public.is_admin());
 
--- Update the handle_new_user trigger to create default user preferences
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = 'public'
-AS $$
-DECLARE
-  user_role app_role := 'youth';
-BEGIN
-  -- Check email to assign appropriate role for testing
-  IF NEW.email LIKE '%admin%' THEN
-    user_role := 'admin';
-  ELSIF NEW.email LIKE '%mentor%' THEN
-    user_role := 'mentor';
-  ELSE
-    user_role := 'youth';
-  END IF;
-
-  -- Insert into profiles (handle duplicates gracefully)
-  INSERT INTO public.profiles (user_id, display_name)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data ->> 'full_name', 'User')
-  )
-  ON CONFLICT (user_id) DO NOTHING;
-
-  -- Insert user role (handle duplicates gracefully)
-  INSERT INTO public.user_roles (user_id, role)
-  VALUES (NEW.id, user_role)
-  ON CONFLICT (user_id, role) DO NOTHING;
-
-  -- Send welcome notification (make this optional - don't fail if notifications table doesn't exist or insert fails)
-  BEGIN
-    INSERT INTO public.notifications (user_id, title, message, type)
-    VALUES (
-      NEW.id,
-      'Welcome to Career na Mimi! 🎉',
-      'Your journey to career success starts here. Complete your onboarding to get personalized recommendations.',
-      'info'
-    );
-  EXCEPTION
-    WHEN OTHERS THEN
-      -- Log the error but don't fail the entire trigger
-      RAISE WARNING 'Failed to create welcome notification for user %: %', NEW.id, SQLERRM;
-  END;
-
-  RETURN NEW;
-EXCEPTION
-  WHEN OTHERS THEN
-    -- If anything goes wrong, log it but don't prevent user creation
-    RAISE WARNING 'Error in handle_new_user trigger for user %: %', NEW.id, SQLERRM;
-    RETURN NEW;
-END;
-$$;
-
 -- Comments for clarity
 COMMENT ON TABLE public.user_preferences IS 'Stores user-specific preferences including theme, notifications, privacy, and other settings. Created on-demand when users first access their settings page.';
 COMMENT ON TABLE public.notification_settings IS 'Stores user notification preferences. Created on-demand when users access notification settings.';
 COMMENT ON TABLE public.security_settings IS 'Stores user security settings. Created on-demand when users access security settings.';
 COMMENT ON TABLE public.billing_settings IS 'Stores user billing and subscription information. Created on-demand when needed.';
-COMMENT ON FUNCTION public.handle_new_user() IS 'Automatically creates profile, assigns role, and sends welcome notification when a new user signs up. Handles errors gracefully to ensure user creation succeeds even if related operations fail. Does NOT create preferences - those are created later when users access their settings.';
