@@ -7,15 +7,19 @@ CREATE TABLE IF NOT EXISTS public.user_preferences (
   theme text DEFAULT 'light' CHECK (theme IN ('light', 'dark', 'auto')),
   accent_color text DEFAULT 'blue',
   language text DEFAULT 'en',
+  timezone text DEFAULT 'Africa/Dar_es_Salaam',
 
   -- Notification preferences
   email_notifications boolean DEFAULT true,
   push_notifications boolean DEFAULT true,
+  sms_notifications boolean DEFAULT false,
 
   -- Privacy settings
   profile_discoverable boolean DEFAULT true,
   show_online_status boolean DEFAULT true,
   allow_messages_from text DEFAULT 'everyone' CHECK (allow_messages_from IN ('everyone', 'connections', 'nobody')),
+  show_email boolean DEFAULT false,
+  show_phone boolean DEFAULT false,
 
   -- Advanced settings
   api_access_enabled boolean DEFAULT false,
@@ -27,6 +31,38 @@ CREATE TABLE IF NOT EXISTS public.user_preferences (
   -- Ensure one row per user
   UNIQUE(user_id)
 );
+
+-- Add missing columns if they don't exist (for existing tables)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'public'
+                 AND table_name = 'user_preferences'
+                 AND column_name = 'timezone') THEN
+    ALTER TABLE public.user_preferences ADD COLUMN timezone text DEFAULT 'Africa/Dar_es_Salaam';
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'public'
+                 AND table_name = 'user_preferences'
+                 AND column_name = 'sms_notifications') THEN
+    ALTER TABLE public.user_preferences ADD COLUMN sms_notifications boolean DEFAULT false;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'public'
+                 AND table_name = 'user_preferences'
+                 AND column_name = 'show_email') THEN
+    ALTER TABLE public.user_preferences ADD COLUMN show_email boolean DEFAULT false;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'public'
+                 AND table_name = 'user_preferences'
+                 AND column_name = 'show_phone') THEN
+    ALTER TABLE public.user_preferences ADD COLUMN show_phone boolean DEFAULT false;
+  END IF;
+END $$;
 
 -- Create notification_settings table
 CREATE TABLE IF NOT EXISTS public.notification_settings (
@@ -105,91 +141,142 @@ CREATE INDEX IF NOT EXISTS idx_notification_settings_user_id ON public.notificat
 CREATE INDEX IF NOT EXISTS idx_security_settings_user_id ON public.security_settings(user_id);
 CREATE INDEX IF NOT EXISTS idx_billing_settings_user_id ON public.billing_settings(user_id);
 
+-- Create updated_at trigger function if it doesn't exist
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Add triggers to automatically update the updated_at column
+DROP TRIGGER IF EXISTS update_user_preferences_updated_at ON public.user_preferences;
+CREATE TRIGGER update_user_preferences_updated_at
+  BEFORE UPDATE ON public.user_preferences
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_notification_settings_updated_at ON public.notification_settings;
+CREATE TRIGGER update_notification_settings_updated_at
+  BEFORE UPDATE ON public.notification_settings
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_security_settings_updated_at ON public.security_settings;
+CREATE TRIGGER update_security_settings_updated_at
+  BEFORE UPDATE ON public.security_settings
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_billing_settings_updated_at ON public.billing_settings;
+CREATE TRIGGER update_billing_settings_updated_at
+  BEFORE UPDATE ON public.billing_settings
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
 -- Enable RLS on all new tables
 ALTER TABLE public.user_preferences ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notification_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.security_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.billing_settings ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies before creating new ones (idempotent approach)
 -- RLS Policies for user_preferences
+DROP POLICY IF EXISTS "Users can view their own preferences" ON public.user_preferences;
 CREATE POLICY "Users can view their own preferences"
   ON public.user_preferences
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own preferences" ON public.user_preferences;
 CREATE POLICY "Users can update their own preferences"
   ON public.user_preferences
   FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own preferences" ON public.user_preferences;
 CREATE POLICY "Users can insert their own preferences"
   ON public.user_preferences
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own preferences" ON public.user_preferences;
 CREATE POLICY "Users can delete their own preferences"
   ON public.user_preferences
   FOR DELETE
   USING (auth.uid() = user_id);
 
 -- RLS Policies for notification_settings
+DROP POLICY IF EXISTS "Users can view their own notification settings" ON public.notification_settings;
 CREATE POLICY "Users can view their own notification settings"
   ON public.notification_settings
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own notification settings" ON public.notification_settings;
 CREATE POLICY "Users can update their own notification settings"
   ON public.notification_settings
   FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own notification settings" ON public.notification_settings;
 CREATE POLICY "Users can insert their own notification settings"
   ON public.notification_settings
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own notification settings" ON public.notification_settings;
 CREATE POLICY "Users can delete their own notification settings"
   ON public.notification_settings
   FOR DELETE
   USING (auth.uid() = user_id);
 
 -- RLS Policies for security_settings
+DROP POLICY IF EXISTS "Users can view their own security settings" ON public.security_settings;
 CREATE POLICY "Users can view their own security settings"
   ON public.security_settings
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own security settings" ON public.security_settings;
 CREATE POLICY "Users can update their own security settings"
   ON public.security_settings
   FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own security settings" ON public.security_settings;
 CREATE POLICY "Users can insert their own security settings"
   ON public.security_settings
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own security settings" ON public.security_settings;
 CREATE POLICY "Users can delete their own security settings"
   ON public.security_settings
   FOR DELETE
   USING (auth.uid() = user_id);
 
 -- RLS Policies for billing_settings
+DROP POLICY IF EXISTS "Users can view their own billing settings" ON public.billing_settings;
 CREATE POLICY "Users can view their own billing settings"
   ON public.billing_settings
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own billing settings" ON public.billing_settings;
 CREATE POLICY "Users can update their own billing settings"
   ON public.billing_settings
   FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own billing settings" ON public.billing_settings;
 CREATE POLICY "Users can insert their own billing settings"
   ON public.billing_settings
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can view all billing settings" ON public.billing_settings;
 CREATE POLICY "Admins can view all billing settings"
   ON public.billing_settings
   FOR SELECT
