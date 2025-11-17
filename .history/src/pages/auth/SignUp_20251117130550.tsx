@@ -83,72 +83,96 @@ export default function SignUp() {
 
     return true;
   };
- 
+
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  if (!validateForm()) return;
-  setIsLoading(true);
+    e.preventDefault();
+    setError("");
+    if (!validateForm()) return;
+    setIsLoading(true);
 
-  try {
-    if (userType === "school") {
-      await handleSchoolRegistration();
-    } else {
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-      const { supabase } = await import("@/integrations/supabase/client");
-      
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: fullName,
+    try {
+      if (userType === "school") {
+        // Handle school registration - will be stored separately
+        await handleSchoolRegistration();
+      } else {
+        // Handle individual registration
+        const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+
+        // Call signup - we need to check the raw Supabase response
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            data: {
+              full_name: fullName,
+            },
           },
-        },
-      });
+        });
 
-      if (error) {
-        throw error;
-      }
-
-      // Check if user already exists
-      if (data.user && data.user.identities && data.user.identities.length === 0) {
-        throw new Error("User already registered");
-      }
-
-      // Optional: Manually create profile if trigger fails
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            user_id: data.user.id,
-            display_name: fullName,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'user_id'
-          });
-        
-        if (profileError && !profileError.message.includes('duplicate')) {
-          console.error('Profile creation error:', profileError);
-          // Continue anyway - the user is created
+        if (error) {
+          throw error;
         }
+
+        // Check if user already exists
+        // When email confirmation is enabled and user exists, Supabase returns:
+        // - data.user is populated
+        // - but data.user.identities is empty (no new identity created)
+        if (data.user && data.user.identities && data.user.identities.length === 0) {
+          // User already exists
+          throw new Error("User already registered");
+        }
+
+        toast({
+          title: "Account Created!",
+          description: "Please check your email to verify your account.",
+        });
+
+        setSuccess(true);
       }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Registration failed";
 
-      toast({
-        title: "Account Created!",
-        description: "Please check your email to verify your account.",
-      });
+      // Check for duplicate email error or database errors
+      if (errorMessage.includes("User already registered") ||
+          errorMessage.includes("already been registered") ||
+          errorMessage.includes("already exists") ||
+          errorMessage.includes("duplicate") ||
+          errorMessage.includes("identities") ||
+          errorMessage.includes("already in use")) {
+        setError("This email is already registered. Please sign in instead.");
+        toast({
+          title: "Account Already Exists",
+          description: "This email is already registered. Redirecting to login...",
+          variant: "destructive",
+        });
 
-      setSuccess(true);
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else if (errorMessage.includes("Database error")) {
+        setError("Unable to create account. Please try again later or contact support.");
+        toast({
+          title: "Registration Error",
+          description: "There was a problem creating your account. Please try again later.",
+          variant: "destructive",
+        });
+      } else {
+        setError(errorMessage);
+        toast({
+          title: "Registration Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    // ... existing error handling
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
+
   const handleSchoolRegistration = async () => {
     // For school registration, we'll create a pending registration
     // This will be stored in a separate table for admin approval
