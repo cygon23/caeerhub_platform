@@ -119,6 +119,7 @@ export default function CVBuilder() {
   const [targetIndustry, setTargetIndustry] = useState('');
   const [copiedStates, setCopiedStates] = useState<{[key: string]: boolean}>({});
   const [showPreview, setShowPreview] = useState(false);
+  const [editingCV, setEditingCV] = useState(false);
 
   const defaultCV: CVData = {
     title: 'My Professional CV',
@@ -259,6 +260,33 @@ export default function CVBuilder() {
     setCurrentCV({ ...defaultCV, title: `CV ${cvs.length + 1}` });
     setAiAnalysis(null);
     setActiveTab('builder');
+    setEditingCV(true);
+  };
+
+  const editCV = (cv: any) => {
+    setCurrentCV({
+      id: cv.id,
+      title: cv.title,
+      personal_info: cv.personal_info || defaultCV.personal_info,
+      experience: cv.experience || [],
+      education: cv.education || [],
+      skills: cv.skills || { technical: [], soft: [] },
+      achievements: cv.achievements || []
+    });
+    setEditingCV(true);
+    setActiveTab('builder');
+  };
+
+  const cancelEdit = () => {
+    setEditingCV(false);
+    loadCVs();
+  };
+
+  const isCVComplete = (cv: CVData | null) => {
+    if (!cv) return false;
+    return cv.personal_info.full_name && cv.personal_info.email &&
+           (cv.experience.length > 0 || cv.education.length > 0 ||
+            cv.skills.technical.length > 0 || cv.skills.soft.length > 0);
   };
 
   const optimizeWithAI = async () => {
@@ -452,7 +480,8 @@ export default function CVBuilder() {
     return 'secondary';
   };
 
-  if (!currentCV) {
+  // Show empty state if no CVs exist
+  if (!currentCV && cvs.length === 0) {
     return (
       <div className="space-y-6 animate-fade-in">
         <Card className="border-2 border-dashed border-primary/20 hover:border-primary/40 transition-all">
@@ -474,9 +503,166 @@ export default function CVBuilder() {
     );
   }
 
+  // Show CV Management View when not editing and CVs exist
+  if (!editingCV && cvs.length > 0) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Header */}
+        <Card className="bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 border-primary/20">
+          <CardHeader>
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
+                  <FileText className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">My CVs</h2>
+                  <p className="text-sm text-muted-foreground">{cvs.length} CV{cvs.length !== 1 ? 's' : ''} created</p>
+                </div>
+              </div>
+              <Button onClick={createNewCV} size="lg" className="bg-gradient-to-r from-primary to-secondary">
+                <Plus className="h-5 w-5 mr-2" />
+                Create New CV
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+
+        {/* CV Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {cvs.map((cv) => {
+            const cvComplete = cv.personal_info?.full_name && cv.personal_info?.email &&
+                              (cv.experience?.length > 0 || cv.education?.length > 0 ||
+                               cv.skills?.technical?.length > 0 || cv.skills?.soft?.length > 0);
+            const totalSkills = (cv.skills?.technical?.length || 0) + (cv.skills?.soft?.length || 0);
+
+            return (
+              <Card
+                key={cv.id}
+                className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/30 cursor-pointer relative overflow-hidden"
+                onClick={() => editCV(cv)}
+              >
+                {/* Gradient background on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                <CardHeader className="relative">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-lg truncate group-hover:text-primary transition-colors">
+                        {cv.title || 'Untitled CV'}
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Last updated: {new Date(cv.updated_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    {cvComplete && (
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    )}
+                  </div>
+                </CardHeader>
+
+                <CardContent className="relative space-y-4">
+                  {/* CV Stats */}
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="p-2 bg-primary/5 rounded-lg">
+                      <Briefcase className="h-4 w-4 mx-auto text-primary mb-1" />
+                      <p className="text-xs font-medium">{cv.experience?.length || 0}</p>
+                      <p className="text-xs text-muted-foreground">Experience</p>
+                    </div>
+                    <div className="p-2 bg-secondary/5 rounded-lg">
+                      <GraduationCap className="h-4 w-4 mx-auto text-secondary mb-1" />
+                      <p className="text-xs font-medium">{cv.education?.length || 0}</p>
+                      <p className="text-xs text-muted-foreground">Education</p>
+                    </div>
+                    <div className="p-2 bg-primary/5 rounded-lg">
+                      <Code className="h-4 w-4 mx-auto text-primary mb-1" />
+                      <p className="text-xs font-medium">{totalSkills}</p>
+                      <p className="text-xs text-muted-foreground">Skills</p>
+                    </div>
+                  </div>
+
+                  {/* Action Icons */}
+                  <div className="flex items-center justify-end gap-1 pt-2 border-t">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        editCV(cv);
+                        setShowPreview(true);
+                      }}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 hover:bg-secondary/10 hover:text-secondary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        editCV(cv);
+                        analyzeCV();
+                      }}
+                    >
+                      <Wand2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDownload();
+                      }}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Preview Modal for Management View */}
+        {currentCV && (
+          <Dialog open={showPreview} onOpenChange={setShowPreview}>
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+              <DialogHeader className="p-6 pb-0">
+                <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                  <Eye className="h-6 w-6 text-primary" />
+                  CV Preview
+                </DialogTitle>
+                <DialogDescription>
+                  Preview how your professional CV will look
+                </DialogDescription>
+              </DialogHeader>
+              <div className="p-6">
+                <CVPreview cvData={currentCV} />
+              </div>
+              <div className="p-6 pt-0 flex justify-end gap-2 border-t">
+                <Button variant="outline" onClick={() => setShowPreview(false)}>
+                  Close
+                </Button>
+                <Button onClick={handleDownload} className="bg-gradient-to-r from-primary to-secondary">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download PDF
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+    );
+  }
+
+  // Show CV Builder/Editor View
+  if (!currentCV) return null;
+
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header with Actions */}
+      {/* Header with Actions - Editor Mode */}
       <Card className="bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 border-primary/20">
         <CardHeader>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -491,17 +677,16 @@ export default function CVBuilder() {
                   placeholder="CV Title"
                   className="text-lg font-semibold border-0 bg-transparent focus-visible:ring-0 p-0 h-auto"
                 />
-                <p className="text-sm text-muted-foreground mt-1">
-                  {currentCV.experience.length} experiences • {currentCV.education.length} education • {currentCV.skills.technical.length + currentCV.skills.soft.length} skills
-                </p>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <Button variant="outline" onClick={createNewCV} size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                New CV
-              </Button>
+              {cvs.length > 0 && (
+                <Button variant="outline" onClick={cancelEdit} size="sm">
+                  <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
+                  Back to CVs
+                </Button>
+              )}
               <Button onClick={saveCV} disabled={loading} variant="outline" size="sm">
                 {loading ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <FileCheck className="h-4 w-4 mr-2" />}
                 {loading ? 'Saving...' : 'Save'}
@@ -580,34 +765,6 @@ export default function CVBuilder() {
 
         {/* CV Builder Tab */}
         <TabsContent value="builder" className="space-y-6">
-          {/* Target Role & Industry */}
-          <Card className="border-primary/20">
-            <CardHeader>
-              <CardTitle className="flex items-center text-lg">
-                <Target className="h-5 w-5 mr-2 text-primary" />
-                Target Position (Optional)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Target Role</label>
-                <Input
-                  placeholder="e.g., Software Developer, Marketing Manager"
-                  value={targetRole}
-                  onChange={(e) => setTargetRole(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Target Industry</label>
-                <Input
-                  placeholder="e.g., Technology, Healthcare, Finance"
-                  value={targetIndustry}
-                  onChange={(e) => setTargetIndustry(e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Section Navigation */}
           <Card>
             <CardContent className="p-4">

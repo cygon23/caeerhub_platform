@@ -86,12 +86,12 @@ export default function CVPreview({ cvData }: CVPreviewProps) {
       {/* Main Content */}
       <div className="p-8 space-y-8">
         {/* Experience Section */}
-        {experience.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-primary">
-              <Briefcase className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold text-primary">Professional Experience</h2>
-            </div>
+        <section>
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-primary">
+            <Briefcase className="h-5 w-5 text-primary" />
+            <h2 className="text-2xl font-bold text-primary">Professional Experience</h2>
+          </div>
+          {experience.length > 0 ? (
             <div className="space-y-6">
               {experience.map((exp, index) => (
                 <div key={index} className="relative pl-6 border-l-2 border-gray-200">
@@ -117,16 +117,22 @@ export default function CVPreview({ cvData }: CVPreviewProps) {
                 </div>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50/50 text-center">
+              <Briefcase className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-gray-500 text-sm font-medium">No work experience added yet</p>
+              <p className="text-gray-400 text-xs mt-1">Add your professional experience to strengthen your CV</p>
+            </div>
+          )}
+        </section>
 
         {/* Education Section */}
-        {education.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-secondary">
-              <GraduationCap className="h-5 w-5 text-secondary" />
-              <h2 className="text-2xl font-bold text-secondary">Education</h2>
-            </div>
+        <section>
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-secondary">
+            <GraduationCap className="h-5 w-5 text-secondary" />
+            <h2 className="text-2xl font-bold text-secondary">Education</h2>
+          </div>
+          {education.length > 0 ? (
             <div className="space-y-4">
               {education.map((edu, index) => (
                 <div key={index} className="relative pl-6 border-l-2 border-gray-200">
@@ -159,16 +165,22 @@ export default function CVPreview({ cvData }: CVPreviewProps) {
                 </div>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50/50 text-center">
+              <GraduationCap className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-gray-500 text-sm font-medium">No education added yet</p>
+              <p className="text-gray-400 text-xs mt-1">Add your educational background to complete your CV</p>
+            </div>
+          )}
+        </section>
 
         {/* Skills Section */}
-        {(skills.technical.length > 0 || skills.soft.length > 0) && (
-          <section>
-            <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-primary">
-              <Code className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold text-primary">Skills</h2>
-            </div>
+        <section>
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-primary">
+            <Code className="h-5 w-5 text-primary" />
+            <h2 className="text-2xl font-bold text-primary">Skills</h2>
+          </div>
+          {(skills.technical.length > 0 || skills.soft.length > 0) ? (
             <div className="space-y-3">
               {skills.technical.length > 0 && (
                 <div>
@@ -195,16 +207,22 @@ export default function CVPreview({ cvData }: CVPreviewProps) {
                 </div>
               )}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50/50 text-center">
+              <Code className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-gray-500 text-sm font-medium">No skills added yet</p>
+              <p className="text-gray-400 text-xs mt-1">Add your technical and soft skills to showcase your abilities</p>
+            </div>
+          )}
+        </section>
 
         {/* Achievements Section */}
-        {achievements.length > 0 && (
-          <section>
-            <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-secondary">
-              <Award className="h-5 w-5 text-secondary" />
-              <h2 className="text-2xl font-bold text-secondary">Achievements & Awards</h2>
-            </div>
+        <section>
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-secondary">
+            <Award className="h-5 w-5 text-secondary" />
+            <h2 className="text-2xl font-bold text-secondary">Achievements & Awards</h2>
+          </div>
+          {achievements.length > 0 ? (
             <div className="space-y-3">
               {achievements.map((achievement, index) => (
                 <div key={index} className="relative pl-6 border-l-2 border-gray-200">
@@ -226,8 +244,14 @@ export default function CVPreview({ cvData }: CVPreviewProps) {
                 </div>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50/50 text-center">
+              <Award className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-gray-500 text-sm font-medium">No achievements added yet</p>
+              <p className="text-gray-400 text-xs mt-1">Highlight your awards and achievements to stand out</p>
+            </div>
+          )}
+        </section>
 
         {/* Footer */}
         <div className="pt-6 border-t border-gray-200">
