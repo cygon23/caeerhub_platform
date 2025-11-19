@@ -120,6 +120,8 @@ export default function CVBuilder() {
   const [copiedStates, setCopiedStates] = useState<{[key: string]: boolean}>({});
   const [showPreview, setShowPreview] = useState(false);
   const [editingCV, setEditingCV] = useState(false);
+  const [deletingCV, setDeletingCV] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const defaultCV: CVData = {
     title: 'My Professional CV',
@@ -280,6 +282,42 @@ export default function CVBuilder() {
   const cancelEdit = () => {
     setEditingCV(false);
     loadCVs();
+  };
+
+  const deleteCV = async (cvId: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('user_cvs')
+        .delete()
+        .eq('id', cvId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast.success('CV deleted successfully');
+
+      // If deleting current CV, reset state
+      if (currentCV?.id === cvId) {
+        setCurrentCV(null);
+        setEditingCV(false);
+        setAiAnalysis(null);
+      }
+
+      // Reload CVs list
+      loadCVs();
+      setShowDeleteDialog(false);
+      setDeletingCV(null);
+    } catch (error) {
+      console.error('Error deleting CV:', error);
+      toast.error('Failed to delete CV');
+    }
+  };
+
+  const confirmDelete = (cvId: string) => {
+    setDeletingCV(cvId);
+    setShowDeleteDialog(true);
   };
 
   const isCVComplete = (cv: CVData | null) => {
@@ -555,9 +593,22 @@ export default function CVBuilder() {
                         Last updated: {new Date(cv.updated_at).toLocaleDateString()}
                       </p>
                     </div>
-                    {cvComplete && (
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                    )}
+                    <div className="flex items-center gap-1">
+                      {cvComplete && (
+                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          confirmDelete(cv.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
 
@@ -653,6 +704,39 @@ export default function CVBuilder() {
             </DialogContent>
           </Dialog>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-destructive">
+                <AlertCircle className="h-5 w-5" />
+                Delete CV
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this CV? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setDeletingCV(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => deletingCV && deleteCV(deletingCV)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
