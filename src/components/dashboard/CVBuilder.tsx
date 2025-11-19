@@ -7,16 +7,22 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import {
   FileText, Plus, Trash2, Download, Eye, Star, Zap, Award,
   CheckCircle, Sparkles, Target, TrendingUp, AlertCircle,
   Lightbulb, Copy, Check, ArrowRight, BarChart3, ChevronRight,
   Briefcase, GraduationCap, Code, MessageSquare, Trophy,
-  Bot, Wand2, RefreshCw, FileCheck, Rocket
+  Bot, Wand2, RefreshCw, FileCheck, Rocket, CalendarIcon, Lock
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import CVPreview from './CVPreview';
 
 interface CVData {
   id?: string;
@@ -105,12 +111,14 @@ export default function CVBuilder() {
   const [currentCV, setCurrentCV] = useState<CVData | null>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [optimizing, setOptimizing] = useState(false);
   const [activeTab, setActiveTab] = useState('builder');
   const [activeSection, setActiveSection] = useState('personal');
   const [aiAnalysis, setAiAnalysis] = useState<CVAnalysis | null>(null);
   const [targetRole, setTargetRole] = useState('');
   const [targetIndustry, setTargetIndustry] = useState('');
   const [copiedStates, setCopiedStates] = useState<{[key: string]: boolean}>({});
+  const [showPreview, setShowPreview] = useState(false);
 
   const defaultCV: CVData = {
     title: 'My Professional CV',
@@ -251,6 +259,82 @@ export default function CVBuilder() {
     setCurrentCV({ ...defaultCV, title: `CV ${cvs.length + 1}` });
     setAiAnalysis(null);
     setActiveTab('builder');
+  };
+
+  const optimizeWithAI = async () => {
+    if (!currentCV || !aiAnalysis) {
+      toast.error('Please run AI analysis first');
+      return;
+    }
+
+    setOptimizing(true);
+    try {
+      const optimizedCV = { ...currentCV };
+
+      // Apply keyword suggestions to summary
+      if (aiAnalysis.keyword_suggestions.length > 0 && optimizedCV.personal_info.summary) {
+        const keywords = aiAnalysis.keyword_suggestions.slice(0, 3).map(k => k.keyword).join(', ');
+        if (!optimizedCV.personal_info.summary.toLowerCase().includes(keywords.toLowerCase())) {
+          optimizedCV.personal_info.summary += ` Skilled in ${keywords}.`;
+        }
+      }
+
+      // Add suggested skills
+      if (aiAnalysis.skills_analysis.suggestions.length > 0) {
+        aiAnalysis.skills_analysis.suggestions.forEach(skill => {
+          if (!optimizedCV.skills.technical.includes(skill) && !optimizedCV.skills.soft.includes(skill)) {
+            // Determine if technical or soft skill
+            const technicalKeywords = ['programming', 'software', 'data', 'cloud', 'development', 'technical'];
+            const isTechnical = technicalKeywords.some(kw => skill.toLowerCase().includes(kw));
+
+            if (isTechnical && optimizedCV.skills.technical.length < 15) {
+              optimizedCV.skills.technical.push(skill);
+            } else if (!isTechnical && optimizedCV.skills.soft.length < 10) {
+              optimizedCV.skills.soft.push(skill);
+            }
+          }
+        });
+      }
+
+      // Apply experience improvements
+      if (aiAnalysis.experience_analysis.length > 0) {
+        aiAnalysis.experience_analysis.forEach((expAnalysis, index) => {
+          if (optimizedCV.experience[index] && expAnalysis.rewritten_bullets.length > 0) {
+            // Append improved bullets to description
+            const currentDesc = optimizedCV.experience[index].description;
+            const newBullets = expAnalysis.rewritten_bullets.slice(0, 2).join('\n');
+            if (currentDesc && !currentDesc.includes(newBullets)) {
+              optimizedCV.experience[index].description = currentDesc + '\n' + newBullets;
+            }
+          }
+        });
+      }
+
+      setCurrentCV(optimizedCV);
+      await saveCV();
+
+      toast.success('🎉 CV optimized with AI suggestions!');
+
+      // Re-analyze to show new scores
+      setTimeout(() => {
+        analyzeCV();
+      }, 1000);
+    } catch (error) {
+      console.error('Error optimizing CV:', error);
+      toast.error('Failed to optimize CV');
+    } finally {
+      setOptimizing(false);
+    }
+  };
+
+  const handleDownload = () => {
+    toast.error(
+      '🔒 Export to PDF is available for Pro users',
+      {
+        description: 'Upgrade to Pro to download your CV as a professional PDF',
+        duration: 5000,
+      }
+    );
   };
 
   const addExperience = () => {
@@ -413,19 +497,56 @@ export default function CVBuilder() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={createNewCV}>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="outline" onClick={createNewCV} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 New CV
               </Button>
-              <Button onClick={saveCV} disabled={loading} variant="outline">
+              <Button onClick={saveCV} disabled={loading} variant="outline" size="sm">
                 {loading ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <FileCheck className="h-4 w-4 mr-2" />}
                 {loading ? 'Saving...' : 'Save'}
+              </Button>
+              <Button
+                onClick={() => setShowPreview(true)}
+                variant="outline"
+                size="sm"
+                className="border-primary text-primary hover:bg-primary/10"
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Preview
+              </Button>
+              <Button
+                onClick={optimizeWithAI}
+                disabled={!aiAnalysis || optimizing}
+                variant="outline"
+                size="sm"
+                className="border-secondary text-secondary hover:bg-secondary/10"
+              >
+                {optimizing ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Optimizing...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    Optimize AI
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={handleDownload}
+                variant="outline"
+                size="sm"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download
               </Button>
               <Button
                 onClick={analyzeCV}
                 disabled={analyzing}
                 className="bg-gradient-to-r from-primary to-secondary"
+                size="sm"
               >
                 {analyzing ? (
                   <>
@@ -653,30 +774,63 @@ export default function CVBuilder() {
                           </div>
                           <div>
                             <label className="text-sm font-medium mb-2 block">Start Date</label>
-                            <Input
-                              placeholder="Start Date"
-                              type="month"
-                              value={exp.start_date}
-                              onChange={(e) => {
-                                const newExp = [...currentCV.experience];
-                                newExp[index] = { ...newExp[index], start_date: e.target.value };
-                                setCurrentCV({ ...currentCV, experience: newExp });
-                              }}
-                            />
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !exp.start_date && "text-muted-foreground"
+                                  )}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {exp.start_date ? format(new Date(exp.start_date), "PPP") : <span>Pick a date</span>}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                  mode="single"
+                                  selected={exp.start_date ? new Date(exp.start_date) : undefined}
+                                  onSelect={(date) => {
+                                    const newExp = [...currentCV.experience];
+                                    newExp[index] = { ...newExp[index], start_date: date ? date.toISOString().split('T')[0] : '' };
+                                    setCurrentCV({ ...currentCV, experience: newExp });
+                                  }}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
                           </div>
                           <div>
                             <label className="text-sm font-medium mb-2 block">End Date</label>
-                            <Input
-                              placeholder="End Date"
-                              type="month"
-                              value={exp.end_date}
-                              onChange={(e) => {
-                                const newExp = [...currentCV.experience];
-                                newExp[index] = { ...newExp[index], end_date: e.target.value };
-                                setCurrentCV({ ...currentCV, experience: newExp });
-                              }}
-                              disabled={exp.current}
-                            />
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !exp.end_date && "text-muted-foreground"
+                                  )}
+                                  disabled={exp.current}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {exp.end_date ? format(new Date(exp.end_date), "PPP") : <span>Pick a date</span>}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                  mode="single"
+                                  selected={exp.end_date ? new Date(exp.end_date) : undefined}
+                                  onSelect={(date) => {
+                                    const newExp = [...currentCV.experience];
+                                    newExp[index] = { ...newExp[index], end_date: date ? date.toISOString().split('T')[0] : '' };
+                                    setCurrentCV({ ...currentCV, experience: newExp });
+                                  }}
+                                  initialFocus
+                                  disabled={exp.current}
+                                />
+                              </PopoverContent>
+                            </Popover>
                           </div>
                         </div>
 
@@ -793,27 +947,61 @@ export default function CVBuilder() {
                           </div>
                           <div>
                             <label className="text-sm font-medium mb-2 block">Start Date</label>
-                            <Input
-                              type="month"
-                              value={edu.start_date}
-                              onChange={(e) => {
-                                const newEdu = [...currentCV.education];
-                                newEdu[index] = { ...newEdu[index], start_date: e.target.value };
-                                setCurrentCV({ ...currentCV, education: newEdu });
-                              }}
-                            />
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !edu.start_date && "text-muted-foreground"
+                                  )}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {edu.start_date ? format(new Date(edu.start_date), "PPP") : <span>Pick a date</span>}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                  mode="single"
+                                  selected={edu.start_date ? new Date(edu.start_date) : undefined}
+                                  onSelect={(date) => {
+                                    const newEdu = [...currentCV.education];
+                                    newEdu[index] = { ...newEdu[index], start_date: date ? date.toISOString().split('T')[0] : '' };
+                                    setCurrentCV({ ...currentCV, education: newEdu });
+                                  }}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
                           </div>
                           <div>
                             <label className="text-sm font-medium mb-2 block">End Date</label>
-                            <Input
-                              type="month"
-                              value={edu.end_date}
-                              onChange={(e) => {
-                                const newEdu = [...currentCV.education];
-                                newEdu[index] = { ...newEdu[index], end_date: e.target.value };
-                                setCurrentCV({ ...currentCV, education: newEdu });
-                              }}
-                            />
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full justify-start text-left font-normal",
+                                    !edu.end_date && "text-muted-foreground"
+                                  )}
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {edu.end_date ? format(new Date(edu.end_date), "PPP") : <span>Pick a date</span>}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                  mode="single"
+                                  selected={edu.end_date ? new Date(edu.end_date) : undefined}
+                                  onSelect={(date) => {
+                                    const newEdu = [...currentCV.education];
+                                    newEdu[index] = { ...newEdu[index], end_date: date ? date.toISOString().split('T')[0] : '' };
+                                    setCurrentCV({ ...currentCV, education: newEdu });
+                                  }}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
                           </div>
                         </div>
                       </CardContent>
@@ -1279,6 +1467,33 @@ export default function CVBuilder() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Preview Modal */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <Eye className="h-6 w-6 text-primary" />
+              CV Preview
+            </DialogTitle>
+            <DialogDescription>
+              Preview how your professional CV will look
+            </DialogDescription>
+          </DialogHeader>
+          <div className="p-6">
+            <CVPreview cvData={currentCV} />
+          </div>
+          <div className="p-6 pt-0 flex justify-end gap-2 border-t">
+            <Button variant="outline" onClick={() => setShowPreview(false)}>
+              Close
+            </Button>
+            <Button onClick={handleDownload} className="bg-gradient-to-r from-primary to-secondary">
+              <Download className="h-4 w-4 mr-2" />
+              Download PDF
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
