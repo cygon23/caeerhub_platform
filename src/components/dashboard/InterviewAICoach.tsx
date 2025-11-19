@@ -1,25 +1,35 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  MessageCircle, 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  Star, 
-  Clock, 
-  Target, 
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
+import {
+  MessageCircle,
+  Target,
   Award,
   Lightbulb,
   CheckCircle,
   AlertCircle,
-  TrendingUp
+  TrendingUp,
+  Clock,
+  Sparkles,
+  BarChart3,
+  RefreshCw,
+  Eye,
+  Trash2,
+  Plus,
+  ArrowRight,
+  FileText,
+  Zap,
+  Star,
+  Brain
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 interface InterviewSession {
@@ -27,117 +37,86 @@ interface InterviewSession {
   position: string;
   industry: string;
   difficulty: 'entry' | 'intermediate' | 'senior';
-  questions: Array<{
-    question: string;
-    type: 'behavioral' | 'technical' | 'situational';
-    tips: string[];
-  }>;
-  responses?: Array<{
-    question: string;
-    response: string;
-    score: number;
-    feedback: string;
-  }>;
+  status?: string;
+  current_question?: number;
+  total_questions?: number;
   overall_score?: number;
   created_at?: string;
+  completed_at?: string;
+}
+
+interface InterviewResponse {
+  id?: string;
+  question_number: number;
+  question_text: string;
+  question_type: 'behavioral' | 'technical' | 'situational';
+  response_text: string;
+  score?: number;
+  communication_score?: number;
+  content_score?: number;
+  structure_score?: number;
+  strengths?: any[];
+  improvements?: any[];
+  suggested_answer?: string;
+  key_points_covered?: string[];
+  key_points_missed?: string[];
 }
 
 export default function InterviewAICoach() {
+  const { user } = useAuth();
   const [sessions, setSessions] = useState<any[]>([]);
   const [currentSession, setCurrentSession] = useState<InterviewSession | null>(null);
-  const [activeTab, setActiveTab] = useState('practice');
-  const [isRecording, setIsRecording] = useState(false);
+  const [currentResponses, setCurrentResponses] = useState<InterviewResponse[]>([]);
+  const [activeTab, setActiveTab] = useState('sessions');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [sessionFeedback, setSessionFeedback] = useState<any>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deletingSession, setDeletingSession] = useState<string | null>(null);
 
+  // Interview questions database
   const interviewQuestions = {
     entry: {
       behavioral: [
-        { 
-          question: "Tell me about yourself and why you're interested in this position.",
-          tips: ["Keep it concise (2-3 minutes)", "Focus on relevant experiences", "Connect to the role"]
-        },
-        { 
-          question: "What are your greatest strengths?",
-          tips: ["Choose strengths relevant to the job", "Provide specific examples", "Show impact"]
-        },
-        { 
-          question: "Where do you see yourself in 5 years?",
-          tips: ["Show ambition but be realistic", "Align with company growth", "Demonstrate commitment"]
-        }
+        { question: "Tell me about yourself and why you're interested in this position.", tips: ["Keep it concise (2-3 minutes)", "Focus on relevant experiences", "Connect to the role"] },
+        { question: "What are your greatest strengths?", tips: ["Choose strengths relevant to the job", "Provide specific examples", "Show impact"] },
+        { question: "Describe a challenging situation you faced and how you overcame it.", tips: ["Use STAR method", "Show problem-solving", "Highlight learning"] }
       ],
       technical: [
-        { 
-          question: "How would you approach learning a new technology or skill required for this role?",
-          tips: ["Show learning methodology", "Mention resources you use", "Give examples from past experience"]
-        },
-        { 
-          question: "Describe a challenging project you worked on. How did you overcome obstacles?",
-          tips: ["Use STAR method", "Focus on your contribution", "Highlight problem-solving skills"]
-        }
+        { question: "How would you approach learning a new technology or skill required for this role?", tips: ["Show learning methodology", "Mention resources", "Give examples"] },
+        { question: "Describe a project you're proud of and your contribution to it.", tips: ["Be specific about your role", "Show technical skills", "Quantify impact"] }
       ],
       situational: [
-        { 
-          question: "How would you handle a disagreement with a team member?",
-          tips: ["Show conflict resolution skills", "Emphasize communication", "Focus on finding solutions"]
-        },
-        { 
-          question: "What would you do if you missed an important deadline?",
-          tips: ["Take responsibility", "Show proactive communication", "Demonstrate learning"]
-        }
+        { question: "How would you handle a disagreement with a team member?", tips: ["Show conflict resolution", "Emphasize communication", "Focus on solutions"] },
+        { question: "What would you do if you missed an important deadline?", tips: ["Take responsibility", "Show proactive communication", "Demonstrate learning"] }
       ]
     },
     intermediate: {
       behavioral: [
-        { 
-          question: "Describe a time when you led a team through a difficult project.",
-          tips: ["Highlight leadership skills", "Show team management", "Discuss outcomes"]
-        },
-        { 
-          question: "Tell me about a time you had to adapt to significant change at work.",
-          tips: ["Show flexibility", "Demonstrate resilience", "Highlight positive outcomes"]
-        }
+        { question: "Describe a time when you led a team through a difficult project.", tips: ["Highlight leadership skills", "Show team management", "Discuss outcomes"] },
+        { question: "Tell me about a time you had to adapt to significant change at work.", tips: ["Show flexibility", "Demonstrate resilience", "Highlight positive outcomes"] }
       ],
       technical: [
-        { 
-          question: "How do you stay current with industry trends and technologies?",
-          tips: ["Mention specific resources", "Show continuous learning", "Discuss application"]
-        },
-        { 
-          question: "Describe your approach to mentoring junior team members.",
-          tips: ["Show teaching ability", "Demonstrate patience", "Highlight development success"]
-        }
+        { question: "How do you stay current with industry trends and technologies?", tips: ["Mention specific resources", "Show continuous learning", "Discuss application"] },
+        { question: "Describe your approach to mentoring junior team members.", tips: ["Show teaching ability", "Demonstrate patience", "Highlight development success"] }
       ],
       situational: [
-        { 
-          question: "How would you handle competing priorities from different stakeholders?",
-          tips: ["Show prioritization skills", "Demonstrate communication", "Focus on business value"]
-        }
+        { question: "How would you handle competing priorities from different stakeholders?", tips: ["Show prioritization skills", "Demonstrate communication", "Focus on business value"] }
       ]
     },
     senior: {
       behavioral: [
-        { 
-          question: "Describe your leadership philosophy and how it has evolved.",
-          tips: ["Show self-awareness", "Demonstrate growth", "Give concrete examples"]
-        },
-        { 
-          question: "Tell me about a strategic decision you made that had significant impact.",
-          tips: ["Show strategic thinking", "Demonstrate impact", "Discuss lessons learned"]
-        }
+        { question: "Describe your leadership philosophy and how it has evolved.", tips: ["Show self-awareness", "Demonstrate growth", "Give concrete examples"] },
+        { question: "Tell me about a strategic decision you made that had significant impact.", tips: ["Show strategic thinking", "Demonstrate impact", "Discuss lessons learned"] }
       ],
       technical: [
-        { 
-          question: "How do you approach building and scaling high-performing teams?",
-          tips: ["Show team building skills", "Demonstrate scalability thinking", "Highlight results"]
-        }
+        { question: "How do you approach building and scaling high-performing teams?", tips: ["Show team building skills", "Demonstrate scalability thinking", "Highlight results"] }
       ],
       situational: [
-        { 
-          question: "How would you handle a situation where your team is consistently missing targets?",
-          tips: ["Show analytical thinking", "Demonstrate leadership", "Focus on solutions"]
-        }
+        { question: "How would you handle a situation where your team is consistently missing targets?", tips: ["Show analytical thinking", "Demonstrate leadership", "Focus on solutions"] }
       ]
     }
   };
@@ -152,54 +131,62 @@ export default function InterviewAICoach() {
 
   useEffect(() => {
     loadSessions();
-  }, []);
+  }, [user]);
 
   const loadSessions = async () => {
-    
+    if (!user) return;
+
     try {
-      // Mock sessions data for now (will be replaced when types are updated)
-      const mockSessions = [
-        {
-          id: '1',
-          position: 'Software Developer',
-          industry: 'Technology',
-          difficulty: 'entry',
-          overall_score: 78,
-          created_at: '2024-01-15T10:30:00Z'
-        },
-        {
-          id: '2',
-          position: 'Data Analyst',
-          industry: 'Finance',
-          difficulty: 'intermediate',
-          overall_score: 85,
-          created_at: '2024-01-10T14:20:00Z'
-        }
-      ];
-      setSessions(mockSessions);
+      const { data, error } = await supabase
+        .from('interview_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSessions(data || []);
     } catch (error) {
       console.error('Error loading sessions:', error);
     }
   };
 
-  const startNewSession = (position: string, industry: string, difficulty: 'entry' | 'intermediate' | 'senior') => {
-    const allQuestions = [
-      ...interviewQuestions[difficulty].behavioral.map(q => ({ ...q, type: 'behavioral' as const })),
-      ...interviewQuestions[difficulty].technical.map(q => ({ ...q, type: 'technical' as const })),
-      ...interviewQuestions[difficulty].situational.map(q => ({ ...q, type: 'situational' as const }))
-    ];
+  const startNewSession = async (position: string, industry: string, difficulty: 'entry' | 'intermediate' | 'senior') => {
+    if (!user) return;
 
-    const session: InterviewSession = {
-      position,
-      industry,
-      difficulty,
-      questions: allQuestions.slice(0, 8) // Limit to 8 questions for practice
-    };
+    try {
+      const allQuestions = [
+        ...interviewQuestions[difficulty].behavioral.map(q => ({ ...q, type: 'behavioral' as const })),
+        ...interviewQuestions[difficulty].technical.map(q => ({ ...q, type: 'technical' as const })),
+        ...interviewQuestions[difficulty].situational.map(q => ({ ...q, type: 'situational' as const }))
+      ];
 
-    setCurrentSession(session);
-    setCurrentQuestion(0);
-    setResponse('');
-    setActiveTab('interview');
+      const questions = allQuestions.slice(0, 6); // 6 questions per session
+
+      const { data, error } = await supabase
+        .from('interview_sessions')
+        .insert({
+          user_id: user.id,
+          position,
+          industry,
+          difficulty,
+          status: 'in_progress',
+          total_questions: questions.length
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCurrentSession({ ...data, questions } as any);
+      setCurrentQuestion(0);
+      setCurrentResponses([]);
+      setResponse('');
+      setActiveTab('interview');
+      toast.success('Interview session started!');
+    } catch (error) {
+      console.error('Error starting session:', error);
+      toast.error('Failed to start session');
+    }
   };
 
   const submitResponse = async () => {
@@ -208,110 +195,169 @@ export default function InterviewAICoach() {
       return;
     }
 
-    setLoading(true);
+    setAnalyzing(true);
     try {
-      // Simulate AI feedback (in real app, you'd call an AI service)
-      const mockScore = Math.floor(Math.random() * 40) + 60; // 60-100 range
-      const mockFeedback = generateFeedback(currentSession.questions[currentQuestion], response, mockScore);
+      const questions = (currentSession as any).questions;
+      const question = questions[currentQuestion];
 
-      const updatedResponses = [
-        ...(currentSession.responses || []),
-        {
-          question: currentSession.questions[currentQuestion].question,
-          response,
-          score: mockScore,
-          feedback: mockFeedback
+      const { data, error } = await supabase.functions.invoke('analyze-interview-response', {
+        body: {
+          session_id: currentSession.id,
+          question_number: currentQuestion,
+          question_text: question.question,
+          question_type: question.type,
+          response_text: response,
+          position: currentSession.position,
+          industry: currentSession.industry,
+          difficulty: currentSession.difficulty
         }
-      ];
-
-      setCurrentSession({
-        ...currentSession,
-        responses: updatedResponses
       });
 
-      setResponse('');
-      
-      if (currentQuestion < currentSession.questions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-        toast.success('Response recorded! Next question loaded.');
+      if (error) throw error;
+
+      if (data.success) {
+        const analysis = data.data.analysis;
+
+        setCurrentResponses(prev => [
+          ...prev,
+          {
+            question_number: currentQuestion,
+            question_text: question.question,
+            question_type: question.type,
+            response_text: response,
+            ...analysis
+          }
+        ]);
+
+        setResponse('');
+
+        if (currentQuestion < questions.length - 1) {
+          setCurrentQuestion(currentQuestion + 1);
+          toast.success(`Score: ${analysis.score}%! Next question loaded.`);
+        } else {
+          // Session complete, generate overall feedback
+          await generateSessionFeedback();
+        }
       } else {
-        // Session complete
-        const overallScore = Math.round(
-          updatedResponses.reduce((sum, r) => sum + r.score, 0) / updatedResponses.length
-        );
-
-        const completedSession = {
-          ...currentSession,
-          responses: updatedResponses,
-          overall_score: overallScore
-        };
-
-        await saveSession(completedSession);
-        setActiveTab('results');
-        toast.success('Interview practice completed!');
+        throw new Error(data.error?.message || 'Analysis failed');
       }
     } catch (error) {
       console.error('Error submitting response:', error);
-      toast.error('Failed to submit response');
+      toast.error('Failed to analyze response');
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const generateSessionFeedback = async () => {
+    if (!currentSession) return;
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-interview-feedback', {
+        body: { session_id: currentSession.id }
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        setSessionFeedback(data.data);
+        setShowResults(true);
+        setActiveTab('results');
+        toast.success(`Interview complete! Overall score: ${data.data.overall_score}%`);
+        loadSessions();
+      } else {
+        throw new Error(data.error?.message || 'Feedback generation failed');
+      }
+    } catch (error) {
+      console.error('Error generating feedback:', error);
+      toast.error('Failed to generate feedback');
     } finally {
       setLoading(false);
     }
   };
 
-  const generateFeedback = (question: any, response: string, score: number): string => {
-    const feedbacks = {
-      high: [
-        "Great response! You demonstrated strong communication skills and provided specific examples.",
-        "Excellent answer! You showed good understanding and relevant experience.",
-        "Outstanding response! Your examples were compelling and well-structured."
-      ],
-      medium: [
-        "Good response! Consider adding more specific examples to strengthen your answer.",
-        "Nice answer! You could improve by being more concise and focused.",
-        "Solid response! Try to connect your experience more directly to the role."
-      ],
-      low: [
-        "Your response needs work. Focus on providing specific examples and being more structured.",
-        "Consider practicing this type of question more. Use the STAR method for better structure.",
-        "Work on being more specific and confident in your responses."
-      ]
-    };
+  const deleteSession = async (sessionId: string) => {
+    if (!user) return;
 
-    const category = score >= 80 ? 'high' : score >= 60 ? 'medium' : 'low';
-    return feedbacks[category][Math.floor(Math.random() * feedbacks[category].length)];
-  };
-
-  const saveSession = async (session: InterviewSession) => {
-    
     try {
-      // Mock save for now (will be replaced when types are updated)
-      console.log('Saving session:', session);
-      
-      // Add to local sessions state
-      const newSession = {
-        id: Date.now().toString(),
-        position: session.position,
-        industry: session.industry,
-        difficulty: session.difficulty,
-        overall_score: session.overall_score,
-        created_at: new Date().toISOString()
-      };
-      
-      setSessions(prev => [newSession, ...prev]);
-      toast.success('Session saved successfully!');
+      const { error } = await supabase
+        .from('interview_sessions')
+        .delete()
+        .eq('id', sessionId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast.success('Session deleted successfully');
+      loadSessions();
+      setShowDeleteDialog(false);
+      setDeletingSession(null);
     } catch (error) {
-      console.error('Error saving session:', error);
+      console.error('Error deleting session:', error);
+      toast.error('Failed to delete session');
     }
   };
 
-  const renderSetup = () => {
+  const confirmDelete = (sessionId: string) => {
+    setDeletingSession(sessionId);
+    setShowDeleteDialog(true);
+  };
+
+  const viewSessionResults = async (session: any) => {
+    try {
+      // Load responses
+      const { data: responses, error: respError } = await supabase
+        .from('interview_responses')
+        .select('*')
+        .eq('session_id', session.id)
+        .order('question_number', { ascending: true });
+
+      if (respError) throw respError;
+
+      // Load feedback
+      const { data: feedback, error: feedError } = await supabase
+        .from('interview_feedback')
+        .select('*')
+        .eq('session_id', session.id)
+        .single();
+
+      if (feedError) throw feedError;
+
+      setCurrentSession(session);
+      setCurrentResponses(responses || []);
+      setSessionFeedback({ ...feedback, overall_score: session.overall_score });
+      setShowResults(true);
+      setActiveTab('results');
+    } catch (error) {
+      console.error('Error loading session results:', error);
+      toast.error('Failed to load results');
+    }
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const getReadinessColor = (level: string) => {
+    if (level === 'well_prepared') return 'text-green-600 bg-green-50 border-green-200';
+    if (level === 'ready') return 'text-blue-600 bg-blue-50 border-blue-200';
+    if (level === 'developing') return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    return 'text-red-600 bg-red-50 border-red-200';
+  };
+
+  // Render Sessions Management View
+  const renderSessionsView = () => {
     const [selectedIndustry, setSelectedIndustry] = useState('');
     const [selectedPosition, setSelectedPosition] = useState('');
     const [selectedDifficulty, setSelectedDifficulty] = useState<'entry' | 'intermediate' | 'senior'>('entry');
 
     return (
-      <div className="space-y-6">
-        <Card className="bg-gradient-card">
+      <div className="space-y-6 animate-fade-in">
+        {/* Setup Card */}
+        <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5">
           <CardHeader>
             <CardTitle className="flex items-center">
               <Target className="h-5 w-5 mr-2 text-primary" />
@@ -319,7 +365,7 @@ export default function InterviewAICoach() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Industry</label>
                 <Select value={selectedIndustry} onValueChange={setSelectedIndustry}>
@@ -336,8 +382,8 @@ export default function InterviewAICoach() {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">Position</label>
-                <Select 
-                  value={selectedPosition} 
+                <Select
+                  value={selectedPosition}
                   onValueChange={setSelectedPosition}
                   disabled={!selectedIndustry}
                 >
@@ -367,234 +413,175 @@ export default function InterviewAICoach() {
               </div>
             </div>
 
-            <Button 
+            <Button
               onClick={() => startNewSession(selectedPosition, selectedIndustry, selectedDifficulty)}
               disabled={!selectedIndustry || !selectedPosition}
-              className="w-full"
+              size="lg"
+              className="w-full bg-gradient-to-r from-primary to-secondary"
             >
-              Start Practice Session
+              <Sparkles className="h-5 w-5 mr-2" />
+              Start AI Interview Practice
             </Button>
           </CardContent>
         </Card>
 
         {/* Recent Sessions */}
-        {sessions.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Practice Sessions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {sessions.slice(0, 5).map((session, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gradient-accent rounded-lg">
-                    <div>
-                      <p className="font-medium">{session.position}</p>
-                      <p className="text-sm text-muted-foreground">{session.industry} • {session.difficulty}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                        <span className="font-medium">{session.overall_score}%</span>
+        {sessions.length > 0 ? (
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Practice Sessions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {sessions.map((session) => (
+                <Card
+                  key={session.id}
+                  className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/30 cursor-pointer relative overflow-hidden"
+                  onClick={() => session.status === 'completed' ? viewSessionResults(session) : null}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  <CardHeader className="relative">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg truncate group-hover:text-primary transition-colors">
+                          {session.position}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {session.industry} • {session.difficulty}
+                        </p>
+                        <Badge
+                          className="mt-2"
+                          variant={session.status === 'completed' ? 'default' : session.status === 'in_progress' ? 'secondary' : 'outline'}
+                        >
+                          {session.status}
+                        </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(session.created_at).toLocaleDateString()}
-                      </p>
+                      <div className="flex items-center gap-1">
+                        {session.status === 'completed' && session.overall_score && (
+                          <div className={`text-2xl font-bold ${getScoreColor(session.overall_score)}`}>
+                            {session.overall_score}%
+                          </div>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            confirmDelete(session.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  </CardHeader>
+
+                  <CardContent className="relative">
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(session.created_at).toLocaleDateString()}
+                      {session.completed_at && ` - Completed ${new Date(session.completed_at).toLocaleDateString()}`}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <Card className="border-2 border-dashed border-muted">
+            <CardContent className="p-12 text-center">
+              <Brain className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <h3 className="text-xl font-semibold mb-2">No Practice Sessions Yet</h3>
+              <p className="text-muted-foreground">
+                Start your first AI-powered interview practice to get personalized feedback
+              </p>
             </CardContent>
           </Card>
         )}
-      </div>
-    );
-  };
 
-  const renderInterview = () => {
-    if (!currentSession) return null;
-
-    const question = currentSession.questions[currentQuestion];
-    const progress = ((currentQuestion + 1) / currentSession.questions.length) * 100;
-
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center">
-                <MessageCircle className="h-5 w-5 mr-2" />
-                Question {currentQuestion + 1} of {currentSession.questions.length}
-              </CardTitle>
-              <Badge variant={question.type === 'behavioral' ? 'default' : question.type === 'technical' ? 'secondary' : 'outline'}>
-                {question.type}
-              </Badge>
-            </div>
-            <div className="w-full bg-secondary rounded-full h-2">
-              <div 
-                className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-6 bg-gradient-card rounded-lg">
-              <h3 className="text-lg font-semibold mb-4">{question.question}</h3>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">💡 Tips:</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  {question.tips.map((tip, index) => (
-                    <li key={index} className="flex items-start">
-                      <CheckCircle className="h-3 w-3 mt-0.5 mr-2 text-primary flex-shrink-0" />
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <Textarea
-              placeholder="Type your response here... (aim for 1-3 minutes when speaking)"
-              value={response}
-              onChange={(e) => setResponse(e.target.value)}
-              rows={6}
-              className="resize-none"
-            />
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  Recommended: 2-3 minutes
-                </span>
-              </div>
-              
-              <div className="flex space-x-2">
-                <Button variant="outline" onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}>
-                  Previous
-                </Button>
-                <Button onClick={submitResponse} disabled={loading || !response.trim()}>
-                  {loading ? 'Analyzing...' : currentQuestion === currentSession.questions.length - 1 ? 'Finish' : 'Next Question'}
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  };
-
-  const renderResults = () => {
-    if (!currentSession?.responses) return null;
-
-    const averageScore = currentSession.overall_score || 0;
-    const getScoreColor = (score: number) => {
-      if (score >= 80) return 'text-green-600';
-      if (score >= 60) return 'text-yellow-600';
-      return 'text-red-600';
-    };
-
-    return (
-      <div className="space-y-6">
-        <Card className="bg-gradient-card">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Award className="h-5 w-5 mr-2 text-primary" />
-                Interview Results
-              </div>
-              <div className={`text-2xl font-bold ${getScoreColor(averageScore)}`}>
-                {averageScore}%
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="text-center p-4 bg-background rounded-lg">
-                <TrendingUp className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="text-2xl font-bold">{currentSession.responses.length}</p>
-                <p className="text-sm text-muted-foreground">Questions Answered</p>
-              </div>
-              <div className="text-center p-4 bg-background rounded-lg">
-                <Star className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
-                <p className="text-2xl font-bold">{averageScore}%</p>
-                <p className="text-sm text-muted-foreground">Average Score</p>
-              </div>
-              <div className="text-center p-4 bg-background rounded-lg">
-                <Target className="h-8 w-8 text-secondary mx-auto mb-2" />
-                <p className="text-2xl font-bold">
-                  {currentSession.responses.filter(r => r.score >= 70).length}
-                </p>
-                <p className="text-sm text-muted-foreground">Strong Answers</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-semibold">Detailed Feedback</h4>
-              {currentSession.responses.map((response, index) => (
-                <div key={index} className="p-4 border border-border rounded-lg">
-                  <div className="flex items-start justify-between mb-2">
-                    <p className="font-medium text-sm">{response.question}</p>
-                    <div className={`text-lg font-bold ${getScoreColor(response.score)}`}>
-                      {response.score}%
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-2">{response.feedback}</p>
-                  <details className="text-xs">
-                    <summary className="cursor-pointer text-primary">Your Response</summary>
-                    <p className="mt-2 p-2 bg-muted rounded text-muted-foreground">{response.response}</p>
-                  </details>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex space-x-2 mt-6">
-              <Button onClick={() => setActiveTab('practice')} variant="outline">
-                Practice Again
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-destructive">
+                <AlertCircle className="h-5 w-5" />
+                Delete Interview Session
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this session? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setDeletingSession(null);
+                }}
+              >
+                Cancel
               </Button>
-              <Button onClick={() => {
-                // Generate improvement plan
-                toast.success('Improvement plan generated! Check your recommendations.');
-              }}>
-                Get Improvement Plan
+              <Button
+                variant="destructive"
+                onClick={() => deletingSession && deleteSession(deletingSession)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   };
 
+  // Rest of the component continues in next part...
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 border-primary/20">
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <MessageCircle className="h-5 w-5 mr-2" />
-            AI Interview Coach
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
+                <MessageCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl">AI Interview Coach</CardTitle>
+                <p className="text-sm text-muted-foreground">Practice with real AI feedback</p>
+              </div>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="practice">Practice Setup</TabsTrigger>
-              <TabsTrigger value="interview" disabled={!currentSession}>Mock Interview</TabsTrigger>
-              <TabsTrigger value="results" disabled={!currentSession?.responses}>Results</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="practice" className="mt-6">
-              {renderSetup()}
-            </TabsContent>
-
-            <TabsContent value="interview" className="mt-6">
-              {renderInterview()}
-            </TabsContent>
-
-            <TabsContent value="results" className="mt-6">
-              {renderResults()}
-            </TabsContent>
-          </Tabs>
-        </CardContent>
       </Card>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3 h-auto p-1">
+          <TabsTrigger value="sessions" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white">
+            <FileText className="h-4 w-4 mr-2" />
+            Sessions
+          </TabsTrigger>
+          <TabsTrigger value="interview" disabled={!currentSession} className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white">
+            <MessageCircle className="h-4 w-4 mr-2" />
+            Interview
+          </TabsTrigger>
+          <TabsTrigger value="results" disabled={!showResults} className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Results
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="sessions" className="mt-6">
+          {renderSessionsView()}
+        </TabsContent>
+
+        <TabsContent value="interview" className="mt-6">
+          {/* Interview content will go here */}
+          <p className="text-muted-foreground text-center">Interview view coming next...</p>
+        </TabsContent>
+
+        <TabsContent value="results" className="mt-6">
+          {/* Results content will go here */}
+          <p className="text-muted-foreground text-center">Results view coming next...</p>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
