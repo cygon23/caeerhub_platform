@@ -805,15 +805,15 @@ export default function InterviewAICoach() {
             <CardContent className="space-y-3">
               {feedback.top_strengths.map((strength: any, index: number) => (
                 <div key={index} className="p-4 bg-white border border-green-200 rounded-lg">
-                  <h4 className="font-semibold text-green-900 mb-2">{strength.strength}</h4>
+                  <h4 className="font-semibold text-green-900 mb-2">{String(strength.strength || '')}</h4>
                   {strength.examples && (
                     <p className="text-sm text-green-700 mb-2">
-                      <strong>Examples:</strong> {strength.examples}
+                      <strong>Examples:</strong> {String(strength.examples)}
                     </p>
                   )}
                   {strength.impact && (
                     <p className="text-sm text-green-600">
-                      <strong>Impact:</strong> {strength.impact}
+                      <strong>Impact:</strong> {String(strength.impact)}
                     </p>
                   )}
                 </div>
@@ -835,19 +835,19 @@ export default function InterviewAICoach() {
               {feedback.areas_for_improvement.map((area: any, index: number) => (
                 <div key={index} className="p-4 bg-white border border-orange-200 rounded-lg">
                   <div className="flex items-start justify-between mb-2">
-                    <h4 className="font-semibold text-orange-900">{area.area}</h4>
+                    <h4 className="font-semibold text-orange-900">{String(area.area || '')}</h4>
                     <Badge variant={area.priority === 'high' ? 'destructive' : area.priority === 'medium' ? 'default' : 'secondary'}>
-                      {area.priority} priority
+                      {String(area.priority || 'medium')} priority
                     </Badge>
                   </div>
                   {area.current_level && (
                     <p className="text-sm text-orange-700 mb-1">
-                      <strong>Current:</strong> {area.current_level}
+                      <strong>Current:</strong> {String(area.current_level)}
                     </p>
                   )}
                   {area.target_level && (
                     <p className="text-sm text-orange-600">
-                      <strong>Target:</strong> {area.target_level}
+                      <strong>Target:</strong> {String(area.target_level)}
                     </p>
                   )}
                 </div>
@@ -868,15 +868,15 @@ export default function InterviewAICoach() {
             <CardContent className="space-y-4">
               {feedback.improvement_plan.map((plan: any, index: number) => (
                 <div key={index} className="p-4 bg-white border border-blue-200 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-3">{plan.focus_area}</h4>
-                  {plan.action_items && plan.action_items.length > 0 && (
+                  <h4 className="font-semibold text-blue-900 mb-3">{String(plan.focus_area || '')}</h4>
+                  {plan.action_items && Array.isArray(plan.action_items) && plan.action_items.length > 0 && (
                     <div className="mb-3">
                       <p className="text-sm font-medium text-blue-800 mb-2">Action Items:</p>
                       <ul className="space-y-1">
-                        {plan.action_items.map((item: string, i: number) => (
+                        {plan.action_items.map((item: any, i: number) => (
                           <li key={i} className="text-sm text-blue-700 flex items-start gap-2">
                             <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                            {item}
+                            {String(item)}
                           </li>
                         ))}
                       </ul>
@@ -886,13 +886,13 @@ export default function InterviewAICoach() {
                     {plan.timeframe && (
                       <span>
                         <Clock className="h-3 w-3 inline mr-1" />
-                        {plan.timeframe}
+                        {String(plan.timeframe)}
                       </span>
                     )}
                     {plan.success_metrics && (
                       <span>
                         <CheckCircle className="h-3 w-3 inline mr-1" />
-                        {plan.success_metrics}
+                        {String(plan.success_metrics)}
                       </span>
                     )}
                   </div>
@@ -963,7 +963,7 @@ export default function InterviewAICoach() {
                       <ul className="space-y-1">
                         {resp.strengths.map((s: any, i: number) => (
                           <li key={i} className="text-sm text-green-600">
-                            • {s.point}: {s.explanation}
+                            • {String(s.point || '')}: {String(s.explanation || '')}
                           </li>
                         ))}
                       </ul>
@@ -977,7 +977,7 @@ export default function InterviewAICoach() {
                       <ul className="space-y-1">
                         {resp.improvements.map((imp: any, i: number) => (
                           <li key={i} className="text-sm text-orange-600">
-                            • {imp.issue}: {imp.suggestion}
+                            • {String(imp.issue || '')}: {String(imp.suggestion || '')}
                           </li>
                         ))}
                       </ul>
@@ -1018,10 +1018,10 @@ export default function InterviewAICoach() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                {feedback.next_steps.map((step: string, index: number) => (
+                {feedback.next_steps.map((step: any, index: number) => (
                   <li key={index} className="flex items-start gap-2 text-sm">
                     <ArrowRight className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                    <span>{step}</span>
+                    <span>{String(step)}</span>
                   </li>
                 ))}
               </ul>
