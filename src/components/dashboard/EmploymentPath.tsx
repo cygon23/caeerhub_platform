@@ -43,10 +43,10 @@ export const EmploymentPath: React.FC = () => {
     return (
       <div className='space-y-6'>
         {roadmap.steps.map((step, i) => (
-          <Card key={step.id || i} className='border-l-4 border-l-primary'>
+          <Card key={String(step.id || i)} className='border-l-4 border-l-primary'>
             <CardHeader>
               <div className='flex justify-between items-start'>
-                <CardTitle className='text-lg'>{step.title}</CardTitle>
+                <CardTitle className='text-lg'>{String(step.title || 'Career Phase')}</CardTitle>
                 <Badge
                   variant={
                     step.priority === "high"
@@ -55,18 +55,18 @@ export const EmploymentPath: React.FC = () => {
                       ? "default"
                       : "secondary"
                   }>
-                  {step.priority}
+                  {String(step.priority || 'medium')}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className='space-y-4'>
               <p className='text-sm text-muted-foreground'>
-                {step.description}
+                {String(step.description || '')}
               </p>
               <div className='flex items-center gap-4 text-sm'>
-                <Badge variant='outline'>{step.level || "Beginner"}</Badge>
+                <Badge variant='outline'>{String(step.level || "Beginner")}</Badge>
                 <span className='text-muted-foreground'>
-                  Duration: {step.duration}
+                  Duration: {String(step.duration || 'N/A')}
                 </span>
                 <Badge
                   variant={
@@ -76,7 +76,7 @@ export const EmploymentPath: React.FC = () => {
                       ? "secondary"
                       : "outline"
                   }>
-                  {step.status}
+                  {String(step.status || 'pending')}
                 </Badge>
               </div>
 
@@ -87,12 +87,12 @@ export const EmploymentPath: React.FC = () => {
                     {step.resources.map((resource, idx) => (
                       <a
                         key={idx}
-                        href={resource.url}
+                        href={String(resource.url || '#')}
                         target='_blank'
                         rel='noopener noreferrer'
                         className='flex items-center text-sm text-primary hover:underline'>
                         <ArrowRight className='h-3 w-3 mr-1' />
-                        {resource.name}
+                        {String(resource.name || 'Resource')}
                       </a>
                     ))}
                   </div>
