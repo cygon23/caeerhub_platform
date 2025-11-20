@@ -97,3 +97,15 @@ entrypoint = "./functions/generate-study-guide/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/generate-study-guide/*.html" ]
+
+[functions.analyze-interview-response]
+enabled = true
+verify_jwt = true
+import_map = "./functions/analyze-interview-response/deno.json"
+entrypoint = "./functions/analyze-interview-response/index.ts"
+
+[functions.generate-interview-feedback]
+enabled = true
+verify_jwt = true
+import_map = "./functions/generate-interview-feedback/deno.json"
+entrypoint = "./functions/generate-interview-feedback/index.ts"
