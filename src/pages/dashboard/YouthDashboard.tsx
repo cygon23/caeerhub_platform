@@ -142,9 +142,17 @@ export default function YouthDashboard() {
         .select("preferred_path, ai_recommended_path")
         .eq("user_id", user.id)
         .single();
-      setUserCareerPath(
-        data?.ai_recommended_path || data?.preferred_path || null
-      );
+
+      // Ensure we get a string value, handle objects/arrays safely
+      const path = data?.ai_recommended_path || data?.preferred_path;
+      if (path && typeof path === 'string') {
+        setUserCareerPath(path);
+      } else if (path && typeof path === 'object') {
+        // If it's an object, try to extract a string value
+        setUserCareerPath(String(path.name || path.value || path.path || ''));
+      } else {
+        setUserCareerPath(null);
+      }
     } catch (err) {
       setUserCareerPath(null);
     }
@@ -658,8 +666,8 @@ export default function YouthDashboard() {
               }
 
               return (
-                <SidebarGroup key={`${index}-${group.title}`}>
-                  <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                <SidebarGroup key={`${index}-${String(group.title)}`}>
+                  <SidebarGroupLabel>{String(group.title)}</SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu>
                       {group.items.map((item, i) => {
