@@ -165,9 +165,14 @@ serve(async (req) => {
       }
     );
 
-    // Make authentication optional - allow both authenticated and anonymous users
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    const userId = user?.id || null; // Use null for anonymous users
+    // Require authentication - users must be logged in to use the service
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Please sign in to use this service' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const requestData: InterviewResponseData = await req.json();
 
@@ -179,7 +184,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Analyzing interview response for user:', userId || 'anonymous');
+    console.log('Analyzing interview response for user:', user.id);
 
     const startTime = Date.now();
 
@@ -203,10 +208,10 @@ serve(async (req) => {
     console.log('Analysis completed in', processingTime, 'ms');
     console.log('Tokens used:', tokens_used);
 
-    // Save response to database
+    // Save response to database (service role bypasses RLS)
     const responseData = {
       session_id: requestData.session_id,
-      user_id: userId,
+      user_id: user.id,
       question_number: requestData.question_number,
       question_text: requestData.question_text,
       question_type: requestData.question_type,
@@ -237,20 +242,14 @@ serve(async (req) => {
     }
 
     // Update session with latest question number
-    const sessionUpdate = supabaseClient
+    await supabaseClient
       .from('interview_sessions')
       .update({
         current_question: requestData.question_number,
         updated_at: new Date().toISOString()
       })
-      .eq('id', requestData.session_id);
-
-    // Only filter by user_id if user is authenticated
-    if (userId) {
-      sessionUpdate.eq('user_id', userId);
-    }
-
-    await sessionUpdate;
+      .eq('id', requestData.session_id)
+      .eq('user_id', user.id);
 
     return new Response(
       JSON.stringify({
