@@ -170,10 +170,10 @@ serve(async (req) => {
   }
 
   try {
-    // Use service role key to bypass RLS for backend operations
-    const supabaseClient = createClient(
+    // Create auth client to validate user JWT
+    const authClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
           headers: { Authorization: req.headers.get('Authorization')! },
@@ -181,14 +181,20 @@ serve(async (req) => {
       }
     );
 
-    // Require authentication - users must be logged in to use the service
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    // Validate user authentication
+    const { data: { user }, error: userError } = await authClient.auth.getUser();
     if (userError || !user) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized - Please sign in to use this service' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Create admin client with service role key to bypass RLS for database operations
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
 
     const { session_id } = await req.json();
 
