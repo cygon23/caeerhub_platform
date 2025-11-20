@@ -181,9 +181,14 @@ serve(async (req) => {
       }
     );
 
-    // Make authentication optional - allow both authenticated and anonymous users
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    const userId = user?.id || null; // Use null for anonymous users
+    // Require authentication - users must be logged in to use the service
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Please sign in to use this service' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const { session_id } = await req.json();
 
@@ -197,16 +202,12 @@ serve(async (req) => {
     console.log('Generating feedback for session:', session_id);
 
     // Get session details
-    let sessionQuery = supabaseClient
+    const { data: session, error: sessionError } = await supabaseClient
       .from('interview_sessions')
       .select('*')
-      .eq('id', session_id);
-
-    if (userId) {
-      sessionQuery = sessionQuery.eq('user_id', userId);
-    }
-
-    const { data: session, error: sessionError } = await sessionQuery.single();
+      .eq('id', session_id)
+      .eq('user_id', user.id)
+      .single();
 
     if (sessionError || !session) {
       return new Response(
@@ -216,16 +217,11 @@ serve(async (req) => {
     }
 
     // Get all responses for this session
-    let responsesQuery = supabaseClient
+    const { data: responses, error: responsesError } = await supabaseClient
       .from('interview_responses')
       .select('*')
-      .eq('session_id', session_id);
-
-    if (userId) {
-      responsesQuery = responsesQuery.eq('user_id', userId);
-    }
-
-    const { data: responses, error: responsesError } = await responsesQuery
+      .eq('session_id', session_id)
+      .eq('user_id', user.id)
       .order('question_number', { ascending: true });
 
     if (responsesError || !responses || responses.length === 0) {
@@ -274,10 +270,10 @@ serve(async (req) => {
       responses.reduce((sum, r) => sum + (r.score || 0), 0) / responseCount
     );
 
-    // Save feedback to database
+    // Save feedback to database (service role bypasses RLS)
     const feedbackData = {
       session_id,
-      user_id: userId,
+      user_id: user.id,
       overall_impression: feedback.overall_impression,
       readiness_level: feedback.readiness_level,
       top_strengths: feedback.top_strengths,
@@ -305,7 +301,7 @@ serve(async (req) => {
     // Update session as completed
     const completionTime = Math.floor((Date.now() - new Date(session.started_at).getTime()) / 1000);
 
-    const sessionUpdateQuery = supabaseClient
+    await supabaseClient
       .from('interview_sessions')
       .update({
         status: 'completed',
@@ -313,13 +309,8 @@ serve(async (req) => {
         completed_at: new Date().toISOString(),
         completion_time: completionTime,
       })
-      .eq('id', session_id);
-
-    if (userId) {
-      sessionUpdateQuery.eq('user_id', userId);
-    }
-
-    await sessionUpdateQuery;
+      .eq('id', session_id)
+      .eq('user_id', user.id);
 
     return new Response(
       JSON.stringify({
