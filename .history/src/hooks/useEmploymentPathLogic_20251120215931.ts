@@ -17,6 +17,11 @@ export function useEmploymentPathLogic() {
     setLoading(true);
     try {
       const onboarding = await employmentPathService.getOnboardingData(user.id);
+      console.log('📊 Onboarding data loaded:', {
+        has_steps: !!onboarding.ai_roadmap_json?.steps,
+        has_phases: !!onboarding.ai_roadmap_json?.phases,
+        roadmap_structure: onboarding.ai_roadmap_json,
+      });
       setOnboardingData(onboarding);
 
       if (onboarding.ai_roadmap_json?.steps) {
@@ -36,6 +41,7 @@ export function useEmploymentPathLogic() {
             : [],
           level: String(step.level || 'Beginner')
         }));
+        console.log('✅ Roadmap set from steps:', { count: safeSteps.length, steps: safeSteps });
         setRoadmap({ steps: safeSteps });
       } else if (onboarding.ai_roadmap_json?.phases && Array.isArray(onboarding.ai_roadmap_json.phases)) {
         // Transform phases from onboarding to steps format

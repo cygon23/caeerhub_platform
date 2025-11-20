@@ -99,6 +99,7 @@ class EmploymentPathService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error("Groq API Error:", errorData);
         throw new Error(
           errorData.error?.message ||
             `API request failed with status ${response.status}. Please check your API key.`
@@ -113,6 +114,7 @@ class EmploymentPathService {
 
       return data.choices[0].message.content;
     } catch (error) {
+      console.error("Error calling Groq API:", error);
       throw error;
     }
   }
@@ -194,6 +196,7 @@ Return ONLY a JSON array with this exact structure (no additional text):
         status: index === 0 ? "in-progress" : "pending",
       }));
     } catch (error) {
+      console.error("Error generating roadmap:", error);
       throw error;
     }
   }
@@ -274,6 +277,7 @@ Example format:
 
       return skillsWithIds;
     } catch (error) {
+      console.error("Error generating skills:", error);
       throw error;
     }
   }
@@ -367,6 +371,7 @@ Return ONLY a JSON object (no additional text):
       const response = await this.callGroqAPI(prompt, 2000);
       return this.extractJSON(response);
     } catch (error) {
+      console.error("Error analyzing skills gap:", error);
       throw error;
     }
   }
@@ -392,6 +397,7 @@ Provide realistic data based on the East African job market.`;
       const response = await this.callGroqAPI(prompt, 1000);
       return this.extractJSON(response);
     } catch (error) {
+      console.error("Error loading market data:", error);
       throw error;
     }
   }
