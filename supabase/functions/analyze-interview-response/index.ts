@@ -164,13 +164,9 @@ serve(async (req) => {
       }
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Make authentication optional - allow both authenticated and anonymous users
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const userId = user?.id || null; // Use null for anonymous users
 
     const requestData: InterviewResponseData = await req.json();
 
@@ -182,7 +178,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Analyzing interview response for user:', user.id);
+    console.log('Analyzing interview response for user:', userId || 'anonymous');
 
     const startTime = Date.now();
 
@@ -209,7 +205,7 @@ serve(async (req) => {
     // Save response to database
     const responseData = {
       session_id: requestData.session_id,
-      user_id: user.id,
+      user_id: userId,
       question_number: requestData.question_number,
       question_text: requestData.question_text,
       question_type: requestData.question_type,
@@ -240,14 +236,20 @@ serve(async (req) => {
     }
 
     // Update session with latest question number
-    await supabaseClient
+    const sessionUpdate = supabaseClient
       .from('interview_sessions')
       .update({
         current_question: requestData.question_number,
         updated_at: new Date().toISOString()
       })
-      .eq('id', requestData.session_id)
-      .eq('user_id', user.id);
+      .eq('id', requestData.session_id);
+
+    // Only filter by user_id if user is authenticated
+    if (userId) {
+      sessionUpdate.eq('user_id', userId);
+    }
+
+    await sessionUpdate;
 
     return new Response(
       JSON.stringify({
