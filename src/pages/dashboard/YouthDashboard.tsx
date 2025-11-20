@@ -77,14 +77,20 @@ const InterviewAICoach = React.lazy(
 const CareerDashboard = React.lazy(
   () => import("@/components/dashboard/CareerDashboard")
 );
-const EmploymentPath = React.lazy(
-  () => import("@/components/dashboard/EmploymentPath")
+const EmploymentPath = React.lazy(() =>
+  import("@/components/dashboard/EmploymentPath").then((m) => ({
+    default: m.EmploymentPath,
+  }))
 );
-const SelfEmploymentPath = React.lazy(
-  () => import("@/components/dashboard/SelfEmploymentPath")
+const SelfEmploymentPath = React.lazy(() =>
+  import("@/components/dashboard/SelfEmploymentPath").then((m) => ({
+    default: m.default,
+  }))
 );
-const InvestorPath = React.lazy(
-  () => import("@/components/dashboard/InvestorPath")
+const InvestorPath = React.lazy(() =>
+  import("@/components/dashboard/InvestorPath").then((m) => ({
+    default: m.default,
+  }))
 );
 const BehavioralInsight = React.lazy(() =>
   import("@/components/dashboard/BehavioralInsight").then((m) => ({
