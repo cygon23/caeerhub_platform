@@ -170,33 +170,25 @@ serve(async (req) => {
   }
 
   try {
-    // Create auth client to validate user JWT
-    const authClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
-    );
-
-    // Validate user authentication
-    const { data: { user }, error: userError } = await authClient.auth.getUser();
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized - Please sign in to use this service' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Create admin client with service role key to bypass RLS for database operations
+    // Use service role key to bypass RLS
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     const { session_id } = await req.json();
+
+    // Try to get user from auth header if provided
+    let userId = null;
+    const authHeader = req.headers.get('Authorization');
+    if (authHeader) {
+      try {
+        const { data: { user } } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''));
+        userId = user?.id || null;
+      } catch (e) {
+        console.log('Could not extract user from token, proceeding without user_id');
+      }
+    }
 
     if (!session_id) {
       return new Response(
@@ -208,12 +200,16 @@ serve(async (req) => {
     console.log('Generating feedback for session:', session_id);
 
     // Get session details
-    const { data: session, error: sessionError } = await supabaseClient
+    let sessionQuery = supabaseClient
       .from('interview_sessions')
       .select('*')
-      .eq('id', session_id)
-      .eq('user_id', user.id)
-      .single();
+      .eq('id', session_id);
+
+    if (userId) {
+      sessionQuery = sessionQuery.eq('user_id', userId);
+    }
+
+    const { data: session, error: sessionError } = await sessionQuery.single();
 
     if (sessionError || !session) {
       return new Response(
@@ -223,11 +219,16 @@ serve(async (req) => {
     }
 
     // Get all responses for this session
-    const { data: responses, error: responsesError } = await supabaseClient
+    let responsesQuery = supabaseClient
       .from('interview_responses')
       .select('*')
-      .eq('session_id', session_id)
-      .eq('user_id', user.id)
+      .eq('session_id', session_id);
+
+    if (userId) {
+      responsesQuery = responsesQuery.eq('user_id', userId);
+    }
+
+    const { data: responses, error: responsesError } = await responsesQuery
       .order('question_number', { ascending: true });
 
     if (responsesError || !responses || responses.length === 0) {
@@ -279,7 +280,7 @@ serve(async (req) => {
     // Save feedback to database (service role bypasses RLS)
     const feedbackData = {
       session_id,
-      user_id: user.id,
+      user_id: userId,
       overall_impression: feedback.overall_impression,
       readiness_level: feedback.readiness_level,
       top_strengths: feedback.top_strengths,
@@ -307,7 +308,7 @@ serve(async (req) => {
     // Update session as completed
     const completionTime = Math.floor((Date.now() - new Date(session.started_at).getTime()) / 1000);
 
-    await supabaseClient
+    const sessionUpdateQuery = supabaseClient
       .from('interview_sessions')
       .update({
         status: 'completed',
@@ -315,8 +316,13 @@ serve(async (req) => {
         completed_at: new Date().toISOString(),
         completion_time: completionTime,
       })
-      .eq('id', session_id)
-      .eq('user_id', user.id);
+      .eq('id', session_id);
+
+    if (userId) {
+      sessionUpdateQuery.eq('user_id', userId);
+    }
+
+    await sessionUpdateQuery;
 
     return new Response(
       JSON.stringify({

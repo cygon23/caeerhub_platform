@@ -154,33 +154,25 @@ serve(async (req) => {
   }
 
   try {
-    // Create auth client to validate user JWT
-    const authClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
-    );
-
-    // Validate user authentication
-    const { data: { user }, error: userError } = await authClient.auth.getUser();
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized - Please sign in to use this service' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Create admin client with service role key to bypass RLS for database operations
+    // Use service role key to bypass RLS
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     const requestData: InterviewResponseData = await req.json();
+
+    // Try to get user from auth header if provided
+    let userId = null;
+    const authHeader = req.headers.get('Authorization');
+    if (authHeader) {
+      try {
+        const { data: { user } } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''));
+        userId = user?.id || null;
+      } catch (e) {
+        console.log('Could not extract user from token, proceeding without user_id');
+      }
+    }
 
     // Validate required fields
     if (!requestData.session_id || !requestData.question_text || !requestData.response_text) {
@@ -190,7 +182,7 @@ serve(async (req) => {
       );
     }
 
-    console.log('Analyzing interview response for user:', user.id);
+    console.log('Analyzing interview response for user:', userId || 'anonymous');
 
     const startTime = Date.now();
 
@@ -217,7 +209,7 @@ serve(async (req) => {
     // Save response to database (service role bypasses RLS)
     const responseData = {
       session_id: requestData.session_id,
-      user_id: user.id,
+      user_id: userId,
       question_number: requestData.question_number,
       question_text: requestData.question_text,
       question_type: requestData.question_type,
@@ -248,14 +240,19 @@ serve(async (req) => {
     }
 
     // Update session with latest question number
-    await supabaseClient
+    const sessionUpdate = supabaseClient
       .from('interview_sessions')
       .update({
         current_question: requestData.question_number,
         updated_at: new Date().toISOString()
       })
-      .eq('id', requestData.session_id)
-      .eq('user_id', user.id);
+      .eq('id', requestData.session_id);
+
+    if (userId) {
+      sessionUpdate.eq('user_id', userId);
+    }
+
+    await sessionUpdate;
 
     return new Response(
       JSON.stringify({
