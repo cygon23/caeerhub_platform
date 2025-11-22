@@ -57,10 +57,7 @@ class AdminService {
    * Fetch all users with their roles and profiles
    */
   async getUsers(): Promise<User[]> {
-    const { data, error } = await supabase
-      .from('admin_users_view')
-      .select('*')
-      .order('profile_created_at', { ascending: false });
+    const { data, error } = await supabase.rpc('get_admin_users');
 
     if (error) throw error;
     if (!data) return [];
@@ -84,27 +81,12 @@ class AdminService {
    * Fetch mentors specifically
    */
   async getMentors(): Promise<Mentor[]> {
-    const { data, error } = await supabase
-      .from('admin_users_view')
-      .select('*')
-      .eq('role', 'mentor')
-      .order('profile_created_at', { ascending: false });
+    // Reuse getUsers and filter for mentors
+    const allUsers = await this.getUsers();
+    const mentors = allUsers.filter(user => user.role === 'mentor');
 
-    if (error) throw error;
-    if (!data) return [];
-
-    return data.map((item: any) => ({
-      id: item.user_id,
-      email: item.email || '',
-      name: item.display_name || item.email?.split('@')[0] || 'Unknown',
-      display_name: item.display_name,
-      role: 'mentor',
-      status: item.status || 'active',
-      phone: item.phone,
-      location: item.location,
-      avatar_url: item.avatar_url,
-      created_at: item.profile_created_at,
-      last_sign_in_at: item.last_sign_in_at,
+    return mentors.map(mentor => ({
+      ...mentor,
       expertise: [],
       availability: 'available',
       mentees_count: 0,
