@@ -34,17 +34,8 @@ export function ProtectedRoute({
 
     // User logged in but accessing auth pages (login/signup)
     if (user && !requireAuth) {
-      // Check if user needs onboarding first
-      if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
-        console.log("Redirecting to onboarding - first login");
-        setHasNavigated(true);
-        navigate("/onboarding");
-        return;
-      }
-
-      // If not first login, redirect to appropriate dashboard
-      if (!user.isFirstLogin) {
-        console.log("Redirecting to dashboard - returning user");
+      // Non-youth users skip onboarding - go straight to their dashboard
+      if (user.role !== 'youth') {
         setHasNavigated(true);
         switch (user.role) {
           case "admin":
@@ -56,26 +47,37 @@ export function ProtectedRoute({
           case "mentor":
             navigate("/dashboard/mentor");
             break;
-          case "youth":
           default:
             navigate("/dashboard/youth");
             break;
         }
         return;
+      }
+
+      // Only youth users go through onboarding
+      if (user.role === 'youth') {
+        // Check if youth user needs onboarding
+        if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
+          console.log("Redirecting to onboarding - first login (youth)");
+          setHasNavigated(true);
+          navigate("/onboarding");
+          return;
+        }
+
+        // If youth completed onboarding, redirect to dashboard
+        if (!user.isFirstLogin) {
+          console.log("Redirecting to dashboard - returning youth user");
+          setHasNavigated(true);
+          navigate("/dashboard/youth");
+          return;
+        }
       }
     }
 
     //User logged in, check if they need onboarding
     if (user && requireAuth) {
-      // Redirect to onboarding if it's their first login and they're not already there
-      if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
-        setHasNavigated(true);
-        navigate("/onboarding");
-        return;
-      }
-
-      // If they've completed onboarding but are on onboarding page, redirect to dashboard
-      if (!user.isFirstLogin && location.pathname.includes("/onboarding")) {
+      // Non-youth users should never access onboarding
+      if (user.role !== 'youth' && location.pathname.includes("/onboarding")) {
         setHasNavigated(true);
         switch (user.role) {
           case "admin":
@@ -87,12 +89,28 @@ export function ProtectedRoute({
           case "mentor":
             navigate("/dashboard/mentor");
             break;
-          case "youth":
           default:
             navigate("/dashboard/youth");
             break;
         }
         return;
+      }
+
+      // Only youth users go through onboarding
+      if (user.role === 'youth') {
+        // Redirect to onboarding if it's their first login and they're not already there
+        if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
+          setHasNavigated(true);
+          navigate("/onboarding");
+          return;
+        }
+
+        // If they've completed onboarding but are on onboarding page, redirect to dashboard
+        if (!user.isFirstLogin && location.pathname.includes("/onboarding")) {
+          setHasNavigated(true);
+          navigate("/dashboard/youth");
+          return;
+        }
       }
     }
 
