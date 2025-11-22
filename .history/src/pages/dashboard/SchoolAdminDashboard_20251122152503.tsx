@@ -117,11 +117,11 @@ export default function SchoolAdminDashboard() {
                   <Building className='h-8 w-8 text-white' />
                 </div>
                 <h3 className='text-xl font-semibold text-foreground mb-2'>
-                  No School Data Yet
+                  No School Assigned Yet
                 </h3>
                 <p className='text-muted-foreground'>
-                  Your school admin account has been created, but no school data been assigned yet.
-                  Please contact the administrator if your sure u have already add school details.
+                  Your school admin account has been created, but no school has been assigned yet.
+                  Please contact the administrator to link your account to a school.
                 </p>
               </CardContent>
             </Card>
