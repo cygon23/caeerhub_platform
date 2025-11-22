@@ -27,6 +27,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import UserManagement from "@/components/admin/UserManagement";
 import MentorManagement from "@/components/admin/MentorManagement";
+import SchoolManagement from "@/components/admin/SchoolManagement";
 import PartnerManagement from "@/components/admin/PartnerManagement";
 import JobBoardManagement from "@/components/admin/JobBoardManagement";
 import LearningModulesManagement from "@/components/admin/LearningModulesManagement";
@@ -44,6 +45,7 @@ export default function AdminDashboard() {
       items: [
         { title: "User Management", icon: Users, id: "users" },
         { title: "Mentor Management", icon: UserCheck, id: "mentors" },
+        { title: "School Management", icon: Building, id: "schools" },
         { title: "Partner Management", icon: Building, id: "partners" },
         { title: "Job Board", icon: Briefcase, id: "jobs" },
         { title: "Learning Modules", icon: BookOpen, id: "modules" },
@@ -173,6 +175,10 @@ export default function AdminDashboard() {
 
     if (activeSection === "mentors") {
       return <MentorManagement />;
+    }
+
+    if (activeSection === "schools") {
+      return <SchoolManagement />;
     }
 
     if (activeSection === "partners") {
