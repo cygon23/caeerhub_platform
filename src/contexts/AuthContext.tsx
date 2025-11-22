@@ -7,7 +7,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "youth" | "mentor" | "admin";
+  role: "youth" | "mentor" | "admin" | "school_admin";
   isFirstLogin?: boolean;
 }
 
@@ -129,13 +129,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         : onboardingResponse.data;
 
       // Determine user role with email-based fallback
-      let userRole: "youth" | "mentor" | "admin" = "youth";
+      let userRole: "youth" | "mentor" | "admin" | "school_admin" = "youth";
 
       if (
         roleData?.role &&
-        ["youth", "mentor", "admin"].includes(roleData.role)
+        ["youth", "mentor", "admin", "school_admin"].includes(roleData.role)
       ) {
-        userRole = roleData.role as "youth" | "mentor" | "admin";
+        userRole = roleData.role as "youth" | "mentor" | "admin" | "school_admin";
       } else {
         // Fallback: determine role based on email if no role in database
         const email = sessionUser.email || "";
@@ -150,9 +150,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const hasCompletedOnboarding =
         onboardingData && onboardingData.completed_at;
 
-      // Admin and mentor users should skip onboarding
+      // Admin, mentor, and school_admin users should skip onboarding
       const shouldSkipOnboarding =
-        userRole === "admin" || userRole === "mentor";
+        userRole === "admin" || userRole === "mentor" || userRole === "school_admin";
 
       const userData: User = {
         id: sessionUser.id,
@@ -178,7 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Only use email-based fallback if no cache exists
       const email = sessionUser.email || "";
-      let fallbackRole: "youth" | "mentor" | "admin" = "youth";
+      let fallbackRole: "youth" | "mentor" | "admin" | "school_admin" = "youth";
 
       if (email.startsWith("admin") || email === "admin@test.com") {
         fallbackRole = "admin";
@@ -190,7 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const cachedData = getCachedUserData(sessionUser.id);
       const isFirstLogin = cachedData
         ? cachedData.isFirstLogin
-        : (fallbackRole === "admin" || fallbackRole === "mentor" ? false : false);
+        : (fallbackRole === "admin" || fallbackRole === "mentor" || fallbackRole === "school_admin" ? false : false);
 
       const fallbackData: User = {
         id: sessionUser.id,
