@@ -58,39 +58,25 @@ class AdminService {
    */
   async getUsers(): Promise<User[]> {
     const { data, error } = await supabase
-      .from('profiles')
-      .select(`
-        id,
-        user_id,
-        display_name,
-        avatar_url,
-        phone,
-        location,
-        status,
-        created_at,
-        user_roles!inner(role),
-        users:user_id(
-          email,
-          created_at,
-          last_sign_in_at
-        )
-      `)
-      .order('created_at', { ascending: false });
+      .from('admin_users_view')
+      .select('*')
+      .order('profile_created_at', { ascending: false });
 
     if (error) throw error;
+    if (!data) return [];
 
     return data.map((item: any) => ({
       id: item.user_id,
-      email: item.users?.email || '',
-      name: item.display_name || item.users?.email?.split('@')[0] || 'Unknown',
+      email: item.email || '',
+      name: item.display_name || item.email?.split('@')[0] || 'Unknown',
       display_name: item.display_name,
-      role: item.user_roles?.[0]?.role || 'youth',
+      role: item.role || 'youth',
       status: item.status || 'active',
       phone: item.phone,
       location: item.location,
       avatar_url: item.avatar_url,
-      created_at: item.created_at,
-      last_sign_in_at: item.users?.last_sign_in_at,
+      created_at: item.profile_created_at,
+      last_sign_in_at: item.last_sign_in_at,
     }));
   }
 
@@ -99,40 +85,26 @@ class AdminService {
    */
   async getMentors(): Promise<Mentor[]> {
     const { data, error } = await supabase
-      .from('profiles')
-      .select(`
-        id,
-        user_id,
-        display_name,
-        avatar_url,
-        phone,
-        location,
-        status,
-        created_at,
-        user_roles!inner(role),
-        users:user_id(
-          email,
-          created_at,
-          last_sign_in_at
-        )
-      `)
-      .eq('user_roles.role', 'mentor')
-      .order('created_at', { ascending: false });
+      .from('admin_users_view')
+      .select('*')
+      .eq('role', 'mentor')
+      .order('profile_created_at', { ascending: false });
 
     if (error) throw error;
+    if (!data) return [];
 
     return data.map((item: any) => ({
       id: item.user_id,
-      email: item.users?.email || '',
-      name: item.display_name || item.users?.email?.split('@')[0] || 'Unknown',
+      email: item.email || '',
+      name: item.display_name || item.email?.split('@')[0] || 'Unknown',
       display_name: item.display_name,
       role: 'mentor',
       status: item.status || 'active',
       phone: item.phone,
       location: item.location,
       avatar_url: item.avatar_url,
-      created_at: item.created_at,
-      last_sign_in_at: item.users?.last_sign_in_at,
+      created_at: item.profile_created_at,
+      last_sign_in_at: item.last_sign_in_at,
       expertise: [],
       availability: 'available',
       mentees_count: 0,
