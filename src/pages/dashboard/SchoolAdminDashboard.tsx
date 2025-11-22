@@ -45,11 +45,15 @@ export default function SchoolAdminDashboard() {
     setLoading(true);
     try {
       // Get user's profile to find school_id
-      const { data: profile } = await (await import("@/integrations/supabase/client")).supabase
+      const { data: profile, error: profileError } = await (await import("@/integrations/supabase/client")).supabase
         .from('profiles')
         .select('school_id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        throw profileError;
+      }
 
       if (profile?.school_id) {
         // Get school info
@@ -60,6 +64,9 @@ export default function SchoolAdminDashboard() {
         // Get student statistics
         const studentStats = await adminService.getStudentStats(profile.school_id);
         setStats(studentStats);
+      } else {
+        // No school assigned yet - show message
+        console.log('No school assigned to this school admin yet');
       }
     } catch (error: any) {
       console.error('Error loading school info:', error);
@@ -86,6 +93,42 @@ export default function SchoolAdminDashboard() {
 
   const renderContent = () => {
     if (activeSection === "overview") {
+      // Show message if no school is assigned yet
+      if (!loading && !schoolInfo) {
+        return (
+          <div className='space-y-8'>
+            <div className='bg-gradient-hero text-white rounded-lg p-8'>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className='text-3xl font-bold mb-2'>
+                    School Admin Dashboard
+                  </h1>
+                  <p className='text-white/90 text-lg'>
+                    Welcome! Your account is being set up.
+                  </p>
+                </div>
+                <Building className="h-16 w-16 text-white/50" />
+              </div>
+            </div>
+
+            <Card>
+              <CardContent className='p-12 text-center'>
+                <div className='w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4'>
+                  <Building className='h-8 w-8 text-white' />
+                </div>
+                <h3 className='text-xl font-semibold text-foreground mb-2'>
+                  No School Assigned Yet
+                </h3>
+                <p className='text-muted-foreground'>
+                  Your school admin account has been created, but no school has been assigned yet.
+                  Please contact the administrator to link your account to a school.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      }
+
       return (
         <div className='space-y-8'>
           <div className='bg-gradient-hero text-white rounded-lg p-8'>
