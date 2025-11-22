@@ -46,7 +46,7 @@ BEGIN
         p.school_id,
         p.created_at as profile_created_at,
         p.updated_at as profile_updated_at,
-        u.email,
+        u.email::text,
         u.created_at as user_created_at,
         u.last_sign_in_at,
         u.confirmed_at,
