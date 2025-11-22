@@ -57,7 +57,8 @@ class AdminService {
    * Fetch all users with their roles and profiles
    */
   async getUsers(): Promise<User[]> {
-    const { data, error } = await supabase
+    // Fetch profiles with auth.users data
+    const { data: profiles, error: profileError } = await supabase
       .from('profiles')
       .select(`
         id,
@@ -67,38 +68,75 @@ class AdminService {
         phone,
         location,
         status,
-        created_at,
-        user_roles!inner(role),
-        users:user_id(
-          email,
-          created_at,
-          last_sign_in_at
-        )
+        created_at
       `)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (profileError) throw profileError;
+    if (!profiles) return [];
 
-    return data.map((item: any) => ({
-      id: item.user_id,
-      email: item.users?.email || '',
-      name: item.display_name || item.users?.email?.split('@')[0] || 'Unknown',
-      display_name: item.display_name,
-      role: item.user_roles?.[0]?.role || 'youth',
-      status: item.status || 'active',
-      phone: item.phone,
-      location: item.location,
-      avatar_url: item.avatar_url,
-      created_at: item.created_at,
-      last_sign_in_at: item.users?.last_sign_in_at,
-    }));
+    // Fetch all user roles
+    const { data: userRoles, error: rolesError } = await supabase
+      .from('user_roles')
+      .select('user_id, role');
+
+    if (rolesError) throw rolesError;
+
+    // Fetch auth.users data
+    const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
+    if (authError) throw authError;
+
+    // Create lookup maps
+    const rolesMap = new Map<string, string>();
+    userRoles?.forEach(ur => {
+      if (!rolesMap.has(ur.user_id)) {
+        rolesMap.set(ur.user_id, ur.role);
+      }
+    });
+
+    const authUsersMap = new Map();
+    authUsers?.forEach(u => {
+      authUsersMap.set(u.id, u);
+    });
+
+    // Combine data
+    return profiles.map((profile: any) => {
+      const authUser = authUsersMap.get(profile.user_id);
+      const role = rolesMap.get(profile.user_id) || 'youth';
+
+      return {
+        id: profile.user_id,
+        email: authUser?.email || '',
+        name: profile.display_name || authUser?.email?.split('@')[0] || 'Unknown',
+        display_name: profile.display_name,
+        role: role,
+        status: profile.status || 'active',
+        phone: profile.phone,
+        location: profile.location,
+        avatar_url: profile.avatar_url,
+        created_at: profile.created_at,
+        last_sign_in_at: authUser?.last_sign_in_at,
+      };
+    });
   }
 
   /**
    * Fetch mentors specifically
    */
   async getMentors(): Promise<Mentor[]> {
-    const { data, error } = await supabase
+    // Get mentor user_ids from user_roles
+    const { data: mentorRoles, error: rolesError } = await supabase
+      .from('user_roles')
+      .select('user_id')
+      .eq('role', 'mentor');
+
+    if (rolesError) throw rolesError;
+    if (!mentorRoles || mentorRoles.length === 0) return [];
+
+    const mentorUserIds = mentorRoles.map(r => r.user_id);
+
+    // Fetch profiles for mentors
+    const { data: profiles, error: profileError } = await supabase
       .from('profiles')
       .select(`
         id,
@@ -108,35 +146,43 @@ class AdminService {
         phone,
         location,
         status,
-        created_at,
-        user_roles!inner(role),
-        users:user_id(
-          email,
-          created_at,
-          last_sign_in_at
-        )
+        created_at
       `)
-      .eq('user_roles.role', 'mentor')
+      .in('user_id', mentorUserIds)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (profileError) throw profileError;
+    if (!profiles) return [];
 
-    return data.map((item: any) => ({
-      id: item.user_id,
-      email: item.users?.email || '',
-      name: item.display_name || item.users?.email?.split('@')[0] || 'Unknown',
-      display_name: item.display_name,
-      role: 'mentor',
-      status: item.status || 'active',
-      phone: item.phone,
-      location: item.location,
-      avatar_url: item.avatar_url,
-      created_at: item.created_at,
-      last_sign_in_at: item.users?.last_sign_in_at,
-      expertise: [],
-      availability: 'available',
-      mentees_count: 0,
-    }));
+    // Fetch auth.users data
+    const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
+    if (authError) throw authError;
+
+    const authUsersMap = new Map();
+    authUsers?.forEach(u => {
+      authUsersMap.set(u.id, u);
+    });
+
+    return profiles.map((profile: any) => {
+      const authUser = authUsersMap.get(profile.user_id);
+
+      return {
+        id: profile.user_id,
+        email: authUser?.email || '',
+        name: profile.display_name || authUser?.email?.split('@')[0] || 'Unknown',
+        display_name: profile.display_name,
+        role: 'mentor',
+        status: profile.status || 'active',
+        phone: profile.phone,
+        location: profile.location,
+        avatar_url: profile.avatar_url,
+        created_at: profile.created_at,
+        last_sign_in_at: authUser?.last_sign_in_at,
+        expertise: [],
+        availability: 'available',
+        mentees_count: 0,
+      };
+    });
   }
 
   /**
