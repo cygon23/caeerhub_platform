@@ -26,6 +26,9 @@ export interface School {
   registration_number: string;
   contact_email: string;
   contact_phone: string;
+  address?: string;
+  city?: string;
+  region?: string;
   status: 'pending' | 'approved' | 'rejected';
   admin_notes?: string;
   created_at: string;
@@ -234,6 +237,26 @@ class AdminService {
         admin_notes: adminNotes,
         reviewed_at: new Date().toISOString(),
         reviewed_by: (await supabase.auth.getUser()).data.user?.id,
+      })
+      .eq('id', schoolId);
+
+    if (error) throw error;
+  }
+
+  /**
+   * Update school information
+   */
+  async updateSchool(schoolId: string, updates: Partial<School>): Promise<void> {
+    const { error } = await supabase
+      .from('school_registrations')
+      .update({
+        school_name: updates.school_name,
+        contact_email: updates.contact_email,
+        contact_phone: updates.contact_phone,
+        address: updates.address,
+        city: updates.city,
+        region: updates.region,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', schoolId);
 

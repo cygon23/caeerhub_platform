@@ -48,8 +48,17 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     setMounted(true);
+    // Always load and apply user theme when component mounts or user changes
     loadUserTheme();
-  }, [user]);
+
+    // Cleanup: Reset to default theme when component unmounts
+    return () => {
+      // This ensures we clean up when switching users
+      if (!user) {
+        applyTheme("light", "blue");
+      }
+    };
+  }, [user?.id]); // Use user.id to ensure we reload when user actually changes
 
   const loadUserTheme = async () => {
     if (!user) {
@@ -103,14 +112,48 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     root.style.setProperty("--ring", colors.ring);
   };
 
-  const setTheme = (newTheme: "light" | "dark" | "auto") => {
+  const setTheme = async (newTheme: "light" | "dark" | "auto") => {
     setThemeState(newTheme);
     applyTheme(newTheme, accentColor);
+
+    // Save to database if user is logged in
+    if (user) {
+      try {
+        await supabase
+          .from("user_preferences")
+          .upsert({
+            user_id: user.id,
+            theme: newTheme,
+            accent_color: accentColor,
+          }, {
+            onConflict: 'user_id'
+          });
+      } catch (error) {
+        console.error("Error saving theme:", error);
+      }
+    }
   };
 
-  const setAccentColor = (newColor: string) => {
+  const setAccentColor = async (newColor: string) => {
     setAccentColorState(newColor);
     applyTheme(theme, newColor);
+
+    // Save to database if user is logged in
+    if (user) {
+      try {
+        await supabase
+          .from("user_preferences")
+          .upsert({
+            user_id: user.id,
+            theme: theme,
+            accent_color: newColor,
+          }, {
+            onConflict: 'user_id'
+          });
+      } catch (error) {
+        console.error("Error saving accent color:", error);
+      }
+    }
   };
 
   // Listen for system theme changes when in auto mode
