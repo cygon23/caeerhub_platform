@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: "youth" | "mentor" | "admin";
+  requiredRole?: "youth" | "mentor" | "admin" | "school_admin";
   requireAuth?: boolean;
 }
 
@@ -50,6 +50,9 @@ export function ProtectedRoute({
           case "admin":
             navigate("/dashboard/admin");
             break;
+          case "school_admin":
+            navigate("/dashboard/school-admin");
+            break;
           case "mentor":
             navigate("/dashboard/mentor");
             break;
@@ -78,6 +81,9 @@ export function ProtectedRoute({
           case "admin":
             navigate("/dashboard/admin");
             break;
+          case "school_admin":
+            navigate("/dashboard/school-admin");
+            break;
           case "mentor":
             navigate("/dashboard/mentor");
             break;
@@ -97,6 +103,9 @@ export function ProtectedRoute({
       switch (user.role) {
         case "admin":
           navigate("/dashboard/admin");
+          break;
+        case "school_admin":
+          navigate("/dashboard/school-admin");
           break;
         case "mentor":
           navigate("/dashboard/mentor");

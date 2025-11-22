@@ -24,6 +24,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import YouthDashboard from "./pages/dashboard/YouthDashboard";
 import MentorDashboard from "./pages/dashboard/MentorDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import SchoolAdminDashboard from "./pages/dashboard/SchoolAdminDashboard";
 
 // Onboarding
 import OnboardingWizard from "./pages/onboarding/OnboardingWizard";
@@ -117,6 +118,16 @@ const App = () => (
                 <ProtectedRoute requiredRole='admin'>
                   <ThemeProvider>
                     <AdminDashboard />
+                  </ThemeProvider>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/school-admin'
+              element={
+                <ProtectedRoute requiredRole='school_admin'>
+                  <ThemeProvider>
+                    <SchoolAdminDashboard />
                   </ThemeProvider>
                 </ProtectedRoute>
               }
