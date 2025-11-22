@@ -11,9 +11,13 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Users,
   GraduationCap,
@@ -21,11 +25,33 @@ import {
   Settings,
   Building,
   TrendingUp,
+  Activity,
+  Calendar,
+  Mail,
+  Phone,
+  MapPin,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import StudentManagement from "@/components/school/StudentManagement";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 export default function SchoolAdminDashboard() {
   const { user, logout } = useAuth();
@@ -33,7 +59,18 @@ export default function SchoolAdminDashboard() {
   const [schoolInfo, setSchoolInfo] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+
+  // School profile edit form state
+  const [editSchoolForm, setEditSchoolForm] = useState({
+    school_name: '',
+    contact_email: '',
+    contact_phone: '',
+    address: '',
+    city: '',
+    region: '',
+  });
 
   useEffect(() => {
     loadSchoolInfo();
@@ -61,6 +98,18 @@ export default function SchoolAdminDashboard() {
         const school = schools.find(s => s.registration_number === profile.school_id);
         setSchoolInfo(school);
 
+        // Populate edit form with school info
+        if (school) {
+          setEditSchoolForm({
+            school_name: school.school_name || '',
+            contact_email: school.contact_email || '',
+            contact_phone: school.contact_phone || '',
+            address: school.address || '',
+            city: school.city || '',
+            region: school.region || '',
+          });
+        }
+
         // Get student statistics
         const studentStats = await adminService.getStudentStats(profile.school_id);
         setStats(studentStats);
@@ -80,6 +129,32 @@ export default function SchoolAdminDashboard() {
     }
   };
 
+  const handleUpdateSchoolProfile = async () => {
+    if (!schoolInfo) return;
+
+    setSaving(true);
+    try {
+      await adminService.updateSchool(schoolInfo.id, editSchoolForm);
+
+      // Reload school info
+      await loadSchoolInfo();
+
+      toast({
+        title: "Success",
+        description: "School profile updated successfully",
+      });
+    } catch (error: any) {
+      console.error('Error updating school profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update school profile",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const sidebarItems = [
     {
       title: "School Management",
@@ -93,8 +168,25 @@ export default function SchoolAdminDashboard() {
 
   const renderContent = () => {
     if (activeSection === "overview") {
+      // Loading state
+      if (loading) {
+        return (
+          <div className='space-y-8'>
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6'>
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-48 w-full" />
+          </div>
+        );
+      }
+
       // Show message if no school is assigned yet
-      if (!loading && !schoolInfo) {
+      if (!schoolInfo) {
         return (
           <div className='space-y-8'>
             <div className='bg-gradient-hero text-white rounded-lg p-8'>
@@ -278,39 +370,343 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "analytics") {
+      if (loading) {
+        return (
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        );
+      }
+
+      // Prepare chart data
+      const formLevelData = stats?.byFormLevel ? Object.entries(stats.byFormLevel).map(([form, count]) => ({
+        form: `Form ${form}`,
+        students: count,
+      })) : [];
+
+      const statusData = stats?.byStatus ? Object.entries(stats.byStatus).map(([status, count]) => ({
+        name: status.charAt(0).toUpperCase() + status.slice(1),
+        value: count as number,
+      })) : [];
+
       return (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <BarChart3 className="h-5 w-5 mr-2" />
-              Reports & Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Reports & Analytics</h2>
             <p className="text-muted-foreground">
-              Detailed reports and analytics will be available here. Track student performance,
-              attendance, and other metrics.
+              Comprehensive analytics and insights about your school's student data
             </p>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Students</p>
+                    <h3 className="text-2xl font-bold text-foreground">{stats?.total || 0}</h3>
+                  </div>
+                  <Users className="h-8 w-8 text-primary opacity-75" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Active</p>
+                    <h3 className="text-2xl font-bold text-green-600">{stats?.byStatus.active || 0}</h3>
+                  </div>
+                  <Activity className="h-8 w-8 text-green-500 opacity-75" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Graduated</p>
+                    <h3 className="text-2xl font-bold text-blue-600">{stats?.byStatus.graduated || 0}</h3>
+                  </div>
+                  <GraduationCap className="h-8 w-8 text-blue-500 opacity-75" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Form Levels</p>
+                    <h3 className="text-2xl font-bold text-foreground">{Object.keys(stats?.byFormLevel || {}).length}</h3>
+                  </div>
+                  <BarChart3 className="h-8 w-8 text-secondary opacity-75" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Charts Row 1 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Form Level Distribution Bar Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Students by Form Level</CardTitle>
+                <CardDescription>Distribution of students across form levels</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={formLevelData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="form" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="students" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Student Status Pie Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Student Status Distribution</CardTitle>
+                <CardDescription>Breakdown by active, graduated, and transferred students</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {statusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Detailed Statistics Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Detailed Statistics</CardTitle>
+              <CardDescription>Comprehensive breakdown of student data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {[1, 2, 3, 4, 5, 6].map(form => (
+                    <div key={form} className="p-4 bg-gradient-accent rounded-lg">
+                      <h4 className="font-semibold text-foreground mb-2">Form {form}</h4>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-muted-foreground">
+                          Total: <span className="font-medium text-foreground">{stats?.byFormLevel[form] || 0}</span>
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       );
     }
 
     if (activeSection === "profile") {
+      if (loading) {
+        return (
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-96 w-full" />
+          </div>
+        );
+      }
+
+      if (!schoolInfo) {
+        return (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <Building className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No School Information</h3>
+              <p className="text-muted-foreground">No school data available to edit.</p>
+            </CardContent>
+          </Card>
+        );
+      }
+
       return (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Settings className="h-5 w-5 mr-2" />
-              School Profile Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">School Profile Settings</h2>
             <p className="text-muted-foreground">
-              Update school contact information and preferences here.
+              Update your school's contact information and details
             </p>
-          </CardContent>
-        </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Building className="h-5 w-5 mr-2" />
+                School Information
+              </CardTitle>
+              <CardDescription>
+                Edit your school's basic information and contact details
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={(e) => { e.preventDefault(); handleUpdateSchoolProfile(); }} className="space-y-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="school_name">School Name</Label>
+                      <Input
+                        id="school_name"
+                        value={editSchoolForm.school_name}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, school_name: e.target.value})}
+                        placeholder="Enter school name"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="reg_number">Registration Number</Label>
+                      <Input
+                        id="reg_number"
+                        value={schoolInfo.registration_number}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <p className="text-xs text-muted-foreground">Registration number cannot be changed</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_email" className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2" />
+                        Contact Email
+                      </Label>
+                      <Input
+                        id="contact_email"
+                        type="email"
+                        value={editSchoolForm.contact_email}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, contact_email: e.target.value})}
+                        placeholder="school@example.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_phone" className="flex items-center">
+                        <Phone className="h-4 w-4 mr-2" />
+                        Contact Phone
+                      </Label>
+                      <Input
+                        id="contact_phone"
+                        type="tel"
+                        value={editSchoolForm.contact_phone}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, contact_phone: e.target.value})}
+                        placeholder="+255 XXX XXX XXX"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Location Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground flex items-center">
+                    <MapPin className="h-5 w-5 mr-2" />
+                    Location Information
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Street Address</Label>
+                      <Textarea
+                        id="address"
+                        value={editSchoolForm.address}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, address: e.target.value})}
+                        placeholder="Enter street address"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="city">City/Town</Label>
+                        <Input
+                          id="city"
+                          value={editSchoolForm.city}
+                          onChange={(e) => setEditSchoolForm({...editSchoolForm, city: e.target.value})}
+                          placeholder="Enter city or town"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="region">Region</Label>
+                        <Input
+                          id="region"
+                          value={editSchoolForm.region}
+                          onChange={(e) => setEditSchoolForm({...editSchoolForm, region: e.target.value})}
+                          placeholder="Enter region"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* School Status (Read Only) */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">School Status</h3>
+                  <div className="flex items-center space-x-4">
+                    <Badge variant={schoolInfo.status === 'approved' ? 'default' : 'secondary'} className="capitalize">
+                      {schoolInfo.status}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      Registered on {new Date(schoolInfo.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-4 pt-4 border-t">
+                  <Button type="submit" disabled={saving}>
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={loadSchoolInfo}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       );
     }
 

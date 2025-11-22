@@ -28,10 +28,8 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState(() => {
-    // Check localStorage first, then system preference
+    // Use system preference only (don't use localStorage to avoid conflicts with user preferences)
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("theme");
-      if (saved) return saved;
       return window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
@@ -57,7 +55,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Theme switching logic
+  // Theme switching logic (for public pages only - no localStorage to avoid conflicts)
   useEffect(() => {
     const root = document.documentElement;
 
@@ -67,7 +65,8 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       root.classList.remove("dark");
     }
 
-    localStorage.setItem("theme", theme);
+    // Note: We don't use localStorage here to avoid conflicts with user-specific theme preferences
+    // Public visitors will get system preference, logged-in users get their saved preferences
   }, [theme]);
 
   const toggleTheme = () => {
