@@ -13,10 +13,9 @@ BEGIN
         WHERE user_id = NEW.user_id AND role = 'school_admin'
     ) THEN
         -- Update auth.users to mark email as confirmed
+        -- confirmed_at is a generated column, only update email_confirmed_at
         UPDATE auth.users
-        SET
-            email_confirmed_at = NOW(),
-            confirmed_at = NOW()
+        SET email_confirmed_at = NOW()
         WHERE id = NEW.user_id;
     END IF;
 

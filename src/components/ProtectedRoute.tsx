@@ -34,6 +34,13 @@ export function ProtectedRoute({
 
     // User logged in but accessing auth pages (login/signup)
     if (user && !requireAuth) {
+      // School admins skip onboarding - go straight to dashboard
+      if (user.role === 'school_admin') {
+        setHasNavigated(true);
+        navigate("/dashboard/school-admin");
+        return;
+      }
+
       // Check if user needs onboarding first
       if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
         console.log("Redirecting to onboarding - first login");
@@ -67,8 +74,15 @@ export function ProtectedRoute({
 
     //User logged in, check if they need onboarding
     if (user && requireAuth) {
+      // School admins skip onboarding entirely
+      if (user.role === 'school_admin' && location.pathname.includes("/onboarding")) {
+        setHasNavigated(true);
+        navigate("/dashboard/school-admin");
+        return;
+      }
+
       // Redirect to onboarding if it's their first login and they're not already there
-      if (user.isFirstLogin && !location.pathname.includes("/onboarding")) {
+      if (user.isFirstLogin && !location.pathname.includes("/onboarding") && user.role !== 'school_admin') {
         setHasNavigated(true);
         navigate("/onboarding");
         return;
