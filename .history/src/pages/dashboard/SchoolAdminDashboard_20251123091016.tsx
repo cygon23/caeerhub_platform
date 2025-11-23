@@ -33,9 +33,6 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import StudentManagement from "@/components/school/StudentManagement";
-import SchoolProfile from "@/components/school/SchoolProfile";
-import HollandAssessmentManagement from "@/components/school/HollandAssessmentManagement";
-import StudyMaterialsManagement from "@/components/school/StudyMaterialsManagement";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -165,13 +162,6 @@ export default function SchoolAdminDashboard() {
         { title: "Student Management", icon: Users, id: "students" },
         { title: "Reports & Analytics", icon: BarChart3, id: "analytics" },
         { title: "School Profile", icon: Settings, id: "profile" },
-      ]
-    },
-    {
-      title: "Modules",
-      items: [
-        { title: "Holland RIASEC Assessment", icon: GraduationCap, id: "holland-assessment" },
-        { title: "Study Materials", icon: Activity, id: "study-materials" },
       ]
     },
   ];
@@ -538,15 +528,186 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "profile") {
-      return <SchoolProfile schoolInfo={schoolInfo} />;
-    }
+      if (loading) {
+        return (
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-96 w-full" />
+          </div>
+        );
+      }
 
-    if (activeSection === "holland-assessment") {
-      return <HollandAssessmentManagement />;
-    }
+      if (!schoolInfo) {
+        return (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <Building className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No School Information</h3>
+              <p className="text-muted-foreground">No school data available to edit.</p>
+            </CardContent>
+          </Card>
+        );
+      }
 
-    if (activeSection === "study-materials") {
-      return <StudyMaterialsManagement />;
+      return (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">School Profile Settings</h2>
+            <p className="text-muted-foreground">
+              Update your school's contact information and details
+            </p>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Building className="h-5 w-5 mr-2" />
+                School Information
+              </CardTitle>
+              <CardDescription>
+                Edit your school's basic information and contact details
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={(e) => { e.preventDefault(); handleUpdateSchoolProfile(); }} className="space-y-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="school_name">School Name</Label>
+                      <Input
+                        id="school_name"
+                        value={editSchoolForm.school_name}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, school_name: e.target.value})}
+                        placeholder="Enter school name"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="reg_number">Registration Number</Label>
+                      <Input
+                        id="reg_number"
+                        value={schoolInfo.registration_number}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <p className="text-xs text-muted-foreground">Registration number cannot be changed</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_email" className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2" />
+                        Contact Email
+                      </Label>
+                      <Input
+                        id="contact_email"
+                        type="email"
+                        value={editSchoolForm.contact_email}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, contact_email: e.target.value})}
+                        placeholder="school@example.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_phone" className="flex items-center">
+                        <Phone className="h-4 w-4 mr-2" />
+                        Contact Phone
+                      </Label>
+                      <Input
+                        id="contact_phone"
+                        type="tel"
+                        value={editSchoolForm.contact_phone}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, contact_phone: e.target.value})}
+                        placeholder="+255 XXX XXX XXX"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Location Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground flex items-center">
+                    <MapPin className="h-5 w-5 mr-2" />
+                    Location Information
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Street Address</Label>
+                      <Textarea
+                        id="address"
+                        value={editSchoolForm.address}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, address: e.target.value})}
+                        placeholder="Enter street address"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="city">City/Town</Label>
+                        <Input
+                          id="city"
+                          value={editSchoolForm.city}
+                          onChange={(e) => setEditSchoolForm({...editSchoolForm, city: e.target.value})}
+                          placeholder="Enter city or town"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="region">Region</Label>
+                        <Input
+                          id="region"
+                          value={editSchoolForm.region}
+                          onChange={(e) => setEditSchoolForm({...editSchoolForm, region: e.target.value})}
+                          placeholder="Enter region"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* School Status (Read Only) */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">School Status</h3>
+                  <div className="flex items-center space-x-4">
+                    <Badge variant={schoolInfo.status === 'approved' ? 'default' : 'secondary'} className="capitalize">
+                      {schoolInfo.status}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      Registered on {new Date(schoolInfo.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-4 pt-4 border-t">
+                  <Button type="submit" disabled={saving}>
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={loadSchoolInfo}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      );
     }
 
     return (
