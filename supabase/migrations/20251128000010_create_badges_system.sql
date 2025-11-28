@@ -68,9 +68,9 @@ CREATE POLICY "Only admins can manage badges"
   FOR ALL
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.user_id = auth.uid()
-      AND profiles.role = 'super_admin'
+      SELECT 1 FROM public.user_roles
+      WHERE user_roles.user_id = auth.uid()
+      AND user_roles.role = 'super_admin'
     )
   );
 
@@ -93,9 +93,9 @@ CREATE POLICY "Admins can view all user badges"
   FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE profiles.user_id = auth.uid()
-      AND profiles.role IN ('super_admin', 'school_admin')
+      SELECT 1 FROM public.user_roles
+      WHERE user_roles.user_id = auth.uid()
+      AND user_roles.role IN ('super_admin', 'school_admin')
     )
   );
 
