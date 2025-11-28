@@ -29,6 +29,8 @@ export interface School {
   address?: string;
   city?: string;
   region?: string;
+  primary_color?: string;
+  secondary_color?: string;
   status: 'pending' | 'approved' | 'rejected';
   admin_notes?: string;
   created_at: string;
@@ -256,6 +258,8 @@ class AdminService {
         address: updates.address,
         city: updates.city,
         region: updates.region,
+        primary_color: updates.primary_color,
+        secondary_color: updates.secondary_color,
         updated_at: new Date().toISOString(),
       })
       .eq('id', schoolId);
