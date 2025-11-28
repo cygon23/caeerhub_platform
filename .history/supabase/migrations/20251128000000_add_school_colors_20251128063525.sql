@@ -1,7 +1,7 @@
 -- Add color fields to school_registrations table for school branding
 ALTER TABLE public.school_registrations
-ADD COLUMN IF NOT EXISTS primary_color TEXT DEFAULT '#FE047F',
-ADD COLUMN IF NOT EXISTS secondary_color TEXT DEFAULT '#006807',
+ADD COLUMN IF NOT EXISTS primary_color TEXT DEFAULT '#0088FE',
+ADD COLUMN IF NOT EXISTS secondary_color TEXT DEFAULT '#00C49F',
 ADD COLUMN IF NOT EXISTS address TEXT,
 ADD COLUMN IF NOT EXISTS city TEXT,
 ADD COLUMN IF NOT EXISTS region TEXT;
