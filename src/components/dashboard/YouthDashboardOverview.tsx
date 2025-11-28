@@ -489,57 +489,185 @@ export default function YouthDashboardOverview() {
 
       {/* Learning Progress & Weekly Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-full -mr-24 -mt-24"></div>
+          <CardHeader className="relative">
             <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
+              <div className="p-2 bg-purple-500/10 rounded-lg">
+                <BookOpen className="h-5 w-5 text-purple-500" />
+              </div>
               Learning Progress by Category
             </CardTitle>
+            <p className="text-xs text-muted-foreground mt-2">Your progress across different skill areas</p>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={metrics.learningProgressByCategory}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="category" style={{ fontSize: '11px' }} angle={-45} textAnchor="end" height={80} />
-                <YAxis style={{ fontSize: '12px' }} />
-                <Tooltip />
-                <Bar dataKey="completed" fill={COLORS.primary} name="Completed" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="total" fill="#e5e7eb" name="Total" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="relative">
+            <div className="grid grid-cols-2 gap-4">
+              {metrics.learningProgressByCategory.map((category, index) => {
+                const colors = [
+                  { bg: 'bg-blue-500/10', text: 'text-blue-600', border: 'border-blue-500' },
+                  { bg: 'bg-purple-500/10', text: 'text-purple-600', border: 'border-purple-500' },
+                  { bg: 'bg-green-500/10', text: 'text-green-600', border: 'border-green-500' },
+                  { bg: 'bg-orange-500/10', text: 'text-orange-600', border: 'border-orange-500' },
+                ];
+                const color = colors[index % colors.length];
+
+                return (
+                  <div key={category.category} className={`p-4 rounded-lg border-2 ${color.border} ${color.bg} hover:shadow-md transition-all group`}>
+                    <div className="flex flex-col items-center">
+                      {/* Circular Progress */}
+                      <div className="relative w-20 h-20 mb-3">
+                        <svg className="transform -rotate-90 w-20 h-20">
+                          {/* Background circle */}
+                          <circle
+                            cx="40"
+                            cy="40"
+                            r="32"
+                            stroke="currentColor"
+                            strokeWidth="6"
+                            fill="none"
+                            className="text-gray-200"
+                          />
+                          {/* Progress circle */}
+                          <circle
+                            cx="40"
+                            cy="40"
+                            r="32"
+                            stroke="currentColor"
+                            strokeWidth="6"
+                            fill="none"
+                            strokeDasharray={`${2 * Math.PI * 32}`}
+                            strokeDashoffset={`${2 * Math.PI * 32 * (1 - category.percentage / 100)}`}
+                            className={color.text}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className={`text-lg font-bold ${color.text}`}>{category.percentage}%</span>
+                        </div>
+                      </div>
+
+                      {/* Category name */}
+                      <h4 className="font-semibold text-sm text-center mb-1 line-clamp-2">{category.category}</h4>
+
+                      {/* Stats */}
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <CheckCircle className="h-3 w-3" />
+                        <span>{category.completed}/{category.total}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Overall summary */}
+            <div className="mt-6 p-4 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-lg border border-purple-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-purple-500/20 rounded-lg">
+                    <TrendingUp className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">Overall Learning Progress</p>
+                    <p className="text-xs text-muted-foreground">Keep up the great work!</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {Math.round(
+                      metrics.learningProgressByCategory.reduce((acc, cat) => acc + cat.percentage, 0) /
+                      Math.max(metrics.learningProgressByCategory.length, 1)
+                    )}%
+                  </div>
+                  <p className="text-xs text-muted-foreground">Average</p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
-              Weekly Activity
-            </CardTitle>
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-green-500/5 to-cyan-500/5 rounded-full -mr-24 -mt-24"></div>
+          <CardHeader className="relative">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 bg-green-500/10 rounded-lg">
+                    <Activity className="h-5 w-5 text-green-500" />
+                  </div>
+                  Weekly Activity
+                </CardTitle>
+                <p className="text-xs text-muted-foreground mt-2">Your engagement over the past week</p>
+              </div>
+              <div className="text-right">
+                <div className="text-xl font-bold text-green-600">
+                  {metrics.weeklyActivityData.reduce((acc, day) => acc + day.hours, 0).toFixed(1)}h
+                </div>
+                <p className="text-xs text-muted-foreground">Total Hours</p>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={metrics.weeklyActivityData}>
+          <CardContent className="relative">
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={metrics.weeklyActivityData}>
                 <defs>
-                  <linearGradient id="colorActivity" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={COLORS.secondary} stopOpacity={0.8} />
-                    <stop offset="95%" stopColor={COLORS.secondary} stopOpacity={0.1} />
+                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.9} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.6} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="day" style={{ fontSize: '12px' }} />
-                <YAxis style={{ fontSize: '12px' }} />
-                <Tooltip />
-                <Area
-                  type="monotone"
-                  dataKey="hours"
-                  stroke={COLORS.secondary}
-                  fillOpacity={1}
-                  fill="url(#colorActivity)"
-                  name="Study Hours"
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                <XAxis
+                  dataKey="day"
+                  style={{ fontSize: '12px' }}
+                  axisLine={false}
+                  tickLine={false}
                 />
-              </AreaChart>
+                <YAxis
+                  style={{ fontSize: '11px' }}
+                  axisLine={false}
+                  tickLine={false}
+                  label={{ value: 'Hours', angle: -90, position: 'insideLeft', style: { fontSize: '11px' } }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  }}
+                  formatter={(value: any) => [`${value} hours`, 'Study Time']}
+                />
+                <Bar
+                  dataKey="hours"
+                  fill="url(#barGradient)"
+                  radius={[8, 8, 0, 0]}
+                  maxBarSize={50}
+                />
+              </BarChart>
             </ResponsiveContainer>
+
+            {/* Weekly stats */}
+            <div className="grid grid-cols-3 gap-3 mt-4">
+              <div className="p-3 bg-green-500/10 rounded-lg text-center">
+                <div className="text-lg font-bold text-green-600">
+                  {metrics.weeklyActivityData.filter(d => d.hours > 0).length}
+                </div>
+                <p className="text-xs text-muted-foreground">Active Days</p>
+              </div>
+              <div className="p-3 bg-blue-500/10 rounded-lg text-center">
+                <div className="text-lg font-bold text-blue-600">
+                  {Math.max(...metrics.weeklyActivityData.map(d => d.hours)).toFixed(1)}h
+                </div>
+                <p className="text-xs text-muted-foreground">Peak Day</p>
+              </div>
+              <div className="p-3 bg-purple-500/10 rounded-lg text-center">
+                <div className="text-lg font-bold text-purple-600">
+                  {(metrics.weeklyActivityData.reduce((acc, day) => acc + day.hours, 0) / 7).toFixed(1)}h
+                </div>
+                <p className="text-xs text-muted-foreground">Daily Avg</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
