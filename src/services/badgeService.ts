@@ -174,7 +174,7 @@ class BadgeService {
       supabase.from('user_module_progress').select('*').eq('user_id', userId),
       supabase.from('career_assessments').select('*').eq('user_id', userId),
       supabase.from('personality_profiles').select('*').eq('user_id', userId).maybeSingle(),
-      supabase.from('user_strengths_weaknesses').select('*').eq('user_id', userId).eq('type', 'strength'),
+      supabase.from('user_strengths_weaknesses').select('strengths').eq('user_id', userId).eq('is_active', true).maybeSingle(),
       supabase.from('profiles').select('*').eq('user_id', userId).maybeSingle(),
       supabase.from('onboarding_responses').select('*').eq('user_id', userId).maybeSingle(),
       supabase.from('user_cvs').select('*').eq('user_id', userId),
@@ -185,6 +185,11 @@ class BadgeService {
     const completedModules = userProgress.filter(p => p.status === 'completed').length;
     const totalModules = modulesData.data?.length || 0;
 
+    // Calculate strengths count from JSON array
+    const strengthsCount = strengthsData.data?.strengths
+      ? (Array.isArray(strengthsData.data.strengths) ? strengthsData.data.strengths.length : 0)
+      : 0;
+
     // Calculate career readiness
     const careerReadiness = this.calculateCareerReadiness({
       completedModules,
@@ -192,7 +197,7 @@ class BadgeService {
       hasCV: (cvData.data?.length || 0) > 0,
       completedAssessments: assessmentData.data?.length || 0,
       hasPersonality: !!personalityData.data,
-      strengthsCount: strengthsData.data?.length || 0,
+      strengthsCount,
     });
 
     // Calculate days active
@@ -207,7 +212,7 @@ class BadgeService {
       modules_completed: completedModules,
       assessments_completed: assessmentData.data?.length || 0,
       personality_completed: personalityData.data ? 1 : 0,
-      strengths_identified: strengthsData.data?.length || 0,
+      strengths_identified: strengthsCount,
       cv_completed: (cvData.data?.length || 0) > 0 ? 1 : 0,
       days_active: daysActive,
       career_readiness: careerReadiness,

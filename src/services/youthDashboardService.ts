@@ -105,10 +105,10 @@ class YouthDashboardService {
       supabase.from('career_assessments').select('*').eq('user_id', userId),
       // Personality profile - use maybeSingle() to handle empty results
       supabase.from('personality_profiles').select('*').eq('user_id', userId).maybeSingle(),
-      // Strengths
-      supabase.from('user_strengths_weaknesses').select('*').eq('user_id', userId).eq('type', 'strength'),
-      // Weaknesses
-      supabase.from('user_strengths_weaknesses').select('*').eq('user_id', userId).eq('type', 'weakness'),
+      // Strengths and weaknesses (single record with JSON columns)
+      supabase.from('user_strengths_weaknesses').select('strengths, weaknesses').eq('user_id', userId).eq('is_active', true).maybeSingle(),
+      // Placeholder for weaknesses (same data source)
+      Promise.resolve({ data: null, error: null }),
       // Profile - use maybeSingle() to handle empty results
       supabase.from('profiles').select('*').eq('user_id', userId).maybeSingle(),
       // Onboarding - use maybeSingle() to handle empty results
@@ -127,6 +127,11 @@ class YouthDashboardService {
     const completedModules = userProgress.filter(p => p.status === 'completed').length;
     const inProgressModules = userProgress.filter(p => p.status === 'in_progress').length;
 
+    // Calculate strengths count from JSON array
+    const strengthsCount = strengthsData.data?.strengths
+      ? (Array.isArray(strengthsData.data.strengths) ? strengthsData.data.strengths.length : 0)
+      : 0;
+
     // Calculate career readiness (0-100)
     const careerReadinessScore = this.calculateCareerReadiness({
       completedModules,
@@ -134,7 +139,7 @@ class YouthDashboardService {
       hasCV: (cvData.data?.length || 0) > 0,
       completedAssessments: assessmentData.data?.length || 0,
       hasPersonality: !!personalityData.data,
-      strengthsCount: strengthsData.data?.length || 0,
+      strengthsCount,
     });
 
     // Calculate days active (from profile creation)
