@@ -55,12 +55,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const COLORS = ['#FE047F', '#006807', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
+const COLORS = ['#FE047F', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 // Predefined school color palette
 const SCHOOL_COLOR_PALETTE = [
   { name: 'Royal Blue', value: '#FE047F' },
-  { name: 'Emerald Green', value: '#006807' },
+  { name: 'Emerald Green', value: '#00C49F' },
   { name: 'Navy Blue', value: '#1E3A8A' },
   { name: 'Forest Green', value: '#065F46' },
   { name: 'Crimson Red', value: '#DC2626' },
@@ -95,7 +95,7 @@ export default function SchoolAdminDashboard() {
     city: '',
     region: '',
     primary_color: '#FE047F',
-    secondary_color: '#006807',
+    secondary_color: '#00C49F',
   });
 
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function SchoolAdminDashboard() {
             city: school.city || '',
             region: school.region || '',
             primary_color: school.primary_color || '#FE047F',
-            secondary_color: school.secondary_color || '#006807',
+            secondary_color: school.secondary_color || '#00C49F',
           });
         }
 
@@ -625,7 +625,7 @@ export default function SchoolAdminDashboard() {
                           type="text"
                           value={editSchoolForm.secondary_color}
                           onChange={(e) => setEditSchoolForm({...editSchoolForm, secondary_color: e.target.value})}
-                          placeholder="#006807"
+                          placeholder="#00C49F"
                           className="font-mono"
                         />
                         <p className="text-xs text-muted-foreground mt-1">
