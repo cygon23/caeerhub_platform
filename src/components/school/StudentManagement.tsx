@@ -7,9 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Users, Search, Plus, Edit, Trash2, Eye, Loader2, AlertCircle, GraduationCap } from "lucide-react";
+import { Users, Search, Plus, Edit, Trash2, Eye, Loader2, AlertCircle, GraduationCap, Upload, Download, FileSpreadsheet } from "lucide-react";
 import { adminService, Student } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
+import * as XLSX from 'xlsx';
 
 interface StudentManagementProps {
   schoolId: string;
@@ -31,6 +32,10 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
     form_level: 1,
     status: 'active',
   });
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [excelData, setExcelData] = useState<any[]>([]);
+  const [excelFile, setExcelFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -187,6 +192,126 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
     return new Date(dateString).toLocaleDateString();
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setExcelFile(file);
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      try {
+        const data = event.target?.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        setExcelData(jsonData);
+        toast({
+          title: "File Loaded",
+          description: `Found ${jsonData.length} student records`,
+        });
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: "Failed to parse Excel file. Please check the format.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
+  const downloadTemplate = () => {
+    const template = [
+      {
+        'Student Name': 'John Doe',
+        'Form Level': 1,
+        'Email': 'john@example.com',
+        'Phone': '+255712345678',
+        'Gender': 'male',
+        'Date of Birth': '2008-01-15',
+        'Guardian Name': 'Jane Doe',
+        'Guardian Phone': '+255712345679',
+        'Guardian Email': 'jane@example.com',
+        'Status': 'active'
+      }
+    ];
+
+    const worksheet = XLSX.utils.json_to_sheet(template);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
+    XLSX.writeFile(workbook, 'student_upload_template.xlsx');
+
+    toast({
+      title: "Template Downloaded",
+      description: "Use this template to upload students in bulk",
+    });
+  };
+
+  const handleBulkUpload = async () => {
+    if (excelData.length === 0) {
+      toast({
+        title: "Error",
+        description: "No data to upload",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+    let successCount = 0;
+    let errorCount = 0;
+
+    try {
+      for (const row of excelData) {
+        try {
+          const regNumber = `${schoolId}-${new Date().getFullYear()}-${String(students.length + successCount + 1).padStart(4, '0')}`;
+
+          await adminService.createStudent({
+            school_id: schoolId,
+            student_name: row['Student Name'] || row['student_name'],
+            form_level: parseInt(row['Form Level'] || row['form_level']) || 1,
+            registration_number: regNumber,
+            email: row['Email'] || row['email'],
+            phone: row['Phone'] || row['phone'],
+            gender: row['Gender'] || row['gender'],
+            date_of_birth: row['Date of Birth'] || row['date_of_birth'],
+            guardian_name: row['Guardian Name'] || row['guardian_name'],
+            guardian_phone: row['Guardian Phone'] || row['guardian_phone'],
+            guardian_email: row['Guardian Email'] || row['guardian_email'],
+            status: (row['Status'] || row['status'] || 'active') as any,
+          } as any);
+
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          console.error('Error creating student:', error);
+        }
+      }
+
+      toast({
+        title: "Upload Complete",
+        description: `Successfully uploaded ${successCount} students. ${errorCount > 0 ? `Failed: ${errorCount}` : ''}`,
+      });
+
+      setUploadDialogOpen(false);
+      setExcelData([]);
+      setExcelFile(null);
+      loadStudents();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to upload students",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -224,6 +349,10 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
               <Button onClick={loadStudents} variant="outline" size="sm">
                 <Loader2 className="h-4 w-4 mr-2" />
                 Refresh
+              </Button>
+              <Button onClick={() => setUploadDialogOpen(true)} variant="outline" size="sm">
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Excel
               </Button>
               <Button onClick={handleCreateClick} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
@@ -687,6 +816,120 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
             </Button>
             <Button variant="destructive" onClick={handleConfirmDelete}>
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Upload Excel Dialog */}
+      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <FileSpreadsheet className="h-5 w-5 mr-2" />
+              Upload Students from Excel
+            </DialogTitle>
+            <DialogDescription>
+              Upload multiple students at once using an Excel file
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Instructions */}
+            <div className="bg-muted p-4 rounded-lg space-y-2">
+              <h4 className="font-semibold text-sm">Instructions:</h4>
+              <ol className="list-decimal list-inside text-sm space-y-1 text-muted-foreground">
+                <li>Download the Excel template using the button below</li>
+                <li>Fill in the student information in the template</li>
+                <li>Upload the completed Excel file</li>
+                <li>Review the data and click "Upload Students"</li>
+              </ol>
+            </div>
+
+            {/* Download Template Button */}
+            <Button onClick={downloadTemplate} variant="outline" className="w-full">
+              <Download className="h-4 w-4 mr-2" />
+              Download Excel Template
+            </Button>
+
+            {/* File Upload */}
+            <div className="space-y-2">
+              <Label>Upload Excel File</Label>
+              <Input
+                type="file"
+                accept=".xlsx, .xls"
+                onChange={handleFileUpload}
+                className="cursor-pointer"
+              />
+              {excelFile && (
+                <p className="text-sm text-muted-foreground">
+                  Selected: {excelFile.name}
+                </p>
+              )}
+            </div>
+
+            {/* Preview Data */}
+            {excelData.length > 0 && (
+              <div className="space-y-2">
+                <Label>Preview ({excelData.length} students)</Label>
+                <div className="border rounded-lg max-h-64 overflow-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Student Name</TableHead>
+                        <TableHead>Form</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Guardian</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {excelData.slice(0, 5).map((row, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{row['Student Name'] || row['student_name'] || 'N/A'}</TableCell>
+                          <TableCell>{row['Form Level'] || row['form_level'] || 'N/A'}</TableCell>
+                          <TableCell className="text-xs">{row['Email'] || row['email'] || 'N/A'}</TableCell>
+                          <TableCell>{row['Guardian Name'] || row['guardian_name'] || 'N/A'}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  {excelData.length > 5 && (
+                    <div className="p-2 text-center text-sm text-muted-foreground border-t">
+                      And {excelData.length - 5} more students...
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setUploadDialogOpen(false);
+                setExcelData([]);
+                setExcelFile(null);
+              }}
+              disabled={uploading}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleBulkUpload}
+              disabled={excelData.length === 0 || uploading}
+            >
+              {uploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload {excelData.length} Students
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
