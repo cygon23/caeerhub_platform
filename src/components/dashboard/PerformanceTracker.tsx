@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, TrendingUp, Target, Award, Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { BarChart3, TrendingUp, Target, Award, Calendar, Clock, CheckCircle, AlertCircle, Users } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import GoalVisualization from '@/components/user/profile/GoalVisualization';
 
 interface PerformanceData {
   week: string;
@@ -115,23 +116,119 @@ export default function PerformanceTracker() {
     return days;
   };
 
+  // Transform goals data for GoalVisualization component
+  const visualizationGoals = goals.map((goal) => ({
+    id: parseInt(goal.id),
+    title: goal.title,
+    type: goal.category.toLowerCase().replace(' ', '-'),
+    progress: goal.progress,
+    mentorAssisted: false, // Can be added to Goal interface if needed
+    shared: false,
+  }));
+
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Summary Stats Cards - Colorful Dashboard Style */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Goals */}
+        <Card className="overflow-hidden border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Goals</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{goals.length}</p>
+                <p className="text-xs text-muted-foreground mt-1">Active & Completed</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Target className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* With Mentors */}
+        <Card className="overflow-hidden border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">With Mentors</p>
+                <p className="text-3xl font-bold text-foreground mt-1">
+                  {goals.filter(g => g.category === 'Mentorship').length}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Mentor-assisted</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Users className="h-6 w-6 text-blue-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Completed Goals */}
+        <Card className="overflow-hidden border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                <p className="text-3xl font-bold text-foreground mt-1">
+                  {goals.filter(g => g.progress === 100).length}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {Math.round((goals.filter(g => g.progress === 100).length / goals.length) * 100)}% completion rate
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                <Award className="h-6 w-6 text-green-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Career Readiness */}
+        <Card className="overflow-hidden border-l-4 border-l-amber-500 bg-gradient-to-br from-amber-500/5 to-transparent">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Readiness</p>
+                <p className="text-3xl font-bold text-foreground mt-1">72%</p>
+                <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                  <TrendingUp className="h-3 w-3" />
+                  +8% this week
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-amber-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tabs Section */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <BarChart3 className="h-5 w-5 mr-2" />
-            Performance Tracker
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="goals">Goals</TabsTrigger>
-              <TabsTrigger value="skills">Skills</TabsTrigger>
-              <TabsTrigger value="trends">Trends</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
+              <TabsTrigger value="overview" className="gap-2">
+                <BarChart3 className="h-4 w-4" />
+                <span className="hidden sm:inline">Overview</span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="gap-2">
+                <TrendingUp className="h-4 w-4" />
+                <span className="hidden sm:inline">Analytics</span>
+              </TabsTrigger>
+              <TabsTrigger value="goals" className="gap-2">
+                <Target className="h-4 w-4" />
+                <span className="hidden sm:inline">Goals</span>
+              </TabsTrigger>
+              <TabsTrigger value="skills" className="gap-2">
+                <Award className="h-4 w-4" />
+                <span className="hidden sm:inline">Skills</span>
+              </TabsTrigger>
+              <TabsTrigger value="trends" className="gap-2">
+                <Calendar className="h-4 w-4" />
+                <span className="hidden sm:inline">Trends</span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
@@ -210,6 +307,17 @@ export default function PerformanceTracker() {
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Analytics Tab - Beautiful Visualizations */}
+            <TabsContent value="analytics" className="space-y-6">
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-foreground mb-2">Goal Analytics & Insights</h3>
+                <p className="text-sm text-muted-foreground">
+                  Comprehensive analytics and visualizations of your career goals progress
+                </p>
+              </div>
+              <GoalVisualization goals={visualizationGoals} />
             </TabsContent>
 
             <TabsContent value="goals" className="space-y-4">
