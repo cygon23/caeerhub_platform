@@ -157,55 +157,6 @@ export default function GoalsDashboard() {
 
   return (
     <div className='min-h-screen bg-background'>
-      {/* Redesigned Header Section - Consistent with Dashboard */}
-      <div className='border-b border-border bg-muted/30'>
-        <div className='max-w-7xl mx-auto px-6 py-8'>
-          <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-6'>
-            <div className='space-y-2'>
-              <h1 className='text-3xl font-bold tracking-tight text-foreground'>
-                Craft Your Career Journey
-              </h1>
-              <p className='text-muted-foreground max-w-2xl'>
-                Set ambitious goals, track meaningful progress, and collaborate with
-                mentors to accelerate your professional growth.
-              </p>
-            </div>
-
-            {/* Action Buttons */}
-            <div className='flex flex-wrap gap-3'>
-              <Button onClick={exportGoals} variant='outline' className='gap-2'>
-                <Download className='h-4 w-4' />
-                Export Goals
-              </Button>
-              <Button className='gap-2 bg-primary'>
-                <Plus className='h-4 w-4' />
-                New Goal
-              </Button>
-            </div>
-          </div>
-
-          {/* Feature Badges */}
-          <div className='flex flex-wrap gap-3 mt-6'>
-            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
-              <Target className='h-4 w-4' />
-              Goal Setting
-            </Badge>
-            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
-              <TrendingUp className='h-4 w-4' />
-              Progress Tracking
-            </Badge>
-            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
-              <Users className='h-4 w-4' />
-              Mentor Collaboration
-            </Badge>
-            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
-              <Award className='h-4 w-4' />
-              Career Roadmaps
-            </Badge>
-          </div>
-        </div>
-      </div>
-
       <div className='max-w-7xl mx-auto px-6 py-8'>
         {/* Main Navigation Tabs - Only Goals and Roadmaps */}
         <Tabs value={mainTab} onValueChange={setMainTab} className='mb-8'>
