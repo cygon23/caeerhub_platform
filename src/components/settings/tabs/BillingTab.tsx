@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Check,
   Crown,
@@ -22,7 +23,9 @@ import {
   Rocket,
   Star,
   Gift,
-  ArrowRight
+  ArrowRight,
+  AlertCircle,
+  Info
 } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { creditService } from '@/services/creditService';
@@ -40,6 +43,7 @@ interface Plan {
   description: string;
   features_included: Record<string, boolean>;
   is_popular: boolean;
+  stripe_price_id: string | null;
 }
 
 export const BillingTab = () => {
@@ -53,6 +57,7 @@ export const BillingTab = () => {
   const [creditsMonthly, setCreditsMonthly] = useState(10);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [subscriptionStatus, setSubscriptionStatus] = useState('active');
+  const [setupIncomplete, setSetupIncomplete] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -89,6 +94,11 @@ export const BillingTab = () => {
 
       if (plansData) {
         setPlans(plansData);
+
+        // Check if paid plans have Stripe price IDs configured
+        const paidPlans = plansData.filter(p => p.plan_key !== 'free');
+        const hasUnconfiguredPlans = paidPlans.some(p => !p.stripe_price_id);
+        setSetupIncomplete(hasUnconfiguredPlans);
       }
     } catch (error) {
       console.error('Error loading billing:', error);
@@ -102,17 +112,32 @@ export const BillingTab = () => {
     }
   };
 
-  const handleUpgrade = async (planKey: string) => {
+  const handleUpgrade = async (plan: Plan) => {
     if (!user) return;
 
-    setUpgrading(planKey);
-    try {
-      const { url } = await creditService.createCheckoutSession(user.id, planKey);
-      window.location.href = url;
-    } catch (error) {
+    // Check if Stripe is configured for this plan
+    if (!plan.stripe_price_id) {
       toast({
-        title: 'Error',
-        description: 'Failed to start checkout process',
+        title: 'Setup Required',
+        description: `The ${plan.plan_name} needs to be configured in Stripe before payments can be accepted. Please contact support.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUpgrading(plan.plan_key);
+    try {
+      const { url } = await creditService.createCheckoutSession(user.id, plan.plan_key);
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      toast({
+        title: 'Checkout Failed',
+        description: error.message || 'Failed to start checkout process. Please try again.',
         variant: 'destructive',
       });
       setUpgrading(null);
@@ -124,7 +149,9 @@ export const BillingTab = () => {
 
     try {
       const { url } = await creditService.createPortalSession(user.id);
-      window.location.href = url;
+      if (url) {
+        window.location.href = url;
+      }
     } catch (error) {
       toast({
         title: 'Error',
@@ -147,7 +174,7 @@ export const BillingTab = () => {
   const creditsPercentage = creditsMonthly > 0 ? (aiCreditsRemaining / creditsMonthly) * 100 : 0;
   const isProfessional = planType === 'professional';
 
-  // Plan icons
+  // Plan icons and gradients
   const getPlanIcon = (planKey: string) => {
     switch (planKey) {
       case 'free': return <Shield className='h-5 w-5' />;
@@ -167,14 +194,25 @@ export const BillingTab = () => {
   };
 
   return (
-    <div className='space-y-8 max-w-6xl mx-auto'>
+    <div className='space-y-8 pb-8'>
       {/* Header Section */}
-      <div className='text-center space-y-3'>
+      <div className='space-y-2'>
         <h2 className='text-3xl font-bold tracking-tight'>Billing & Subscription</h2>
-        <p className='text-muted-foreground max-w-2xl mx-auto'>
+        <p className='text-muted-foreground'>
           Choose the plan that fits your career journey. Upgrade anytime to unlock more features.
         </p>
       </div>
+
+      {/* Setup Warning (if Stripe not configured) */}
+      {setupIncomplete && (
+        <Alert className='border-amber-500/50 bg-amber-50 dark:bg-amber-950/20'>
+          <AlertCircle className='h-4 w-4 text-amber-600' />
+          <AlertDescription className='text-amber-900 dark:text-amber-100'>
+            <strong>Payment Setup Incomplete:</strong> Some plans are not yet configured in Stripe.
+            Please complete the setup to accept payments. See <code>docs/STRIPE_SETUP_GUIDE.md</code>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Current Plan Overview */}
       <Card className='border-2 overflow-hidden'>
@@ -183,14 +221,14 @@ export const BillingTab = () => {
           getPlanGradient(planType)
         )} />
         <CardHeader className='pb-4'>
-          <div className='flex items-start justify-between'>
-            <div className='space-y-1'>
-              <div className='flex items-center gap-2'>
+          <div className='flex flex-col sm:flex-row sm:items-start justify-between gap-4'>
+            <div className='space-y-1 flex-1'>
+              <div className='flex items-center gap-2 flex-wrap'>
                 <CardTitle className='text-2xl'>Current Plan</CardTitle>
                 <Badge
                   className={cn(
                     'capitalize text-xs font-semibold',
-                    planType === 'free' && 'bg-slate-100 text-slate-700',
+                    planType === 'free' && 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
                     planType === 'student' && 'bg-gradient-to-r from-blue-600 to-purple-600 text-white',
                     planType === 'professional' && 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
                   )}
@@ -208,7 +246,7 @@ export const BillingTab = () => {
                 variant='outline'
                 size='sm'
                 onClick={handleManageSubscription}
-                className='gap-2'
+                className='gap-2 shrink-0'
               >
                 <CreditCard className='h-4 w-4' />
                 Manage
@@ -226,10 +264,10 @@ export const BillingTab = () => {
               </div>
               <div className='text-right'>
                 <p className='text-2xl font-bold tabular-nums'>
-                  {isProfessional ? '∞' : aiCreditsRemaining}
+                  {isProfessional ? '∞' : aiCreditsRemaining.toLocaleString()}
                 </p>
                 <p className='text-xs text-muted-foreground'>
-                  {isProfessional ? 'Unlimited' : `of ${creditsMonthly} this month`}
+                  {isProfessional ? 'Unlimited' : `of ${creditsMonthly.toLocaleString()} this month`}
                 </p>
               </div>
             </div>
@@ -247,7 +285,7 @@ export const BillingTab = () => {
             )}
           </div>
 
-          {/* Plan Status */}
+          {/* Plan Status Warning */}
           {subscriptionStatus !== 'active' && (
             <div className='p-4 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950 dark:border-amber-800'>
               <div className='flex items-start gap-3'>
@@ -266,173 +304,190 @@ export const BillingTab = () => {
         </CardContent>
       </Card>
 
-      {/* Upgrade Section - Only show if on free or student tier */}
-      {planType !== 'professional' && (
-        <div className='space-y-6'>
-          <div className='text-center space-y-2'>
-            <h3 className='text-2xl font-bold flex items-center justify-center gap-2'>
-              <Rocket className='h-6 w-6 text-primary' />
-              Upgrade Your Plan
+      {/* All Plans Section */}
+      <div className='space-y-6'>
+        <div className='space-y-2'>
+          <div className='flex items-center justify-center gap-2'>
+            <Rocket className='h-6 w-6 text-primary' />
+            <h3 className='text-2xl font-bold text-center'>
+              {planType === 'free' ? 'Choose Your Plan' : 'Available Plans'}
             </h3>
-            <p className='text-muted-foreground'>
-              Unlock powerful AI features and accelerate your career growth
-            </p>
           </div>
+          <p className='text-muted-foreground text-center'>
+            Select the perfect plan to accelerate your career growth
+          </p>
+        </div>
 
-          <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-            {plans.map((plan) => {
-              const isCurrentPlan = plan.plan_key === planType;
-              const isUpgrade = ['student', 'professional'].indexOf(plan.plan_key) >
-                                ['free', 'student', 'professional'].indexOf(planType);
+        <div className='grid gap-6 md:grid-cols-3'>
+          {plans.map((plan) => {
+            const isCurrentPlan = plan.plan_key === planType;
+            const canUpgrade = !isCurrentPlan && plan.stripe_price_id;
+            const needsSetup = plan.plan_key !== 'free' && !plan.stripe_price_id;
 
-              if (!isUpgrade && !isCurrentPlan) return null;
+            return (
+              <Card
+                key={plan.id}
+                className={cn(
+                  'relative overflow-hidden transition-all duration-300',
+                  isCurrentPlan && 'border-2 border-primary ring-2 ring-primary/20 shadow-lg',
+                  !isCurrentPlan && 'hover:shadow-xl hover:-translate-y-1 border-2'
+                )}
+              >
+                {/* Popular Badge */}
+                {plan.is_popular && (
+                  <div className='absolute -top-0 -right-0 z-10'>
+                    <div className='bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 text-xs font-bold rounded-bl-lg flex items-center gap-1 shadow-lg'>
+                      <Star className='h-3 w-3 fill-current' />
+                      MOST POPULAR
+                    </div>
+                  </div>
+                )}
 
-              return (
-                <Card
-                  key={plan.id}
-                  className={cn(
-                    'relative overflow-hidden transition-all duration-300',
-                    isCurrentPlan && 'border-2 border-primary ring-2 ring-primary/20',
-                    !isCurrentPlan && 'hover:shadow-xl hover:scale-105 border-2 hover:border-primary/50'
-                  )}
-                >
-                  {/* Popular Badge */}
-                  {plan.is_popular && !isCurrentPlan && (
-                    <div className='absolute top-0 right-0'>
-                      <div className='bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1 text-xs font-bold rounded-bl-lg flex items-center gap-1'>
-                        <Star className='h-3 w-3 fill-current' />
-                        POPULAR
+                {/* Current Plan Badge */}
+                {isCurrentPlan && (
+                  <div className='absolute -top-0 -right-0 z-10'>
+                    <div className='bg-primary text-primary-foreground px-4 py-1.5 text-xs font-bold rounded-bl-lg shadow-lg'>
+                      YOUR PLAN
+                    </div>
+                  </div>
+                )}
+
+                {/* Top Color Bar */}
+                <div className={cn(
+                  'h-2 w-full bg-gradient-to-r',
+                  getPlanGradient(plan.plan_key)
+                )} />
+
+                <CardHeader className='pb-4 pt-6'>
+                  <div className='flex items-center gap-3 mb-3'>
+                    <div className={cn(
+                      'p-3 rounded-xl bg-gradient-to-r shadow-md',
+                      getPlanGradient(plan.plan_key)
+                    )}>
+                      <div className='text-white'>
+                        {getPlanIcon(plan.plan_key)}
                       </div>
                     </div>
-                  )}
-
-                  {/* Current Plan Badge */}
-                  {isCurrentPlan && (
-                    <div className='absolute top-0 right-0'>
-                      <div className='bg-primary text-primary-foreground px-3 py-1 text-xs font-bold rounded-bl-lg'>
-                        CURRENT
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Top Color Bar */}
-                  <div className={cn(
-                    'h-1.5 w-full bg-gradient-to-r',
-                    getPlanGradient(plan.plan_key)
-                  )} />
-
-                  <CardHeader className='pb-4'>
-                    <div className='flex items-center gap-3 mb-3'>
-                      <div className={cn(
-                        'p-2.5 rounded-xl bg-gradient-to-r',
-                        getPlanGradient(plan.plan_key)
-                      )}>
-                        <div className='text-white'>
-                          {getPlanIcon(plan.plan_key)}
-                        </div>
-                      </div>
+                    <div>
                       <CardTitle className='text-xl'>{plan.plan_name}</CardTitle>
                     </div>
+                  </div>
 
-                    <div className='space-y-1'>
-                      <div className='flex items-baseline gap-1'>
-                        <span className='text-4xl font-bold'>
-                          TZS {plan.price_monthly.toLocaleString()}
-                        </span>
+                  <div className='space-y-2'>
+                    <div className='flex items-baseline gap-1'>
+                      <span className='text-4xl font-bold'>
+                        {plan.price_monthly === 0 ? 'Free' : `TZS ${plan.price_monthly.toLocaleString()}`}
+                      </span>
+                      {plan.price_monthly > 0 && (
                         <span className='text-muted-foreground text-sm'>/month</span>
-                      </div>
-                      {plan.price_yearly > 0 && (
-                        <p className='text-xs text-muted-foreground flex items-center gap-1'>
-                          <Gift className='h-3 w-3' />
-                          Save TZS {((plan.price_monthly * 12) - plan.price_yearly).toLocaleString()}
-                          with yearly billing
-                        </p>
                       )}
                     </div>
-
-                    <CardDescription className='text-sm pt-2'>
-                      {plan.description}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className='space-y-6'>
-                    {/* Credits Info */}
-                    <div className='p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200/50 dark:border-amber-800/50'>
-                      <div className='flex items-center gap-2'>
-                        <Sparkles className='h-4 w-4 text-amber-600' />
-                        <span className='font-semibold text-sm'>
-                          {plan.plan_key === 'professional'
-                            ? 'Unlimited AI Credits'
-                            : `${plan.credits_monthly} AI Credits/month`
-                          }
-                        </span>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    {/* Features List */}
-                    <div className='space-y-3'>
-                      <p className='text-sm font-semibold text-muted-foreground'>
-                        What's included:
+                    {plan.price_yearly > 0 && (
+                      <p className='text-xs text-green-600 dark:text-green-400 flex items-center gap-1 font-medium'>
+                        <Gift className='h-3 w-3' />
+                        Save TZS {((plan.price_monthly * 12) - plan.price_yearly).toLocaleString()}/year
                       </p>
-                      <ul className='space-y-2.5'>
-                        {Object.entries(plan.features_included || {})
-                          .filter(([_, enabled]) => enabled)
-                          .slice(0, 6)
-                          .map(([feature]) => (
-                            <li key={feature} className='flex items-start gap-2 text-sm'>
-                              <Check className='h-4 w-4 text-green-600 flex-shrink-0 mt-0.5' />
-                              <span className='capitalize leading-tight'>
-                                {feature.replace(/_/g, ' ')}
-                              </span>
-                            </li>
-                          ))}
-                        {Object.keys(plan.features_included || {}).length > 6 && (
-                          <li className='text-xs text-muted-foreground pl-6'>
-                            +{Object.keys(plan.features_included).length - 6} more features
-                          </li>
-                        )}
-                      </ul>
-                    </div>
+                    )}
+                  </div>
 
-                    {/* CTA Button */}
-                    <Button
-                      className={cn(
-                        'w-full h-11 gap-2 font-semibold transition-all',
-                        isCurrentPlan && 'opacity-50 cursor-not-allowed',
-                        !isCurrentPlan && cn(
-                          'bg-gradient-to-r hover:opacity-90 hover:scale-105',
+                  <CardDescription className='text-sm pt-2 leading-relaxed'>
+                    {plan.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className='space-y-6'>
+                  {/* Credits Info */}
+                  <div className='p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200/50 dark:border-amber-800/50'>
+                    <div className='flex items-center justify-center gap-2'>
+                      <Sparkles className='h-4 w-4 text-amber-600' />
+                      <span className='font-semibold text-sm'>
+                        {plan.plan_key === 'professional'
+                          ? 'Unlimited AI Credits'
+                          : `${plan.credits_monthly} AI Credits/month`
+                        }
+                      </span>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Features List */}
+                  <div className='space-y-3'>
+                    <p className='text-sm font-semibold text-muted-foreground uppercase tracking-wide'>
+                      Includes:
+                    </p>
+                    <ul className='space-y-2.5'>
+                      {Object.entries(plan.features_included || {})
+                        .filter(([_, enabled]) => enabled)
+                        .slice(0, 5)
+                        .map(([feature]) => (
+                          <li key={feature} className='flex items-start gap-2.5 text-sm'>
+                            <div className='bg-green-100 dark:bg-green-900/30 rounded-full p-0.5 mt-0.5'>
+                              <Check className='h-3.5 w-3.5 text-green-600 dark:text-green-400' />
+                            </div>
+                            <span className='capitalize leading-tight flex-1'>
+                              {feature.replace(/_/g, ' ')}
+                            </span>
+                          </li>
+                        ))}
+                      {Object.keys(plan.features_included || {}).length > 5 && (
+                        <li className='text-xs text-muted-foreground pl-6 font-medium'>
+                          + {Object.keys(plan.features_included).length - 5} more features
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* CTA Button */}
+                  <div className='pt-2'>
+                    {needsSetup ? (
+                      <Button
+                        className='w-full h-11 gap-2 font-semibold'
+                        variant='outline'
+                        disabled
+                      >
+                        <Info className='h-4 w-4' />
+                        Setup Required
+                      </Button>
+                    ) : isCurrentPlan ? (
+                      <Button
+                        className='w-full h-11 gap-2 font-semibold bg-primary/10 hover:bg-primary/20'
+                        variant='outline'
+                        disabled
+                      >
+                        <Check className='h-4 w-4' />
+                        Current Plan
+                      </Button>
+                    ) : (
+                      <Button
+                        className={cn(
+                          'w-full h-11 gap-2 font-semibold transition-all',
+                          'bg-gradient-to-r text-white hover:opacity-90 hover:scale-105 shadow-md',
                           getPlanGradient(plan.plan_key)
-                        )
-                      )}
-                      onClick={() => !isCurrentPlan && handleUpgrade(plan.plan_key)}
-                      disabled={isCurrentPlan || upgrading === plan.plan_key}
-                    >
-                      {upgrading === plan.plan_key ? (
-                        <>
-                          <RefreshCw className='h-4 w-4 animate-spin' />
-                          Processing...
-                        </>
-                      ) : isCurrentPlan ? (
-                        <>
-                          <Check className='h-4 w-4' />
-                          Current Plan
-                        </>
-                      ) : (
-                        <>
-                          Upgrade Now
-                          <ArrowRight className='h-4 w-4' />
-                        </>
-                      )}
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                        )}
+                        onClick={() => handleUpgrade(plan)}
+                        disabled={upgrading === plan.plan_key}
+                      >
+                        {upgrading === plan.plan_key ? (
+                          <>
+                            <RefreshCw className='h-4 w-4 animate-spin' />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            {plan.plan_key === 'free' ? 'Select Plan' : 'Upgrade Now'}
+                            <ArrowRight className='h-4 w-4' />
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
-      )}
+      </div>
 
       {/* Payment Method Card */}
       <Card>
@@ -474,7 +529,7 @@ export const BillingTab = () => {
       </Card>
 
       {/* Trust Badges */}
-      <div className='flex items-center justify-center gap-8 py-6 border-t'>
+      <div className='flex flex-wrap items-center justify-center gap-6 py-6 border-t'>
         <div className='flex items-center gap-2 text-sm text-muted-foreground'>
           <Shield className='h-4 w-4 text-green-600' />
           <span>Secure Payments</span>
