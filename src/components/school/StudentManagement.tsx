@@ -314,8 +314,69 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Users className="h-5 w-5 mr-2" />
+                Student Management
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button onClick={loadStudents} variant="outline" size="sm" disabled>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Refresh
+                </Button>
+                <Button onClick={() => setUploadDialogOpen(true)} variant="outline" size="sm">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Excel
+                </Button>
+                <Button onClick={handleCreateClick} size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Student
+                </Button>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name or registration number..."
+                  className="pl-10"
+                  disabled
+                />
+              </div>
+              <Select disabled>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Form Level" />
+                </SelectTrigger>
+              </Select>
+              <Select disabled>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+              </Select>
+            </div>
+
+            <div className="text-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
+              <p className="text-muted-foreground">Loading students...</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          {[...Array(7)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-muted-foreground">-</div>
+                <div className="text-xs text-muted-foreground">Loading...</div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
