@@ -93,76 +93,158 @@ export default function YouthDashboardOverview() {
   const userName = user?.name?.split(' ')[0] || 'User';
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-6 md:p-8">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              Habari {userName}! 👋
-            </h1>
-            <p className="text-white/90 text-base md:text-lg">
-              Ready to continue building your career journey today?
-            </p>
+    <div className="space-y-6 p-6">
+      {/* Header with Welcome and Live Indicator */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Habari {userName}! 👋</h1>
+          <p className="text-muted-foreground mt-1">Ready to continue building your career journey today?</p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span>Live</span>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center min-w-[120px]">
-            <div className="text-3xl font-bold">{metrics.careerReadinessScore}%</div>
-            <div className="text-white/90 text-sm">Career Readiness</div>
-          </div>
+          <span>•</span>
+          <span>Last updated: {new Date().toLocaleTimeString()}</span>
         </div>
       </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Modules Completed</p>
-                <p className="text-2xl font-bold text-primary">{metrics.completedModules}</p>
-                <p className="text-xs text-muted-foreground mt-1">of {metrics.totalModules} total</p>
+      {/* Key Metrics Row - Career Readiness & Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Career Readiness</CardTitle>
+            <Target className="h-5 w-5 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{metrics.careerReadinessScore}%</div>
+            <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center text-xs text-green-600">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                {metrics.completedModules > 0 ? 'On track' : 'Get started'}
               </div>
-              <BookOpen className="h-8 w-8 text-primary" />
+              <div className="text-xs text-muted-foreground">
+                {metrics.completedModules}/{metrics.totalModules} modules
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Days Active</p>
-                <p className="text-2xl font-bold text-secondary">{metrics.daysActive}</p>
-                <p className="text-xs text-muted-foreground mt-1">since joining</p>
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full -mr-16 -mt-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Learning Progress</CardTitle>
+            <BookOpen className="h-5 w-5 text-purple-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{metrics.completedModules}</div>
+            <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center text-xs text-orange-600">
+                <Clock className="h-3 w-3 mr-1" />
+                {metrics.inProgressModules} in progress
               </div>
-              <Calendar className="h-8 w-8 text-secondary" />
+              <div className="text-xs text-muted-foreground">
+                of {metrics.totalModules} total
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Total Points</p>
-                <p className="text-2xl font-bold text-success">{metrics.totalPoints}</p>
-                <p className="text-xs text-muted-foreground mt-1">earned so far</p>
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full -mr-16 -mt-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Days Active</CardTitle>
+            <Calendar className="h-5 w-5 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{metrics.daysActive}</div>
+            <div className="flex items-center gap-2 mt-2">
+              <div className="text-xs text-muted-foreground">
+                since {new Date(Date.now() - metrics.daysActive * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
               </div>
-              <Award className="h-8 w-8 text-success" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Assessments</p>
-                <p className="text-2xl font-bold text-warning">{metrics.completedAssessments}</p>
-                <p className="text-xs text-muted-foreground mt-1">completed</p>
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full -mr-16 -mt-16"></div>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Points</CardTitle>
+            <Award className="h-5 w-5 text-cyan-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{metrics.totalPoints.toLocaleString()}</div>
+            <div className="flex items-center gap-2 mt-2">
+              <div className="text-xs text-green-600">
+                <TrendingUp className="h-3 w-3 inline mr-1" />
+                +{metrics.completedModules * 100} from modules
               </div>
-              <Brain className="h-8 w-8 text-warning" />
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Assessment & Skills Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-l-4 border-l-blue-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Brain className="h-4 w-4" />
+              Assessments
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {metrics.completedAssessments}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Tests Completed</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-purple-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Strengths
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-600">
+              {metrics.strengthsCount}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Skills Identified</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-green-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <GraduationCap className="h-4 w-4" />
+              CV Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {metrics.cvCompleted ? '100%' : '0%'}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">{metrics.cvCompleted ? 'Complete' : 'Not Started'}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-orange-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Mentors
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-600">
+              {metrics.totalMentors}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Active Connections</p>
           </CardContent>
         </Card>
       </div>
