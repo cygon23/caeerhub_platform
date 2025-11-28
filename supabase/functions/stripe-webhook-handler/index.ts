@@ -13,8 +13,8 @@ serve(async (req) => {
   const body = await req.text();
 
   try {
-    // Verify webhook signature
-    const event = stripe.webhooks.constructEvent(
+    // Verify webhook signature (using async method for compatibility)
+    const event = await stripe.webhooks.constructEventAsync(
       body,
       signature!,
       webhookSecret
