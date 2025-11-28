@@ -138,9 +138,11 @@ export default function YouthDashboard() {
   const { user, logout } = useAuth();
   const [userCareerPath, setUserCareerPath] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState("overview");
+  const [userPlanTier, setUserPlanTier] = useState<string>("free");
 
   useEffect(() => {
     fetchUserCareerPath();
+    fetchUserPlan();
   }, [user]);
 
   const fetchUserCareerPath = async () => {
@@ -163,6 +165,27 @@ export default function YouthDashboard() {
       }
     } catch (err) {
       setUserCareerPath(null);
+    }
+  };
+
+  const fetchUserPlan = async () => {
+    if (!user?.id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("billing_settings")
+        .select("plan_tier")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (data?.plan_tier) {
+        setUserPlanTier(data.plan_tier);
+      } else {
+        setUserPlanTier("free");
+      }
+    } catch (err) {
+      console.error("Error fetching user plan:", err);
+      setUserPlanTier("free");
     }
   };
 
@@ -745,20 +768,96 @@ export default function YouthDashboard() {
             })}
           </SidebarContent>
 
-          <div className='p-4 border-t border-border'>
-            <div className='text-xs text-muted-foreground mb-2'>
-              Logged in as:
-            </div>
-            <div className='text-sm font-medium text-foreground'>
-              {user?.name}
-            </div>
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={logout}
-              className='w-full mt-2 text-muted-foreground hover:text-foreground'>
-              Sign Out
-            </Button>
+          {/* Professional User Profile Section */}
+          <div className='p-3 border-t border-border bg-muted/30'>
+            <DropdownMenu>
+              <DropdownMenuTrigger className='w-full focus:outline-none'>
+                <div className='flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group'>
+                  {/* Avatar with Initials */}
+                  <Avatar className='h-10 w-10 border-2 border-primary/20 group-hover:border-primary/40 transition-colors'>
+                    <AvatarImage src={user?.avatarUrl} alt={user?.name} />
+                    <AvatarFallback className='bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-semibold text-sm'>
+                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  {/* User Info */}
+                  <div className='flex-1 text-left min-w-0'>
+                    <div className='text-sm font-medium text-foreground truncate'>
+                      {user?.name?.split(' ')[0] || 'User'}
+                    </div>
+                    <div className='flex items-center gap-1.5 mt-0.5'>
+                      <Badge
+                        variant='outline'
+                        className='text-[10px] px-1.5 py-0 h-4 border-primary/30 bg-primary/5 text-primary font-medium capitalize'
+                      >
+                        {userPlanTier}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Dropdown Icon */}
+                  <ChevronDown className='h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0' />
+                </div>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align='end'
+                className='w-56 mb-2'
+                sideOffset={8}
+              >
+                <DropdownMenuLabel className='font-normal'>
+                  <div className='flex flex-col space-y-1'>
+                    <p className='text-sm font-medium leading-none'>{user?.name}</p>
+                    <p className='text-xs leading-none text-muted-foreground'>
+                      {user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={() => setActiveSection('settings')}
+                  className='cursor-pointer'
+                >
+                  <Settings className='mr-2 h-4 w-4' />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className='cursor-pointer'>
+                  <svg
+                    className='mr-2 h-4 w-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129'
+                    />
+                  </svg>
+                  <span>Languages</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className='cursor-pointer'>
+                  <MessageCircle className='mr-2 h-4 w-4' />
+                  <span>Get Help</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={logout}
+                  className='cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/30'
+                >
+                  <LogOut className='mr-2 h-4 w-4' />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </Sidebar>
 
