@@ -96,8 +96,8 @@ export const creditService = {
       body: {
         userId,
         planKey,
-        successUrl: `${window.location.origin}/dashboard/settings/billing?success=true`,
-        cancelUrl: `${window.location.origin}/dashboard/settings/billing?cancelled=true`,
+        successUrl: `${window.location.origin}/dashboard/youth?success=true`,
+        cancelUrl: `${window.location.origin}/dashboard/youth?cancelled=true`,
       },
     });
 
@@ -112,7 +112,7 @@ export const creditService = {
     const { data, error } = await supabase.functions.invoke('create-portal-session', {
       body: {
         userId,
-        returnUrl: `${window.location.origin}/dashboard/settings/billing`,
+        returnUrl: `${window.location.origin}/dashboard/youth`,
       },
     });
 
@@ -128,8 +128,8 @@ export const creditService = {
       body: {
         userId,
         creditAmount,
-        successUrl: `${window.location.origin}/dashboard/settings/billing?purchase_success=true`,
-        cancelUrl: `${window.location.origin}/dashboard/settings/billing?purchase_cancelled=true`,
+        successUrl: `${window.location.origin}/dashboard/youth?purchase_success=true`,
+        cancelUrl: `${window.location.origin}/dashboard/youth?purchase_cancelled=true`,
       },
     });
 
