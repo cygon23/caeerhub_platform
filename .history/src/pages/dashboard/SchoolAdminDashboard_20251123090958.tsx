@@ -30,13 +30,9 @@ import {
   Mail,
   Phone,
   MapPin,
-  Palette,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import StudentManagement from "@/components/school/StudentManagement";
-import SchoolProfile from "@/components/school/SchoolProfile";
-import HollandAssessmentManagement from "@/components/school/HollandAssessmentManagement";
-import StudyMaterialsManagement from "@/components/school/StudyMaterialsManagement";
 import { adminService } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -57,26 +53,6 @@ import {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
-// Predefined school color palette
-const SCHOOL_COLOR_PALETTE = [
-  { name: 'Royal Blue', value: '#0088FE' },
-  { name: 'Emerald Green', value: '#00C49F' },
-  { name: 'Navy Blue', value: '#1E3A8A' },
-  { name: 'Forest Green', value: '#065F46' },
-  { name: 'Crimson Red', value: '#DC2626' },
-  { name: 'Maroon', value: '#7F1D1D' },
-  { name: 'Deep Purple', value: '#6B21A8' },
-  { name: 'Golden Yellow', value: '#FFBB28' },
-  { name: 'Orange', value: '#FF8042' },
-  { name: 'Teal', value: '#0D9488' },
-  { name: 'Indigo', value: '#4F46E5' },
-  { name: 'Sky Blue', value: '#0EA5E9' },
-  { name: 'Rose Pink', value: '#E11D48' },
-  { name: 'Amber', value: '#F59E0B' },
-  { name: 'Slate Gray', value: '#475569' },
-  { name: 'Brown', value: '#78350F' },
-];
-
 export default function SchoolAdminDashboard() {
   const { user, logout } = useAuth();
   const [activeSection, setActiveSection] = useState("overview");
@@ -94,8 +70,6 @@ export default function SchoolAdminDashboard() {
     address: '',
     city: '',
     region: '',
-    primary_color: '#0088FE',
-    secondary_color: '#00C49F',
   });
 
   useEffect(() => {
@@ -133,8 +107,6 @@ export default function SchoolAdminDashboard() {
             address: school.address || '',
             city: school.city || '',
             region: school.region || '',
-            primary_color: school.primary_color || '#0088FE',
-            secondary_color: school.secondary_color || '#00C49F',
           });
         }
 
@@ -187,16 +159,9 @@ export default function SchoolAdminDashboard() {
     {
       title: "School Management",
       items: [
-        { title: "Student Management", icon: Users, id: "students" },
+        { title: "Student Management..", icon: Users, id: "students" },
         { title: "Reports & Analytics", icon: BarChart3, id: "analytics" },
         { title: "School Profile", icon: Settings, id: "profile" },
-      ]
-    },
-    {
-      title: "Modules",
-      items: [
-        { title: "Holland RIASEC Assessment", icon: GraduationCap, id: "holland-assessment" },
-        { title: "Study Materials", icon: Activity, id: "study-materials" },
       ]
     },
   ];
@@ -396,8 +361,11 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "students") {
-      // Get school_id from profile - use empty string if not available yet
-      const schoolId = schoolInfo?.registration_number || '';
+      // Get school_id from profile
+      const schoolId = schoolInfo?.registration_number;
+      if (!schoolId) {
+        return <div>Loading school information...</div>;
+      }
       return <StudentManagement schoolId={schoolId} />;
     }
 
@@ -560,106 +528,150 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "profile") {
-      return <SchoolProfile schoolInfo={schoolInfo} />;
-    }
+      if (loading) {
+        return (
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-96 w-full" />
+          </div>
+        );
+      }
 
-                {/* School Branding - Color Selection */}
+      if (!schoolInfo) {
+        return (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <Building className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No School Information</h3>
+              <p className="text-muted-foreground">No school data available to edit.</p>
+            </CardContent>
+          </Card>
+        );
+      }
+
+      return (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">School Profile Settings</h2>
+            <p className="text-muted-foreground">
+              Update your school's contact information and details
+            </p>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Building className="h-5 w-5 mr-2" />
+                School Information
+              </CardTitle>
+              <CardDescription>
+                Edit your school's basic information and contact details
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={(e) => { e.preventDefault(); handleUpdateSchoolProfile(); }} className="space-y-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="school_name">School Name</Label>
+                      <Input
+                        id="school_name"
+                        value={editSchoolForm.school_name}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, school_name: e.target.value})}
+                        placeholder="Enter school name"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="reg_number">Registration Number</Label>
+                      <Input
+                        id="reg_number"
+                        value={schoolInfo.registration_number}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <p className="text-xs text-muted-foreground">Registration number cannot be changed</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_email" className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2" />
+                        Contact Email
+                      </Label>
+                      <Input
+                        id="contact_email"
+                        type="email"
+                        value={editSchoolForm.contact_email}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, contact_email: e.target.value})}
+                        placeholder="school@example.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_phone" className="flex items-center">
+                        <Phone className="h-4 w-4 mr-2" />
+                        Contact Phone
+                      </Label>
+                      <Input
+                        id="contact_phone"
+                        type="tel"
+                        value={editSchoolForm.contact_phone}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, contact_phone: e.target.value})}
+                        placeholder="+255 XXX XXX XXX"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Location Information */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground flex items-center">
-                    <Palette className="h-5 w-5 mr-2" />
-                    School Branding Colors
+                    <MapPin className="h-5 w-5 mr-2" />
+                    Location Information
                   </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Choose colors that represent your school's brand identity
-                  </p>
 
-                  {/* Primary Color Selection */}
-                  <div className="space-y-3">
-                    <Label className="text-base">Primary Color</Label>
-                    <div className="flex items-center gap-4 mb-2">
-                      <div
-                        className="w-16 h-16 rounded-lg border-2 border-border shadow-sm"
-                        style={{ backgroundColor: editSchoolForm.primary_color }}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Street Address</Label>
+                      <Textarea
+                        id="address"
+                        value={editSchoolForm.address}
+                        onChange={(e) => setEditSchoolForm({...editSchoolForm, address: e.target.value})}
+                        placeholder="Enter street address"
+                        rows={3}
                       />
-                      <div className="flex-1">
-                        <Input
-                          type="text"
-                          value={editSchoolForm.primary_color}
-                          onChange={(e) => setEditSchoolForm({...editSchoolForm, primary_color: e.target.value})}
-                          placeholder="#0088FE"
-                          className="font-mono"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Enter a hex color code or select from the palette below
-                        </p>
-                      </div>
                     </div>
-                    <div className="grid grid-cols-8 gap-2">
-                      {SCHOOL_COLOR_PALETTE.map((color) => (
-                        <button
-                          key={color.value}
-                          type="button"
-                          onClick={() => setEditSchoolForm({...editSchoolForm, primary_color: color.value})}
-                          className={`w-full h-12 rounded-md border-2 transition-all hover:scale-110 hover:shadow-md ${
-                            editSchoolForm.primary_color === color.value
-                              ? 'border-foreground ring-2 ring-offset-2 ring-primary'
-                              : 'border-border'
-                          }`}
-                          style={{ backgroundColor: color.value }}
-                          title={color.name}
-                        />
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* Secondary Color Selection */}
-                  <div className="space-y-3">
-                    <Label className="text-base">Secondary Color</Label>
-                    <div className="flex items-center gap-4 mb-2">
-                      <div
-                        className="w-16 h-16 rounded-lg border-2 border-border shadow-sm"
-                        style={{ backgroundColor: editSchoolForm.secondary_color }}
-                      />
-                      <div className="flex-1">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="city">City/Town</Label>
                         <Input
-                          type="text"
-                          value={editSchoolForm.secondary_color}
-                          onChange={(e) => setEditSchoolForm({...editSchoolForm, secondary_color: e.target.value})}
-                          placeholder="#00C49F"
-                          className="font-mono"
+                          id="city"
+                          value={editSchoolForm.city}
+                          onChange={(e) => setEditSchoolForm({...editSchoolForm, city: e.target.value})}
+                          placeholder="Enter city or town"
                         />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Enter a hex color code or select from the palette below
-                        </p>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-8 gap-2">
-                      {SCHOOL_COLOR_PALETTE.map((color) => (
-                        <button
-                          key={color.value}
-                          type="button"
-                          onClick={() => setEditSchoolForm({...editSchoolForm, secondary_color: color.value})}
-                          className={`w-full h-12 rounded-md border-2 transition-all hover:scale-110 hover:shadow-md ${
-                            editSchoolForm.secondary_color === color.value
-                              ? 'border-foreground ring-2 ring-offset-2 ring-primary'
-                              : 'border-border'
-                          }`}
-                          style={{ backgroundColor: color.value }}
-                          title={color.name}
-                        />
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* Color Preview */}
-                  <div className="bg-gradient-to-r p-6 rounded-lg border border-border"
-                    style={{
-                      background: `linear-gradient(135deg, ${editSchoolForm.primary_color} 0%, ${editSchoolForm.secondary_color} 100%)`
-                    }}
-                  >
-                    <div className="text-white text-center">
-                      <p className="text-lg font-semibold drop-shadow-md">Color Preview</p>
-                      <p className="text-sm opacity-90 drop-shadow-md">This is how your school colors will look together</p>
+                      <div className="space-y-2">
+                        <Label htmlFor="region">Region</Label>
+                        <Input
+                          id="region"
+                          value={editSchoolForm.region}
+                          onChange={(e) => setEditSchoolForm({...editSchoolForm, region: e.target.value})}
+                          placeholder="Enter region"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -677,8 +689,25 @@ export default function SchoolAdminDashboard() {
                   </div>
                 </div>
 
-    if (activeSection === "study-materials") {
-      return <StudyMaterialsManagement />;
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-4 pt-4 border-t">
+                  <Button type="submit" disabled={saving}>
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={loadSchoolInfo}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      );
     }
 
     return (
