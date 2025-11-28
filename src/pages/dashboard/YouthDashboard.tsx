@@ -68,6 +68,8 @@ import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
 import UploadMaterials from "@/components/dashboard/UploadMaterials";
 import PracticeQuestions from "@/components/dashboard/PracticeQuestions";
 import StudyGuides from "@/components/dashboard/StudyGuides";
+import YouthDashboardOverview from "@/components/dashboard/YouthDashboardOverview";
+import SelfLearningHub from "@/components/dashboard/SelfLearningHub";
 import { supabase } from "@/integrations/supabase/client";
 
 // Lazy load dashboard components with proper named exports
@@ -223,7 +225,6 @@ export default function YouthDashboard() {
       items: [
         { title: "Smart CV Builder", icon: FileText, id: "cv-builder" },
         { title: "Interview AI Coach", icon: MessageCircle, id: "interview" },
-        { title: "Career Dashboard", icon: BarChart3, id: "career-dashboard" },
       ],
     },
    {
@@ -337,7 +338,9 @@ export default function YouthDashboard() {
     { title: "Review Roadmap Progress", priority: "Low", due: "This Week" },
   ];
 
-  const renderOverview = () => (
+  const renderOverview = () => <YouthDashboardOverview />;
+
+  const renderOverviewOld = () => (
     <div className='space-y-8'>
       {/* Welcome Section */}
       <div className='bg-gradient-hero text-white rounded-lg p-4 md:p-8'>
@@ -585,7 +588,7 @@ export default function YouthDashboard() {
     if (activeSection === "behavioral") return <BehavioralInsight />;
     if (activeSection === "badges") return <Badges />;
     if (activeSection === "academic") return <AcademicSupport />;
-    if (activeSection === "challenges") return <SelfLearning />;
+    if (activeSection === "challenges") return <SelfLearningHub />;
     if (activeSection === "planner") return <DreamPlanner />;
     if (activeSection === "suggestions") return <CareerSuggestion />;
     if (activeSection === "insights") return <UbongInsight />;
