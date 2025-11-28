@@ -112,10 +112,45 @@ async function handleCheckoutCompleted(
     .eq("plan_key", planKey)
     .single();
 
-  // Update billing_settings
+  // Get payment method details from PaymentIntent
+  let paymentMethodDetails = null;
+  let paymentMethodType = null;
+
+  if (session.payment_intent) {
+    try {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        session.payment_intent as string,
+        { expand: ['payment_method'] }
+      );
+
+      if (paymentIntent.payment_method) {
+        const pm = paymentIntent.payment_method as Stripe.PaymentMethod;
+        paymentMethodType = pm.type;
+
+        // Store detailed payment method info
+        if (pm.card) {
+          paymentMethodDetails = {
+            type: 'card',
+            card: {
+              brand: pm.card.brand,
+              last4: pm.card.last4,
+              exp_month: pm.card.exp_month,
+              exp_year: pm.card.exp_year,
+              funding: pm.card.funding,
+            }
+          };
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching payment method:', err);
+    }
+  }
+
+  // Update billing_settings with customer ID and payment info
   await supabase
     .from("billing_settings")
     .update({
+      stripe_customer_id: session.customer,
       stripe_subscription_id: session.subscription,
       plan_type: planKey,
       plan_tier: planKey,
@@ -140,7 +175,7 @@ async function handleCheckoutCompleted(
     p_metadata: { stripe_session_id: session.id, plan_key: planKey },
   });
 
-  // Record payment
+  // Record payment with payment method details
   await supabase.from("stripe_payments").insert({
     user_id: userId,
     stripe_payment_intent_id: session.payment_intent,
@@ -149,6 +184,8 @@ async function handleCheckoutCompleted(
     currency: session.currency,
     status: "succeeded",
     payment_type: "subscription",
+    payment_method: paymentMethodType,
+    payment_method_details: paymentMethodDetails,
     subscription_period_start: new Date().toISOString(),
     subscription_period_end: new Date(
       Date.now() + 30 * 24 * 60 * 60 * 1000
@@ -180,6 +217,39 @@ async function handleInvoicePaymentSucceeded(
     .eq("plan_key", billing.plan_tier)
     .single();
 
+  // Get payment method details from PaymentIntent
+  let paymentMethodDetails = null;
+  let paymentMethodType = null;
+
+  if (invoice.payment_intent) {
+    try {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        invoice.payment_intent as string,
+        { expand: ['payment_method'] }
+      );
+
+      if (paymentIntent.payment_method) {
+        const pm = paymentIntent.payment_method as Stripe.PaymentMethod;
+        paymentMethodType = pm.type;
+
+        if (pm.card) {
+          paymentMethodDetails = {
+            type: 'card',
+            card: {
+              brand: pm.card.brand,
+              last4: pm.card.last4,
+              exp_month: pm.card.exp_month,
+              exp_year: pm.card.exp_year,
+              funding: pm.card.funding,
+            }
+          };
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching payment method:', err);
+    }
+  }
+
   // Update billing
   await supabase
     .from("billing_settings")
@@ -195,7 +265,7 @@ async function handleInvoicePaymentSucceeded(
   // Reset monthly credits via stored procedure
   await supabase.rpc("reset_monthly_credits");
 
-  // Record payment
+  // Record payment with payment method details
   await supabase.from("stripe_payments").insert({
     user_id: billing.user_id,
     stripe_invoice_id: invoice.id,
@@ -204,6 +274,8 @@ async function handleInvoicePaymentSucceeded(
     currency: invoice.currency,
     status: "succeeded",
     payment_type: "subscription",
+    payment_method: paymentMethodType,
+    payment_method_details: paymentMethodDetails,
     subscription_period_start: new Date(
       invoice.period_start * 1000
     ).toISOString(),
