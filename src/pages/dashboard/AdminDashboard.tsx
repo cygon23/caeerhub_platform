@@ -34,6 +34,7 @@ import LearningModulesManagement from "@/components/admin/LearningModulesManagem
 import NotificationManagement from "@/components/admin/NotificationManagement";
 import AdminProfile from "@/components/admin/AdminProfile";
 import AuditLog from "@/components/admin/AuditLog";
+import SystemAnalytics from "@/components/admin/SystemAnalytics";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -206,43 +207,7 @@ export default function AdminDashboard() {
     }
 
     if (activeSection === "analytics") {
-      return (
-        <div className='space-y-6'>
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center'>
-                <BarChart3 className='h-5 w-5 mr-2' />
-                Platform Analytics
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                <div className='space-y-2'>
-                  <p className='text-sm text-muted-foreground'>Daily Active Users</p>
-                  <p className='text-2xl font-bold text-foreground'>8,543</p>
-                  <div className='flex items-center text-sm text-green-600'>
-                    +12.5% from yesterday
-                  </div>
-                </div>
-                <div className='space-y-2'>
-                  <p className='text-sm text-muted-foreground'>Course Completion Rate</p>
-                  <p className='text-2xl font-bold text-foreground'>87.3%</p>
-                  <div className='flex items-center text-sm text-green-600'>
-                    +3.2% from last week
-                  </div>
-                </div>
-                <div className='space-y-2'>
-                  <p className='text-sm text-muted-foreground'>Mentor-Youth Matches</p>
-                  <p className='text-2xl font-bold text-foreground'>1,247</p>
-                  <div className='flex items-center text-sm text-green-600'>
-                    +8.7% from last month
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      );
+      return <SystemAnalytics />;
     }
     
     // Other sections 
