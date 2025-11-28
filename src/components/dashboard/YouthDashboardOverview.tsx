@@ -251,96 +251,237 @@ export default function YouthDashboardOverview() {
 
       {/* Career Readiness Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
-              Career Readiness Progress
-            </CardTitle>
+        <Card className="lg:col-span-2 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full -mr-32 -mt-32"></div>
+          <CardHeader className="relative">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <Target className="h-5 w-5 text-blue-500" />
+                </div>
+                Career Readiness Progress
+              </CardTitle>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-blue-600">{metrics.careerReadinessScore}%</div>
+                <div className="text-xs text-muted-foreground">Overall Score</div>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Learning Modules ({metrics.completedModules}/{metrics.totalModules})</span>
-                  <span className="font-semibold">
-                    {metrics.totalModules > 0 ? Math.round((metrics.completedModules / metrics.totalModules) * 100) : 0}%
-                  </span>
+          <CardContent className="relative">
+            <div className="space-y-5">
+              {/* Learning Modules */}
+              <div className="group hover:bg-accent/50 p-3 rounded-lg transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-500/10 rounded-lg">
+                      <BookOpen className="h-4 w-4 text-purple-500" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">Learning Modules</div>
+                      <div className="text-xs text-muted-foreground">
+                        {metrics.completedModules} of {metrics.totalModules} completed
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-lg text-purple-600">
+                      {metrics.totalModules > 0 ? Math.round((metrics.completedModules / metrics.totalModules) * 100) : 0}%
+                    </span>
+                    {metrics.completedModules === metrics.totalModules && metrics.totalModules > 0 ? (
+                      <Badge className="bg-green-500/10 text-green-700 border-green-200">Complete</Badge>
+                    ) : metrics.completedModules > 0 ? (
+                      <Badge className="bg-blue-500/10 text-blue-700 border-blue-200">In Progress</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-muted-foreground">Not Started</Badge>
+                    )}
+                  </div>
                 </div>
                 <Progress
                   value={metrics.totalModules > 0 ? (metrics.completedModules / metrics.totalModules) * 100 : 0}
-                  className="h-3"
+                  className="h-2 bg-purple-500/10"
                 />
               </div>
 
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>CV Completion</span>
-                  <span className="font-semibold">{metrics.cvCompleted ? '100%' : '0%'}</span>
+              {/* CV Completion */}
+              <div className="group hover:bg-accent/50 p-3 rounded-lg transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-500/10 rounded-lg">
+                      <FileText className="h-4 w-4 text-green-500" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">CV Completion</div>
+                      <div className="text-xs text-muted-foreground">
+                        {metrics.cvCompleted ? 'Professional CV ready' : 'Build your resume'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-lg text-green-600">
+                      {metrics.cvCompleted ? '100%' : '0%'}
+                    </span>
+                    {metrics.cvCompleted ? (
+                      <Badge className="bg-green-500/10 text-green-700 border-green-200">Complete</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-muted-foreground">Not Started</Badge>
+                    )}
+                  </div>
                 </div>
-                <Progress value={metrics.cvCompleted ? 100 : 0} className="h-3" />
+                <Progress value={metrics.cvCompleted ? 100 : 0} className="h-2 bg-green-500/10" />
               </div>
 
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Career Assessments ({metrics.completedAssessments})</span>
-                  <span className="font-semibold">{Math.min(metrics.completedAssessments * 25, 100)}%</span>
+              {/* Career Assessments */}
+              <div className="group hover:bg-accent/50 p-3 rounded-lg transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-500/10 rounded-lg">
+                      <Brain className="h-4 w-4 text-blue-500" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">Career Assessments</div>
+                      <div className="text-xs text-muted-foreground">
+                        {metrics.completedAssessments} {metrics.completedAssessments === 1 ? 'test' : 'tests'} completed
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-lg text-blue-600">
+                      {Math.min(metrics.completedAssessments * 25, 100)}%
+                    </span>
+                    {metrics.completedAssessments >= 4 ? (
+                      <Badge className="bg-green-500/10 text-green-700 border-green-200">Complete</Badge>
+                    ) : metrics.completedAssessments > 0 ? (
+                      <Badge className="bg-blue-500/10 text-blue-700 border-blue-200">In Progress</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-muted-foreground">Not Started</Badge>
+                    )}
+                  </div>
                 </div>
-                <Progress value={Math.min(metrics.completedAssessments * 25, 100)} className="h-3" />
+                <Progress value={Math.min(metrics.completedAssessments * 25, 100)} className="h-2 bg-blue-500/10" />
               </div>
 
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Personality Test</span>
-                  <span className="font-semibold">{metrics.personalityType ? '100%' : '0%'}</span>
+              {/* Personality Test */}
+              <div className="group hover:bg-accent/50 p-3 rounded-lg transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-500/10 rounded-lg">
+                      <Star className="h-4 w-4 text-orange-500" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">Personality Test</div>
+                      <div className="text-xs text-muted-foreground">
+                        {metrics.personalityType || 'Discover your personality type'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-lg text-orange-600">
+                      {metrics.personalityType ? '100%' : '0%'}
+                    </span>
+                    {metrics.personalityType ? (
+                      <Badge className="bg-green-500/10 text-green-700 border-green-200">Complete</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-muted-foreground">Not Started</Badge>
+                    )}
+                  </div>
                 </div>
-                <Progress value={metrics.personalityType ? 100 : 0} className="h-3" />
+                <Progress value={metrics.personalityType ? 100 : 0} className="h-2 bg-orange-500/10" />
               </div>
 
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Strengths Identified ({metrics.strengthsCount})</span>
-                  <span className="font-semibold">{Math.min(metrics.strengthsCount * 20, 100)}%</span>
+              {/* Strengths Identified */}
+              <div className="group hover:bg-accent/50 p-3 rounded-lg transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-cyan-500/10 rounded-lg">
+                      <CheckCircle className="h-4 w-4 text-cyan-500" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">Strengths Identified</div>
+                      <div className="text-xs text-muted-foreground">
+                        {metrics.strengthsCount} {metrics.strengthsCount === 1 ? 'skill' : 'skills'} discovered
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-lg text-cyan-600">
+                      {Math.min(metrics.strengthsCount * 20, 100)}%
+                    </span>
+                    {metrics.strengthsCount >= 5 ? (
+                      <Badge className="bg-green-500/10 text-green-700 border-green-200">Complete</Badge>
+                    ) : metrics.strengthsCount > 0 ? (
+                      <Badge className="bg-blue-500/10 text-blue-700 border-blue-200">In Progress</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-muted-foreground">Not Started</Badge>
+                    )}
+                  </div>
                 </div>
-                <Progress value={Math.min(metrics.strengthsCount * 20, 100)} className="h-3" />
+                <Progress value={Math.min(metrics.strengthsCount * 20, 100)} className="h-2 bg-cyan-500/10" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-500/5 to-orange-500/5 rounded-full -mr-16 -mt-16"></div>
+          <CardHeader className="relative">
             <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5" />
+              <div className="p-2 bg-yellow-500/10 rounded-lg">
+                <Zap className="h-5 w-5 text-yellow-600" />
+              </div>
               Quick Actions
             </CardTitle>
+            <p className="text-xs text-muted-foreground mt-2">Recommended next steps for you</p>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2 relative">
             {!metrics.personalityType && (
-              <Button variant="outline" className="w-full justify-start" size="sm">
-                <Brain className="h-4 w-4 mr-2" />
+              <Button variant="outline" className="w-full justify-start hover:bg-blue-500/10 hover:border-blue-500/50 hover:text-blue-700 transition-all group" size="sm">
+                <div className="p-1.5 bg-blue-500/10 rounded group-hover:bg-blue-500/20 mr-2">
+                  <Brain className="h-4 w-4 text-blue-600" />
+                </div>
                 Take Personality Test
+                <Badge variant="outline" className="ml-auto bg-yellow-500/10 text-yellow-700 border-yellow-300">+10%</Badge>
               </Button>
             )}
             {!metrics.cvCompleted && (
-              <Button variant="outline" className="w-full justify-start" size="sm">
-                <FileText className="h-4 w-4 mr-2" />
+              <Button variant="outline" className="w-full justify-start hover:bg-green-500/10 hover:border-green-500/50 hover:text-green-700 transition-all group" size="sm">
+                <div className="p-1.5 bg-green-500/10 rounded group-hover:bg-green-500/20 mr-2">
+                  <FileText className="h-4 w-4 text-green-600" />
+                </div>
                 Build Your CV
+                <Badge variant="outline" className="ml-auto bg-yellow-500/10 text-yellow-700 border-yellow-300">+20%</Badge>
               </Button>
             )}
             {metrics.inProgressModules > 0 && (
-              <Button variant="outline" className="w-full justify-start" size="sm">
-                <BookOpen className="h-4 w-4 mr-2" />
+              <Button variant="outline" className="w-full justify-start hover:bg-purple-500/10 hover:border-purple-500/50 hover:text-purple-700 transition-all group" size="sm">
+                <div className="p-1.5 bg-purple-500/10 rounded group-hover:bg-purple-500/20 mr-2">
+                  <BookOpen className="h-4 w-4 text-purple-600" />
+                </div>
                 Continue Learning ({metrics.inProgressModules})
+                <TrendingUp className="h-3 w-3 ml-auto text-green-600" />
               </Button>
             )}
-            <Button variant="outline" className="w-full justify-start" size="sm">
-              <Users className="h-4 w-4 mr-2" />
+            {metrics.completedAssessments < 4 && (
+              <Button variant="outline" className="w-full justify-start hover:bg-orange-500/10 hover:border-orange-500/50 hover:text-orange-700 transition-all group" size="sm">
+                <div className="p-1.5 bg-orange-500/10 rounded group-hover:bg-orange-500/20 mr-2">
+                  <GraduationCap className="h-4 w-4 text-orange-600" />
+                </div>
+                Take Career Assessment
+                <Badge variant="outline" className="ml-auto bg-yellow-500/10 text-yellow-700 border-yellow-300">+{25 - (metrics.completedAssessments * 25)}%</Badge>
+              </Button>
+            )}
+            <Button variant="outline" className="w-full justify-start hover:bg-cyan-500/10 hover:border-cyan-500/50 hover:text-cyan-700 transition-all group" size="sm">
+              <div className="p-1.5 bg-cyan-500/10 rounded group-hover:bg-cyan-500/20 mr-2">
+                <Users className="h-4 w-4 text-cyan-600" />
+              </div>
               Find a Mentor
+              <Activity className="h-3 w-3 ml-auto text-cyan-600" />
             </Button>
-            <Button variant="outline" className="w-full justify-start" size="sm">
-              <Briefcase className="h-4 w-4 mr-2" />
+            <Button variant="outline" className="w-full justify-start hover:bg-indigo-500/10 hover:border-indigo-500/50 hover:text-indigo-700 transition-all group" size="sm">
+              <div className="p-1.5 bg-indigo-500/10 rounded group-hover:bg-indigo-500/20 mr-2">
+                <Briefcase className="h-4 w-4 text-indigo-600" />
+              </div>
               Browse Jobs
+              <Star className="h-3 w-3 ml-auto text-yellow-600" />
             </Button>
           </CardContent>
         </Card>
