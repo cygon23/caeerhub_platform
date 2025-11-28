@@ -6,8 +6,6 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EnhancedSelect from "@/components/ui/enhanced-select";
-import GoalVisualization from "@/components/user/profile/GoalVisualization";
-import PersonalGrowthProfile from "@/components/user/profile/PersonalGrowthProfile";
 import RoadmapGenerator from "@/components/user/profile/RoadmapGenerator";
 import {
   Target,
@@ -27,7 +25,6 @@ import {
   TrendingUp,
   Award,
 } from "lucide-react";
-import heroImage from "@/assets/hero-image.jpg";
 
 export default function GoalsDashboard() {
   const [newGoal, setNewGoal] = useState("");
@@ -160,55 +157,66 @@ export default function GoalsDashboard() {
 
   return (
     <div className='min-h-screen bg-background'>
-      {/* Hero Section */}
-      <div
-        className='relative bg-gradient-hero text-white py-16 px-6 bg-cover bg-center'
-        style={{ backgroundImage: `url(${heroImage})` }}>
-        <div className='absolute inset-0 bg-gradient-hero/90'></div>
-        <div className='relative max-w-4xl mx-auto text-center'>
-          <h1 className='text-4xl md:text-6xl font-bold mb-4'>
-            Craft Your Career Journey
-          </h1>
-          <p className='text-xl text-white/90 mb-8 max-w-2xl mx-auto'>
-            Set ambitious goals, track meaningful progress, and collaborate with
-            mentors to accelerate your professional growth.
-          </p>
-          <div className='flex flex-wrap justify-center gap-4'>
-            <Badge className='bg-white/20 text-white px-4 py-2 text-base'>
-              <Target className='h-4 w-4 mr-2' />
+      {/* Redesigned Header Section - Consistent with Dashboard */}
+      <div className='border-b border-border bg-muted/30'>
+        <div className='max-w-7xl mx-auto px-6 py-8'>
+          <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-6'>
+            <div className='space-y-2'>
+              <h1 className='text-3xl font-bold tracking-tight text-foreground'>
+                Craft Your Career Journey
+              </h1>
+              <p className='text-muted-foreground max-w-2xl'>
+                Set ambitious goals, track meaningful progress, and collaborate with
+                mentors to accelerate your professional growth.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className='flex flex-wrap gap-3'>
+              <Button onClick={exportGoals} variant='outline' className='gap-2'>
+                <Download className='h-4 w-4' />
+                Export Goals
+              </Button>
+              <Button className='gap-2 bg-primary'>
+                <Plus className='h-4 w-4' />
+                New Goal
+              </Button>
+            </div>
+          </div>
+
+          {/* Feature Badges */}
+          <div className='flex flex-wrap gap-3 mt-6'>
+            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
+              <Target className='h-4 w-4' />
               Goal Setting
             </Badge>
-            <Badge className='bg-white/20 text-white px-4 py-2 text-base'>
-              <TrendingUp className='h-4 w-4 mr-2' />
+            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
+              <TrendingUp className='h-4 w-4' />
               Progress Tracking
             </Badge>
-            <Badge className='bg-white/20 text-white px-4 py-2 text-base'>
-              <Users className='h-4 w-4 mr-2' />
+            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
+              <Users className='h-4 w-4' />
               Mentor Collaboration
+            </Badge>
+            <Badge variant='secondary' className='px-3 py-1.5 text-sm gap-2'>
+              <Award className='h-4 w-4' />
+              Career Roadmaps
             </Badge>
           </div>
         </div>
       </div>
 
       <div className='max-w-7xl mx-auto px-6 py-8'>
-        {/* Main Navigation Tabs */}
+        {/* Main Navigation Tabs - Only Goals and Roadmaps */}
         <Tabs value={mainTab} onValueChange={setMainTab} className='mb-8'>
-          <TabsList className='grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4 mb-8'>
+          <TabsList className='grid w-full grid-cols-2 lg:w-auto lg:grid-cols-2 mb-8'>
             <TabsTrigger value='goals' className='flex items-center gap-2'>
               <Target className='h-4 w-4' />
-              <span className='hidden sm:inline'>Goals</span>
-            </TabsTrigger>
-            <TabsTrigger value='analytics' className='flex items-center gap-2'>
-              <BarChart3 className='h-4 w-4' />
-              <span className='hidden sm:inline'>Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value='profile' className='flex items-center gap-2'>
-              <User className='h-4 w-4' />
-              <span className='hidden sm:inline'>Profile</span>
+              <span>Goals</span>
             </TabsTrigger>
             <TabsTrigger value='roadmaps' className='flex items-center gap-2'>
               <Map className='h-4 w-4' />
-              <span className='hidden sm:inline'>Roadmaps</span>
+              <span>Roadmaps</span>
             </TabsTrigger>
           </TabsList>
 
@@ -405,16 +413,6 @@ export default function GoalsDashboard() {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-
-          {/* Analytics Tab */}
-          <TabsContent value='analytics'>
-            <GoalVisualization goals={goals} />
-          </TabsContent>
-
-          {/* Profile Tab */}
-          <TabsContent value='profile'>
-            <PersonalGrowthProfile goals={goals} />
           </TabsContent>
 
           {/* Roadmaps Tab */}
