@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Check,
@@ -18,20 +17,22 @@ import {
   Sparkles,
   CreditCard,
   RefreshCw,
-  TrendingUp,
   Shield,
   Rocket,
   Star,
   Gift,
   ArrowRight,
   AlertCircle,
-  Info
+  Info,
+  Calendar,
+  CheckCircle2
 } from "lucide-react";
 import { useAuth } from '@/contexts/AuthContext';
 import { creditService } from '@/services/creditService';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useLocation } from 'react-router-dom';
 
 interface Plan {
   id: string;
@@ -49,21 +50,39 @@ interface Plan {
 export const BillingTab = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [planType, setPlanType] = useState('free');
-  const [aiCreditsRemaining, setAiCreditsRemaining] = useState(0);
-  const [creditsMonthly, setCreditsMonthly] = useState(10);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [subscriptionStatus, setSubscriptionStatus] = useState('active');
   const [setupIncomplete, setSetupIncomplete] = useState(false);
+  const [nextBillingDate, setNextBillingDate] = useState<string | null>(null);
+  const [lastPaymentAmount, setLastPaymentAmount] = useState<number | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+  const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
       loadBillingData();
     }
   }, [user]);
+
+  // Auto-refresh after successful payment
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('success') === 'true') {
+      toast({
+        title: '🎉 Payment Successful!',
+        description: 'Your subscription has been activated.',
+      });
+      // Reload billing data after short delay to allow webhook to process
+      setTimeout(() => {
+        loadBillingData();
+      }, 2000);
+    }
+  }, [location.search]);
 
   const loadBillingData = async () => {
     if (!user) return;
@@ -80,9 +99,15 @@ export const BillingTab = () => {
 
       if (billing) {
         setPlanType(billing.plan_tier || 'free');
-        setAiCreditsRemaining(billing.ai_credits_remaining || 0);
-        setCreditsMonthly(billing.credits_monthly_allowance || 10);
         setSubscriptionStatus(billing.subscription_status || 'active');
+        setNextBillingDate(billing.next_billing_date);
+        setLastPaymentAmount(billing.last_payment_amount);
+        setStripeCustomerId(billing.stripe_customer_id);
+
+        // Get payment method details if available
+        if (billing.stripe_customer_id) {
+          fetchPaymentMethod(billing.stripe_customer_id);
+        }
       }
 
       // Fetch subscription plans
@@ -94,8 +119,6 @@ export const BillingTab = () => {
 
       if (plansData) {
         setPlans(plansData);
-
-        // Check if paid plans have Stripe price IDs configured
         const paidPlans = plansData.filter(p => p.plan_key !== 'free');
         const hasUnconfiguredPlans = paidPlans.some(p => !p.stripe_price_id);
         setSetupIncomplete(hasUnconfiguredPlans);
@@ -112,14 +135,38 @@ export const BillingTab = () => {
     }
   };
 
+  const fetchPaymentMethod = async (customerId: string) => {
+    try {
+      // Fetch latest payment from database
+      const { data: payment } = await supabase
+        .from('stripe_payments')
+        .select('payment_method, payment_method_details')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (payment?.payment_method) {
+        setPaymentMethod(payment.payment_method);
+      } else if (payment?.payment_method_details) {
+        // Try to extract from details
+        const details = payment.payment_method_details as any;
+        if (details?.card) {
+          setPaymentMethod(`${details.card.brand} •••• ${details.card.last4}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching payment method:', error);
+    }
+  };
+
   const handleUpgrade = async (plan: Plan) => {
     if (!user) return;
 
-    // Check if Stripe is configured for this plan
     if (!plan.stripe_price_id) {
       toast({
         title: 'Setup Required',
-        description: `The ${plan.plan_name} needs to be configured in Stripe before payments can be accepted. Please contact support.`,
+        description: `The ${plan.plan_name} needs to be configured in Stripe.`,
         variant: 'destructive',
       });
       return;
@@ -137,7 +184,7 @@ export const BillingTab = () => {
       console.error('Checkout error:', error);
       toast({
         title: 'Checkout Failed',
-        description: error.message || 'Failed to start checkout process. Please try again.',
+        description: error.message || 'Failed to start checkout process.',
         variant: 'destructive',
       });
       setUpgrading(null);
@@ -171,10 +218,7 @@ export const BillingTab = () => {
   }
 
   const currentPlan = plans.find(p => p.plan_key === planType) || plans[0];
-  const creditsPercentage = creditsMonthly > 0 ? (aiCreditsRemaining / creditsMonthly) * 100 : 0;
-  const isProfessional = planType === 'professional';
 
-  // Plan icons and gradients
   const getPlanIcon = (planKey: string) => {
     switch (planKey) {
       case 'free': return <Shield className='h-5 w-5' />;
@@ -195,34 +239,30 @@ export const BillingTab = () => {
 
   return (
     <div className='space-y-8 pb-8'>
-      {/* Header Section */}
+      {/* Header */}
       <div className='space-y-2'>
         <h2 className='text-3xl font-bold tracking-tight'>Billing & Subscription</h2>
         <p className='text-muted-foreground'>
-          Choose the plan that fits your career journey. Upgrade anytime to unlock more features.
+          Manage your subscription and payment methods
         </p>
       </div>
 
-      {/* Setup Warning (if Stripe not configured) */}
+      {/* Setup Warning */}
       {setupIncomplete && (
         <Alert className='border-amber-500/50 bg-amber-50 dark:bg-amber-950/20'>
           <AlertCircle className='h-4 w-4 text-amber-600' />
           <AlertDescription className='text-amber-900 dark:text-amber-100'>
-            <strong>Payment Setup Incomplete:</strong> Some plans are not yet configured in Stripe.
-            Please complete the setup to accept payments. See <code>docs/STRIPE_SETUP_GUIDE.md</code>
+            <strong>Payment Setup Incomplete:</strong> Some plans need Stripe configuration.
           </AlertDescription>
         </Alert>
       )}
 
       {/* Current Plan Overview */}
       <Card className='border-2 overflow-hidden'>
-        <div className={cn(
-          'h-2 w-full bg-gradient-to-r',
-          getPlanGradient(planType)
-        )} />
+        <div className={cn('h-2 w-full bg-gradient-to-r', getPlanGradient(planType))} />
         <CardHeader className='pb-4'>
           <div className='flex flex-col sm:flex-row sm:items-start justify-between gap-4'>
-            <div className='space-y-1 flex-1'>
+            <div className='space-y-2 flex-1'>
               <div className='flex items-center gap-2 flex-wrap'>
                 <CardTitle className='text-2xl'>Current Plan</CardTitle>
                 <Badge
@@ -249,38 +289,38 @@ export const BillingTab = () => {
                 className='gap-2 shrink-0'
               >
                 <CreditCard className='h-4 w-4' />
-                Manage
+                Manage Subscription
               </Button>
             )}
           </div>
         </CardHeader>
-        <CardContent className='space-y-6'>
-          {/* Credits Display */}
-          <div className='space-y-3'>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-2'>
-                <Sparkles className='h-5 w-5 text-amber-500' />
-                <span className='font-semibold text-lg'>AI Credits</span>
+        <CardContent className='space-y-4'>
+          {/* Subscription Info */}
+          <div className='grid gap-4 sm:grid-cols-2'>
+            {planType !== 'free' && nextBillingDate && (
+              <div className='flex items-start gap-3 p-3 rounded-lg bg-muted/50'>
+                <Calendar className='h-5 w-5 text-primary mt-0.5' />
+                <div className='flex-1'>
+                  <p className='text-sm font-medium'>Next Billing Date</p>
+                  <p className='text-sm text-muted-foreground'>
+                    {new Date(nextBillingDate).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </p>
+                </div>
               </div>
-              <div className='text-right'>
-                <p className='text-2xl font-bold tabular-nums'>
-                  {isProfessional ? '∞' : aiCreditsRemaining.toLocaleString()}
-                </p>
-                <p className='text-xs text-muted-foreground'>
-                  {isProfessional ? 'Unlimited' : `of ${creditsMonthly.toLocaleString()} this month`}
-                </p>
-              </div>
-            </div>
-
-            {!isProfessional && (
-              <div className='space-y-2'>
-                <Progress
-                  value={creditsPercentage}
-                  className='h-3'
-                />
-                <p className='text-xs text-muted-foreground text-center'>
-                  {Math.round(creditsPercentage)}% remaining
-                </p>
+            )}
+            {lastPaymentAmount && (
+              <div className='flex items-start gap-3 p-3 rounded-lg bg-muted/50'>
+                <CheckCircle2 className='h-5 w-5 text-green-600 mt-0.5' />
+                <div className='flex-1'>
+                  <p className='text-sm font-medium'>Last Payment</p>
+                  <p className='text-sm text-muted-foreground'>
+                    TZS {lastPaymentAmount.toLocaleString()}
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -289,13 +329,13 @@ export const BillingTab = () => {
           {subscriptionStatus !== 'active' && (
             <div className='p-4 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950 dark:border-amber-800'>
               <div className='flex items-start gap-3'>
-                <TrendingUp className='h-5 w-5 text-amber-600 mt-0.5' />
+                <AlertCircle className='h-5 w-5 text-amber-600 mt-0.5' />
                 <div className='flex-1'>
                   <p className='font-semibold text-amber-900 dark:text-amber-100'>
                     Subscription Status: {subscriptionStatus}
                   </p>
                   <p className='text-sm text-amber-700 dark:text-amber-300 mt-1'>
-                    Please update your payment method to continue enjoying premium features.
+                    Please update your payment method to continue.
                   </p>
                 </div>
               </div>
@@ -304,7 +344,7 @@ export const BillingTab = () => {
         </CardContent>
       </Card>
 
-      {/* All Plans Section */}
+      {/* Available Plans */}
       <div className='space-y-6'>
         <div className='space-y-2'>
           <div className='flex items-center justify-center gap-2'>
@@ -321,7 +361,6 @@ export const BillingTab = () => {
         <div className='grid gap-6 md:grid-cols-3'>
           {plans.map((plan) => {
             const isCurrentPlan = plan.plan_key === planType;
-            const canUpgrade = !isCurrentPlan && plan.stripe_price_id;
             const needsSetup = plan.plan_key !== 'free' && !plan.stripe_price_id;
 
             return (
@@ -333,7 +372,6 @@ export const BillingTab = () => {
                   !isCurrentPlan && 'hover:shadow-xl hover:-translate-y-1 border-2'
                 )}
               >
-                {/* Popular Badge */}
                 {plan.is_popular && (
                   <div className='absolute -top-0 -right-0 z-10'>
                     <div className='bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 text-xs font-bold rounded-bl-lg flex items-center gap-1 shadow-lg'>
@@ -343,20 +381,15 @@ export const BillingTab = () => {
                   </div>
                 )}
 
-                {/* Current Plan Badge */}
                 {isCurrentPlan && (
                   <div className='absolute -top-0 -right-0 z-10'>
                     <div className='bg-primary text-primary-foreground px-4 py-1.5 text-xs font-bold rounded-bl-lg shadow-lg'>
-                      YOUR PLAN
+                      CURRENT PLAN
                     </div>
                   </div>
                 )}
 
-                {/* Top Color Bar */}
-                <div className={cn(
-                  'h-2 w-full bg-gradient-to-r',
-                  getPlanGradient(plan.plan_key)
-                )} />
+                <div className={cn('h-2 w-full bg-gradient-to-r', getPlanGradient(plan.plan_key))} />
 
                 <CardHeader className='pb-4 pt-6'>
                   <div className='flex items-center gap-3 mb-3'>
@@ -368,9 +401,7 @@ export const BillingTab = () => {
                         {getPlanIcon(plan.plan_key)}
                       </div>
                     </div>
-                    <div>
-                      <CardTitle className='text-xl'>{plan.plan_name}</CardTitle>
-                    </div>
+                    <CardTitle className='text-xl'>{plan.plan_name}</CardTitle>
                   </div>
 
                   <div className='space-y-2'>
@@ -396,22 +427,9 @@ export const BillingTab = () => {
                 </CardHeader>
 
                 <CardContent className='space-y-6'>
-                  {/* Credits Info */}
-                  <div className='p-3 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200/50 dark:border-amber-800/50'>
-                    <div className='flex items-center justify-center gap-2'>
-                      <Sparkles className='h-4 w-4 text-amber-600' />
-                      <span className='font-semibold text-sm'>
-                        {plan.plan_key === 'professional'
-                          ? 'Unlimited AI Credits'
-                          : `${plan.credits_monthly} AI Credits/month`
-                        }
-                      </span>
-                    </div>
-                  </div>
-
                   <Separator />
 
-                  {/* Features List */}
+                  {/* Features */}
                   <div className='space-y-3'>
                     <p className='text-sm font-semibold text-muted-foreground uppercase tracking-wide'>
                       Includes:
@@ -441,22 +459,18 @@ export const BillingTab = () => {
                   {/* CTA Button */}
                   <div className='pt-2'>
                     {needsSetup ? (
-                      <Button
-                        className='w-full h-11 gap-2 font-semibold'
-                        variant='outline'
-                        disabled
-                      >
+                      <Button className='w-full h-11 gap-2 font-semibold' variant='outline' disabled>
                         <Info className='h-4 w-4' />
                         Setup Required
                       </Button>
                     ) : isCurrentPlan ? (
                       <Button
-                        className='w-full h-11 gap-2 font-semibold bg-primary/10 hover:bg-primary/20'
+                        className='w-full h-11 gap-2 font-semibold'
                         variant='outline'
-                        disabled
+                        onClick={handleManageSubscription}
                       >
-                        <Check className='h-4 w-4' />
-                        Current Plan
+                        <CreditCard className='h-4 w-4' />
+                        Manage Plan
                       </Button>
                     ) : (
                       <Button
@@ -475,7 +489,7 @@ export const BillingTab = () => {
                           </>
                         ) : (
                           <>
-                            {plan.plan_key === 'free' ? 'Select Plan' : 'Upgrade Now'}
+                            Upgrade Now
                             <ArrowRight className='h-4 w-4' />
                           </>
                         )}
@@ -489,7 +503,7 @@ export const BillingTab = () => {
         </div>
       </div>
 
-      {/* Payment Method Card */}
+      {/* Payment Method */}
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
@@ -497,28 +511,42 @@ export const BillingTab = () => {
             Payment Method
           </CardTitle>
           <CardDescription>
-            Manage your payment methods securely through Stripe
+            {planType !== 'free'
+              ? 'Manage your payment methods through Stripe'
+              : 'Add a payment method by upgrading to a paid plan'
+            }
           </CardDescription>
         </CardHeader>
         <CardContent>
           {planType !== 'free' ? (
-            <Button
-              variant='outline'
-              onClick={handleManageSubscription}
-              className='gap-2'
-            >
-              <CreditCard className='h-4 w-4' />
-              Manage Payment Method
-            </Button>
+            <div className='space-y-4'>
+              {paymentMethod && (
+                <div className='flex items-center gap-3 p-4 border rounded-lg'>
+                  <div className='p-2 rounded-lg bg-primary/10'>
+                    <CreditCard className='h-5 w-5 text-primary' />
+                  </div>
+                  <div className='flex-1'>
+                    <p className='font-medium capitalize'>{paymentMethod}</p>
+                    <p className='text-sm text-muted-foreground'>Primary payment method</p>
+                  </div>
+                </div>
+              )}
+              <Button
+                variant='outline'
+                onClick={handleManageSubscription}
+                className='gap-2'
+              >
+                <CreditCard className='h-4 w-4' />
+                {paymentMethod ? 'Update Payment Method' : 'Add Payment Method'}
+              </Button>
+            </div>
           ) : (
             <div className='p-8 border-2 border-dashed rounded-lg text-center space-y-3 bg-muted/30'>
               <div className='inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted'>
                 <CreditCard className='h-6 w-6 text-muted-foreground' />
               </div>
               <div>
-                <p className='font-medium text-muted-foreground'>
-                  No payment method added
-                </p>
+                <p className='font-medium text-muted-foreground'>No payment method added</p>
                 <p className='text-xs text-muted-foreground mt-1'>
                   Upgrade to a paid plan to add a payment method
                 </p>
