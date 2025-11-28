@@ -57,6 +57,51 @@ export interface Student {
   updated_at: string;
 }
 
+export interface AuditLog {
+  id: string;
+  timestamp: string;
+  user_id?: string;
+  user_email?: string;
+  user_role?: string;
+  action: string;
+  resource: string;
+  resource_id?: string;
+  category: 'authentication' | 'user_management' | 'system' | 'data' | 'security' | 'school_management' | 'student_management';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  ip_address?: string;
+  user_agent?: string;
+  details?: any;
+  success: boolean;
+  error_message?: string;
+  metadata?: any;
+  created_at: string;
+}
+
+export interface AuditLogFilters {
+  category?: string;
+  severity?: string;
+  success?: boolean;
+  startDate?: string;
+  endDate?: string;
+  userId?: string;
+  search?: string;
+}
+
+export interface SystemAnalytics {
+  totalUsers: number;
+  totalSchools: number;
+  totalStudents: number;
+  totalMentors: number;
+  activeUsers: number;
+  usersByRole: Record<string, number>;
+  schoolsByStatus: Record<string, number>;
+  studentsByStatus: Record<string, number>;
+  auditLogsByCategory: Record<string, number>;
+  auditLogsBySeverity: Record<string, number>;
+  userGrowthByMonth: Array<{ month: string; count: number }>;
+  schoolGrowthByMonth: Array<{ month: string; count: number }>;
+}
+
 class AdminService {
   /**
    * Fetch all users with their roles and profiles
@@ -374,6 +419,231 @@ class AdminService {
     });
 
     return stats;
+  }
+
+  /**
+   * Log an audit event
+   */
+  async logAuditEvent(
+    action: string,
+    resource: string,
+    category: string,
+    severity: string = 'low',
+    resourceId?: string,
+    details?: any,
+    success: boolean = true,
+    errorMessage?: string
+  ): Promise<void> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const { error } = await supabase
+        .from('audit_logs')
+        .insert({
+          user_id: user?.id || null,
+          action,
+          resource,
+          category,
+          severity,
+          resource_id: resourceId,
+          details,
+          success,
+          error_message: errorMessage,
+        });
+
+      if (error) {
+        console.error('Error logging audit event:', error);
+      }
+    } catch (error) {
+      console.error('Error logging audit event:', error);
+    }
+  }
+
+  /**
+   * Get audit logs with filters
+   */
+  async getAuditLogs(filters: AuditLogFilters = {}, limit: number = 100): Promise<AuditLog[]> {
+    let query = supabase
+      .from('audit_logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(limit);
+
+    // Apply filters
+    if (filters.category && filters.category !== 'all') {
+      query = query.eq('category', filters.category);
+    }
+
+    if (filters.severity && filters.severity !== 'all') {
+      query = query.eq('severity', filters.severity);
+    }
+
+    if (filters.success !== undefined) {
+      query = query.eq('success', filters.success);
+    }
+
+    if (filters.startDate) {
+      query = query.gte('timestamp', filters.startDate);
+    }
+
+    if (filters.endDate) {
+      query = query.lte('timestamp', filters.endDate);
+    }
+
+    if (filters.userId) {
+      query = query.eq('user_id', filters.userId);
+    }
+
+    if (filters.search) {
+      query = query.or(`action.ilike.%${filters.search}%,resource.ilike.%${filters.search}%,user_email.ilike.%${filters.search}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  /**
+   * Get audit log statistics
+   */
+  async getAuditLogStats() {
+    const { data, error } = await supabase
+      .from('audit_logs')
+      .select('category, severity, success, created_at');
+
+    if (error) throw error;
+
+    const stats = {
+      total: data.length,
+      byCategory: {} as Record<string, number>,
+      bySeverity: {} as Record<string, number>,
+      successCount: 0,
+      failureCount: 0,
+      criticalEvents: 0,
+      recentActivity: [] as any[],
+    };
+
+    data.forEach((log) => {
+      // Count by category
+      stats.byCategory[log.category] = (stats.byCategory[log.category] || 0) + 1;
+
+      // Count by severity
+      stats.bySeverity[log.severity] = (stats.bySeverity[log.severity] || 0) + 1;
+
+      // Count success/failure
+      if (log.success) {
+        stats.successCount++;
+      } else {
+        stats.failureCount++;
+      }
+
+      // Count critical events
+      if (log.severity === 'critical') {
+        stats.criticalEvents++;
+      }
+    });
+
+    // Get recent activity (last 10 logs)
+    stats.recentActivity = data.slice(0, 10);
+
+    return stats;
+  }
+
+  /**
+   * Get comprehensive system analytics
+   */
+  async getSystemAnalytics(): Promise<SystemAnalytics> {
+    // Get all users
+    const users = await this.getUsers();
+
+    // Get all schools
+    const schools = await this.getSchools();
+
+    // Get all students
+    const { data: students, error: studentsError } = await supabase
+      .from('students')
+      .select('status, created_at');
+
+    if (studentsError) throw studentsError;
+
+    // Get audit logs for analytics
+    const { data: auditLogs, error: auditError } = await supabase
+      .from('audit_logs')
+      .select('category, severity, created_at');
+
+    if (auditError) throw auditError;
+
+    // Calculate statistics
+    const usersByRole: Record<string, number> = {};
+    users.forEach(user => {
+      usersByRole[user.role] = (usersByRole[user.role] || 0) + 1;
+    });
+
+    const schoolsByStatus: Record<string, number> = {};
+    schools.forEach(school => {
+      schoolsByStatus[school.status] = (schoolsByStatus[school.status] || 0) + 1;
+    });
+
+    const studentsByStatus: Record<string, number> = {};
+    students.forEach(student => {
+      studentsByStatus[student.status] = (studentsByStatus[student.status] || 0) + 1;
+    });
+
+    const auditLogsByCategory: Record<string, number> = {};
+    const auditLogsBySeverity: Record<string, number> = {};
+    auditLogs.forEach(log => {
+      auditLogsByCategory[log.category] = (auditLogsByCategory[log.category] || 0) + 1;
+      auditLogsBySeverity[log.severity] = (auditLogsBySeverity[log.severity] || 0) + 1;
+    });
+
+    // Calculate growth by month (last 12 months)
+    const userGrowthByMonth = this.calculateGrowthByMonth(users.map(u => ({ created_at: u.created_at })));
+    const schoolGrowthByMonth = this.calculateGrowthByMonth(schools.map(s => ({ created_at: s.created_at })));
+
+    return {
+      totalUsers: users.length,
+      totalSchools: schools.length,
+      totalStudents: students.length,
+      totalMentors: usersByRole['mentor'] || 0,
+      activeUsers: users.filter(u => u.status === 'active').length,
+      usersByRole,
+      schoolsByStatus,
+      studentsByStatus,
+      auditLogsByCategory,
+      auditLogsBySeverity,
+      userGrowthByMonth,
+      schoolGrowthByMonth,
+    };
+  }
+
+  /**
+   * Helper function to calculate growth by month
+   */
+  private calculateGrowthByMonth(items: Array<{ created_at: string }>): Array<{ month: string; count: number }> {
+    const monthCounts: Record<string, number> = {};
+    const now = new Date();
+
+    // Initialize last 12 months
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthKey = date.toISOString().substring(0, 7); // YYYY-MM
+      monthCounts[monthKey] = 0;
+    }
+
+    // Count items by month
+    items.forEach(item => {
+      const monthKey = item.created_at.substring(0, 7);
+      if (monthKey in monthCounts) {
+        monthCounts[monthKey]++;
+      }
+    });
+
+    // Convert to array format
+    return Object.entries(monthCounts).map(([month, count]) => ({
+      month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      count,
+    }));
   }
 }
 

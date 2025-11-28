@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { 
-  Activity, 
-  Search, 
-  Download, 
-  Filter, 
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Activity,
+  Search,
+  Download,
+  Filter,
   Calendar,
   Shield,
   User,
@@ -18,126 +19,80 @@ import {
   Lock,
   AlertTriangle,
   Eye,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from "lucide-react";
-
-interface AuditEntry {
-  id: string;
-  timestamp: string;
-  user: string;
-  userId: string;
-  action: string;
-  resource: string;
-  resourceId?: string;
-  category: "authentication" | "user_management" | "system" | "data" | "security";
-  severity: "low" | "medium" | "high" | "critical";
-  ipAddress: string;
-  userAgent: string;
-  details?: string;
-  success: boolean;
-}
+import { adminService, AuditLog as AuditLogType } from "@/services/adminService";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AuditLog() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [severityFilter, setSeverityFilter] = useState("all");
   const [dateRange, setDateRange] = useState("7days");
+  const [auditLogs, setAuditLogs] = useState<AuditLogType[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const mockAuditData: AuditEntry[] = [
-    {
-      id: "1",
-      timestamp: "2024-01-20 14:30:25",
-      user: "John Admin",
-      userId: "admin-001",
-      action: "User Role Updated",
-      resource: "User Profile",
-      resourceId: "user-123",
-      category: "user_management",
-      severity: "medium",
-      ipAddress: "192.168.1.100",
-      userAgent: "Mozilla/5.0 Chrome/120.0",
-      details: "Changed user role from 'youth' to 'mentor'",
-      success: true
-    },
-    {
-      id: "2",
-      timestamp: "2024-01-20 14:25:15",
-      user: "Sarah Kimani",
-      userId: "user-456",
-      action: "Failed Login Attempt",
-      resource: "Authentication",
-      category: "authentication",
-      severity: "high",
-      ipAddress: "203.0.113.45",
-      userAgent: "Mozilla/5.0 Safari/605.1",
-      details: "Invalid password - 3rd attempt",
-      success: false
-    },
-    {
-      id: "3",
-      timestamp: "2024-01-20 14:20:10",
-      user: "System",
-      userId: "system",
-      action: "Database Backup",
-      resource: "Database",
-      category: "system",
-      severity: "low",
-      ipAddress: "127.0.0.1",
-      userAgent: "System Process",
-      details: "Automated daily backup completed",
-      success: true
-    },
-    {
-      id: "4",
-      timestamp: "2024-01-20 14:15:30",
-      user: "Alice Wanjiku",
-      userId: "user-789",
-      action: "Data Export",
-      resource: "User Data",
-      category: "data",
-      severity: "medium",
-      ipAddress: "10.0.0.50",
-      userAgent: "Mozilla/5.0 Firefox/121.0",
-      details: "Exported personal learning progress data",
-      success: true
-    },
-    {
-      id: "5",
-      timestamp: "2024-01-20 14:10:45",
-      user: "John Admin",
-      userId: "admin-001",
-      action: "Security Settings Modified",
-      resource: "System Settings",
-      category: "security",
-      severity: "critical",
-      ipAddress: "192.168.1.100",
-      userAgent: "Mozilla/5.0 Chrome/120.0",
-      details: "Updated password policy requirements",
-      success: true
-    },
-    {
-      id: "6",
-      timestamp: "2024-01-20 14:05:20",
-      user: "Unknown",
-      userId: "unknown",
-      action: "Unauthorized Access Attempt",
-      resource: "Admin Panel",
-      category: "security",
-      severity: "critical",
-      ipAddress: "198.51.100.10",
-      userAgent: "curl/7.68.0",
-      details: "Attempted to access admin endpoint without authentication",
-      success: false
+  useEffect(() => {
+    loadAuditLogs();
+  }, [categoryFilter, severityFilter, dateRange]);
+
+  const loadAuditLogs = async () => {
+    setLoading(true);
+    try {
+      // Calculate date range
+      const now = new Date();
+      let startDate: string | undefined;
+
+      switch (dateRange) {
+        case '1day':
+          startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+          break;
+        case '7days':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        case '30days':
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        case '90days':
+          startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+      }
+
+      const [logs, logStats] = await Promise.all([
+        adminService.getAuditLogs({
+          category: categoryFilter,
+          severity: severityFilter,
+          startDate,
+          search: searchTerm,
+        }, 200),
+        adminService.getAuditLogStats()
+      ]);
+
+      setAuditLogs(logs);
+      setStats(logStats);
+    } catch (error: any) {
+      console.error('Error loading audit logs:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load audit logs",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const filteredAuditData = mockAuditData.filter(entry => {
-    const matchesSearch = entry.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entry.resource.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || entry.category === categoryFilter;
-    const matchesSeverity = severityFilter === "all" || entry.severity === severityFilter;
-    return matchesSearch && matchesCategory && matchesSeverity;
+  const filteredAuditData = auditLogs.filter(entry => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
+    return (
+      entry.user_email?.toLowerCase().includes(search) ||
+      entry.action.toLowerCase().includes(search) ||
+      entry.resource.toLowerCase().includes(search)
+    );
   });
 
   const getCategoryIcon = (category: string) => {
@@ -183,8 +138,53 @@ export default function AuditLog() {
   };
 
   const handleExport = () => {
-    console.log("Exporting audit logs...");
+    const csv = [
+      ['Timestamp', 'User', 'Action', 'Resource', 'Category', 'Severity', 'Status', 'IP Address'].join(','),
+      ...filteredAuditData.map(entry =>
+        [
+          entry.timestamp,
+          entry.user_email || 'System',
+          entry.action,
+          entry.resource,
+          entry.category,
+          entry.severity,
+          entry.success ? 'Success' : 'Failed',
+          entry.ip_address || 'N/A'
+        ].join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `audit-logs-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
   };
+
+  if (loading && auditLogs.length === 0) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Activity className="h-5 w-5 mr-2" />
+              System Audit Log
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-4">
+              <Skeleton className="h-10 flex-1" />
+              <Skeleton className="h-10 w-[180px]" />
+              <Skeleton className="h-10 w-[150px]" />
+              <Skeleton className="h-10 w-[150px]" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -196,12 +196,12 @@ export default function AuditLog() {
               System Audit Log
             </div>
             <div className="flex space-x-2">
-              <Button variant="outline" size="sm" onClick={handleExport}>
+              <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredAuditData.length === 0}>
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button variant="outline" size="sm">
-                <RefreshCw className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" onClick={loadAuditLogs} disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
                 Refresh
               </Button>
             </div>
@@ -230,6 +230,8 @@ export default function AuditLog() {
                 <SelectItem value="system">System</SelectItem>
                 <SelectItem value="data">Data</SelectItem>
                 <SelectItem value="security">Security</SelectItem>
+                <SelectItem value="school_management">School Management</SelectItem>
+                <SelectItem value="student_management">Student Management</SelectItem>
               </SelectContent>
             </Select>
             <Select value={severityFilter} onValueChange={setSeverityFilter}>
@@ -273,56 +275,66 @@ export default function AuditLog() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredAuditData.map((entry) => (
-                  <TableRow key={entry.id}>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{entry.timestamp.split(' ')[1]}</div>
-                        <div className="text-muted-foreground">{entry.timestamp.split(' ')[0]}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{entry.user}</div>
-                        <div className="text-sm text-muted-foreground">{entry.userId}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{entry.action}</div>
-                        <div className="text-sm text-muted-foreground">{entry.resource}</div>
-                        {entry.resourceId && (
-                          <div className="text-xs text-muted-foreground">ID: {entry.resourceId}</div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(entry.category)}`}>
-                        {getCategoryIcon(entry.category)}
-                        <span className="ml-1 capitalize">{entry.category.replace('_', ' ')}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={`flex items-center font-medium ${getSeverityColor(entry.severity)}`}>
-                        {entry.severity === "critical" && <AlertTriangle className="h-4 w-4 mr-1" />}
-                        <span className="capitalize">{entry.severity}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={entry.success ? "default" : "destructive"}>
-                        {entry.success ? "Success" : "Failed"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm font-mono">{entry.ipAddress}</div>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {filteredAuditData.map((entry) => {
+                  const timestamp = new Date(entry.timestamp);
+                  const timeStr = timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                  const dateStr = timestamp.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                  return (
+                    <TableRow key={entry.id}>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div className="font-medium">{timeStr}</div>
+                          <div className="text-muted-foreground">{dateStr}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{entry.user_email || 'System'}</div>
+                          <div className="text-sm text-muted-foreground capitalize">{entry.user_role || 'system'}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{entry.action}</div>
+                          <div className="text-sm text-muted-foreground">{entry.resource}</div>
+                          {entry.resource_id && (
+                            <div className="text-xs text-muted-foreground">ID: {entry.resource_id}</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(entry.category)}`}>
+                          {getCategoryIcon(entry.category)}
+                          <span className="ml-1 capitalize">{entry.category.replace('_', ' ')}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={`flex items-center font-medium ${getSeverityColor(entry.severity)}`}>
+                          {entry.severity === "critical" && <AlertTriangle className="h-4 w-4 mr-1" />}
+                          <span className="capitalize">{entry.severity}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={entry.success ? "default" : "destructive"}>
+                          {entry.success ? "Success" : "Failed"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm font-mono">{entry.ip_address || 'N/A'}</div>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          title={entry.details ? JSON.stringify(entry.details, null, 2) : 'No additional details'}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
@@ -336,38 +348,42 @@ export default function AuditLog() {
       </Card>
 
       {/* Audit Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-primary">156</div>
-            <div className="text-sm text-muted-foreground">Total Events</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-red-600">3</div>
-            <div className="text-sm text-muted-foreground">Critical Events</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-orange-600">12</div>
-            <div className="text-sm text-muted-foreground">Failed Actions</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600">89</div>
-            <div className="text-sm text-muted-foreground">User Actions</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">98.2%</div>
-            <div className="text-sm text-muted-foreground">Success Rate</div>
-          </CardContent>
-        </Card>
-      </div>
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-primary">{stats.total || 0}</div>
+              <div className="text-sm text-muted-foreground">Total Events</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-red-600">{stats.criticalEvents || 0}</div>
+              <div className="text-sm text-muted-foreground">Critical Events</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-orange-600">{stats.failureCount || 0}</div>
+              <div className="text-sm text-muted-foreground">Failed Actions</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-blue-600">{stats.successCount || 0}</div>
+              <div className="text-sm text-muted-foreground">Successful Actions</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {stats.total > 0 ? ((stats.successCount / stats.total) * 100).toFixed(1) : 0}%
+              </div>
+              <div className="text-sm text-muted-foreground">Success Rate</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
