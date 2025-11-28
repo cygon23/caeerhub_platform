@@ -98,21 +98,21 @@ class YouthDashboardService {
       auditData,
     ] = await Promise.all([
       // Learning modules
-      supabase.from('learning_modules').select('id, status').eq('status', 'published'),
+      supabase.from('learning_modules').select('id, status, category').eq('status', 'published'),
       // User progress
       supabase.from('user_module_progress').select('*').eq('user_id', userId),
       // Career assessments
       supabase.from('career_assessments').select('*').eq('user_id', userId),
-      // Personality profile
-      supabase.from('personality_profiles').select('*').eq('user_id', userId).single(),
+      // Personality profile - use maybeSingle() to handle empty results
+      supabase.from('personality_profiles').select('*').eq('user_id', userId).maybeSingle(),
       // Strengths
       supabase.from('user_strengths_weaknesses').select('*').eq('user_id', userId).eq('type', 'strength'),
       // Weaknesses
       supabase.from('user_strengths_weaknesses').select('*').eq('user_id', userId).eq('type', 'weakness'),
-      // Profile
-      supabase.from('profiles').select('*').eq('user_id', userId).single(),
-      // Onboarding
-      supabase.from('onboarding_responses').select('*').eq('user_id', userId).single(),
+      // Profile - use maybeSingle() to handle empty results
+      supabase.from('profiles').select('*').eq('user_id', userId).maybeSingle(),
+      // Onboarding - use maybeSingle() to handle empty results
+      supabase.from('onboarding_responses').select('*').eq('user_id', userId).maybeSingle(),
       // CV
       supabase.from('user_cvs').select('*').eq('user_id', userId),
       // Mentorship
