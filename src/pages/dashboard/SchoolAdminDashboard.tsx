@@ -374,7 +374,33 @@ export default function SchoolAdminDashboard() {
       // Get school_id from profile
       const schoolId = schoolInfo?.registration_number;
       if (!schoolId) {
-        return <div>Loading school information...</div>;
+        return (
+          <div className='space-y-6'>
+            <div className='bg-gradient-hero text-white rounded-lg p-6'>
+              <div className="flex items-center space-x-4">
+                <Users className="h-10 w-10 text-white/50 animate-pulse" />
+                <div>
+                  <h2 className='text-2xl font-bold mb-1'>Student Management</h2>
+                  <p className='text-white/90'>Loading school information...</p>
+                </div>
+              </div>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-4 w-72 mt-2" />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-10 w-64" />
+                  <Skeleton className="h-10 w-32" />
+                </div>
+                <Skeleton className="h-64 w-full" />
+              </CardContent>
+            </Card>
+          </div>
+        );
       }
       return <StudentManagement schoolId={schoolId} />;
     }
