@@ -138,22 +138,30 @@ export const BillingTab = () => {
   const fetchPaymentMethod = async (customerId: string) => {
     try {
       // Fetch latest payment from database
-      const { data: payment } = await supabase
+      const { data: payment, error } = await supabase
         .from('stripe_payments')
         .select('payment_method, payment_method_details')
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      if (payment?.payment_method) {
-        setPaymentMethod(payment.payment_method);
-      } else if (payment?.payment_method_details) {
-        // Try to extract from details
+      if (error) {
+        console.error('Error fetching payment method:', error);
+        return;
+      }
+
+      if (payment?.payment_method_details) {
+        // Extract from payment method details
         const details = payment.payment_method_details as any;
         if (details?.card) {
-          setPaymentMethod(`${details.card.brand} •••• ${details.card.last4}`);
+          const brand = details.card.brand.charAt(0).toUpperCase() + details.card.brand.slice(1);
+          setPaymentMethod(`${brand} •••• ${details.card.last4}`);
+        } else if (details?.type) {
+          setPaymentMethod(details.type);
         }
+      } else if (payment?.payment_method) {
+        setPaymentMethod(payment.payment_method);
       }
     } catch (error) {
       console.error('Error fetching payment method:', error);
@@ -363,6 +371,12 @@ export const BillingTab = () => {
             const isCurrentPlan = plan.plan_key === planType;
             const needsSetup = plan.plan_key !== 'free' && !plan.stripe_price_id;
 
+            // Determine plan hierarchy for upgrade/downgrade logic
+            const planHierarchy = { 'free': 0, 'student': 1, 'professional': 2 };
+            const currentPlanLevel = planHierarchy[planType as keyof typeof planHierarchy] || 0;
+            const thisPlanLevel = planHierarchy[plan.plan_key as keyof typeof planHierarchy] || 0;
+            const isDowngrade = thisPlanLevel < currentPlanLevel;
+
             return (
               <Card
                 key={plan.id}
@@ -472,6 +486,15 @@ export const BillingTab = () => {
                         <CreditCard className='h-4 w-4' />
                         Manage Plan
                       </Button>
+                    ) : isDowngrade && planType !== 'free' ? (
+                      <Button
+                        className='w-full h-11 gap-2 font-semibold'
+                        variant='outline'
+                        disabled
+                      >
+                        <Check className='h-4 w-4' />
+                        Current: {currentPlan?.plan_name}
+                      </Button>
                     ) : (
                       <Button
                         className={cn(
@@ -489,7 +512,7 @@ export const BillingTab = () => {
                           </>
                         ) : (
                           <>
-                            Upgrade Now
+                            {thisPlanLevel > currentPlanLevel ? 'Upgrade Now' : 'Select Plan'}
                             <ArrowRight className='h-4 w-4' />
                           </>
                         )}
