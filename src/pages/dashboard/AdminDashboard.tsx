@@ -35,6 +35,7 @@ import NotificationManagement from "@/components/admin/NotificationManagement";
 import AdminProfile from "@/components/admin/AdminProfile";
 import AuditLog from "@/components/admin/AuditLog";
 import SystemAnalytics from "@/components/admin/SystemAnalytics";
+import { DashboardOverview } from "@/components/admin/DashboardOverview";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -65,109 +66,7 @@ export default function AdminDashboard() {
 
   const renderContent = () => {
     if (activeSection === "overview") {
-      return (
-        <div className='space-y-8'>
-          <div className='bg-gradient-hero text-white rounded-lg p-8'>
-            <h1 className='text-3xl font-bold mb-2'>
-              Admin Control Center 🚀
-            </h1>
-            <p className='text-white/90 text-lg'>
-              Managing the Career na Mimi platform
-            </p>
-          </div>
-
-          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6'>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <Users className='h-8 w-8 text-primary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  42,156
-                </div>
-                <div className='text-muted-foreground'>Total Users</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <UserCheck className='h-8 w-8 text-secondary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  127
-                </div>
-                <div className='text-muted-foreground'>Active Mentors</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <Building className='h-8 w-8 text-primary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>52</div>
-                <div className='text-muted-foreground'>Partners</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <BookOpen className='h-8 w-8 text-secondary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>89</div>
-                <div className='text-muted-foreground'>
-                  Learning Modules
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Recent Activity */}
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent User Activity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-                  {[
-                    { user: "Amina Hassan", action: "Completed Career Assessment", time: "2 min ago" },
-                    { user: "John Mbeki", action: "Started ICT Module", time: "15 min ago" },
-                    { user: "Grace Mwangi", action: "Joined Mentorship Program", time: "1 hour ago" },
-                    { user: "David Keter", action: "Generated CV", time: "2 hours ago" }
-                  ].map((activity, index) => (
-                    <div key={index} className='flex items-center justify-between p-3 bg-gradient-accent rounded-lg'>
-                      <div>
-                        <p className='font-medium text-foreground'>{activity.user}</p>
-                        <p className='text-sm text-muted-foreground'>{activity.action}</p>
-                      </div>
-                      <span className='text-xs text-muted-foreground'>{activity.time}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>System Health</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-                  {[
-                    { metric: "Server Uptime", value: "99.9%", status: "excellent" },
-                    { metric: "API Response Time", value: "245ms", status: "good" },
-                    { metric: "Database Performance", value: "Optimal", status: "excellent" },
-                    { metric: "Error Rate", value: "0.02%", status: "excellent" }
-                  ].map((health, index) => (
-                    <div key={index} className='flex items-center justify-between'>
-                      <span className='text-sm text-muted-foreground'>{health.metric}</span>
-                      <div className='flex items-center space-x-2'>
-                        <span className='text-sm font-medium text-foreground'>{health.value}</span>
-                        <div className={`w-2 h-2 rounded-full ${
-                          health.status === 'excellent' ? 'bg-green-500' : 
-                          health.status === 'good' ? 'bg-yellow-500' : 'bg-red-500'
-                        }`} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      );
+      return <DashboardOverview />;
     }
 
     if (activeSection === "users") {
