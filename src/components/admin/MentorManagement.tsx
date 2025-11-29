@@ -174,45 +174,24 @@ export default function MentorManagement() {
     setCreating(true);
 
     try {
-      // Create auth user
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: createForm.email,
-        password: createForm.password,
-        email_confirm: true,
-        user_metadata: {
+      // Call Edge Function to create mentor with auth
+      const { data, error } = await supabase.functions.invoke('create-mentor-with-auth', {
+        body: {
           name: createForm.name,
-        },
-      });
-
-      if (authError) throw authError;
-
-      if (!authData.user) {
-        throw new Error("Failed to create user");
-      }
-
-      // Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: authData.user.id,
-          display_name: createForm.name,
+          email: createForm.email,
+          password: createForm.password,
           phone: createForm.phone || null,
           location: createForm.location || null,
           bio: createForm.bio || null,
-          status: 'active',
-        });
+          expertise: createForm.expertise || null,
+        },
+      });
 
-      if (profileError) throw profileError;
+      if (error) throw error;
 
-      // Assign mentor role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: authData.user.id,
-          role: 'mentor',
-        });
-
-      if (roleError) throw roleError;
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
       toast({
         title: "Success",
