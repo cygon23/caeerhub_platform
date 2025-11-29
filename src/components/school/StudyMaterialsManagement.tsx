@@ -27,6 +27,10 @@ import {
   Loader2,
   ExternalLink,
   File,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  List,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,6 +78,12 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
   const [editDialog, setEditDialog] = useState<StudyMaterial | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<StudyMaterial | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Filters and Pagination
+  const [filterType, setFilterType] = useState<'all' | 'video' | 'document' | 'link'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [viewAll, setViewAll] = useState(false);
+  const itemsPerPage = 5;
 
   const primaryColor = schoolInfo?.primary_color || '#FE047F';
   const secondaryColor = schoolInfo?.secondary_color || '#006807';
@@ -342,6 +352,25 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
     totalDuration: materials.filter(m => m.duration).reduce((acc, m) => acc + (m.duration || 0), 0),
   };
 
+  // Filter materials based on selected type
+  const filteredMaterials = filterType === 'all'
+    ? materials
+    : materials.filter(m => m.type === filterType);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredMaterials.length / itemsPerPage);
+  const displayedMaterials = viewAll
+    ? filteredMaterials
+    : filteredMaterials.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      );
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterType]);
+
   const formatDuration = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -485,8 +514,74 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
               <p className="text-muted-foreground mb-4">Start by uploading your first study material</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {materials.map((material) => (
+            <>
+              {/* Filter Buttons */}
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-muted-foreground">Filter:</span>
+                </div>
+                <Button
+                  size="sm"
+                  variant={filterType === 'all' ? 'default' : 'outline'}
+                  onClick={() => setFilterType('all')}
+                  className={filterType === 'all' ? 'text-white' : ''}
+                  style={filterType === 'all' ? {
+                    background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`
+                  } : undefined}
+                >
+                  <List className="h-3 w-3 mr-1" />
+                  All ({materials.length})
+                </Button>
+                <Button
+                  size="sm"
+                  variant={filterType === 'video' ? 'default' : 'outline'}
+                  onClick={() => setFilterType('video')}
+                  className={filterType === 'video' ? 'text-white' : ''}
+                  style={filterType === 'video' ? {
+                    background: primaryColor
+                  } : { borderColor: primaryColor, color: primaryColor }}
+                >
+                  <Video className="h-3 w-3 mr-1" />
+                  Videos ({stats.videos})
+                </Button>
+                <Button
+                  size="sm"
+                  variant={filterType === 'document' ? 'default' : 'outline'}
+                  onClick={() => setFilterType('document')}
+                  className={filterType === 'document' ? 'text-white' : ''}
+                  style={filterType === 'document' ? {
+                    background: secondaryColor
+                  } : { borderColor: secondaryColor, color: secondaryColor }}
+                >
+                  <FileText className="h-3 w-3 mr-1" />
+                  Documents ({stats.documents})
+                </Button>
+                <Button
+                  size="sm"
+                  variant={filterType === 'link' ? 'default' : 'outline'}
+                  onClick={() => setFilterType('link')}
+                  className={filterType === 'link' ? 'text-white' : ''}
+                  style={filterType === 'link' ? {
+                    background: `linear-gradient(135deg, ${secondaryColor} 0%, ${primaryColor} 100%)`
+                  } : undefined}
+                >
+                  <LinkIcon className="h-3 w-3 mr-1" />
+                  Links ({materials.filter(m => m.type === 'link').length})
+                </Button>
+              </div>
+
+              {/* Materials Grid */}
+              {filteredMaterials.length === 0 ? (
+                <div className="text-center py-12">
+                  <Filter className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <h3 className="text-lg font-semibold mb-2">No {filterType === 'all' ? '' : filterType + 's'} found</h3>
+                  <p className="text-muted-foreground mb-4">Try a different filter</p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {displayedMaterials.map((material) => (
                 <Card
                   key={material.id}
                   className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-border/50"
@@ -614,7 +709,107 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
                 </Card>
               ))}
             </div>
-          )}
+
+            {/* Pagination Controls */}
+            {!viewAll && totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t">
+                <div className="text-sm text-muted-foreground">
+                  Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredMaterials.length)} of {filteredMaterials.length} {filterType === 'all' ? 'materials' : filterType + 's'}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Previous Button */}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    style={{
+                      borderColor: currentPage === 1 ? undefined : primaryColor,
+                      color: currentPage === 1 ? undefined : primaryColor
+                    }}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+
+                  {/* Page Numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        size="sm"
+                        variant={currentPage === page ? 'default' : 'outline'}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-8 h-8 p-0 ${currentPage === page ? 'text-white' : ''}`}
+                        style={currentPage === page ? {
+                          background: primaryColor
+                        } : {
+                          borderColor: primaryColor,
+                          color: primaryColor
+                        }}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+
+                  {/* Next Button */}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    style={{
+                      borderColor: currentPage === totalPages ? undefined : primaryColor,
+                      color: currentPage === totalPages ? undefined : primaryColor
+                    }}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* View All Button */}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setViewAll(true)}
+                  style={{
+                    borderColor: secondaryColor,
+                    color: secondaryColor
+                  }}
+                >
+                  <List className="h-3 w-3 mr-1" />
+                  View All
+                </Button>
+              </div>
+            )}
+
+            {/* View All Mode - Show Paginated View Button */}
+            {viewAll && filteredMaterials.length > itemsPerPage && (
+              <div className="flex justify-center mt-6 pt-6 border-t">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setViewAll(false);
+                    setCurrentPage(1);
+                  }}
+                  style={{
+                    borderColor: primaryColor,
+                    color: primaryColor
+                  }}
+                >
+                  <Filter className="h-3 w-3 mr-1" />
+                  Show Paginated View
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </>
+    )}
         </CardContent>
       </Card>
 
