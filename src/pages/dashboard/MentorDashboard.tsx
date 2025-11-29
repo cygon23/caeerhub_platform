@@ -70,129 +70,254 @@ export default function MentorDashboard() {
   const renderContent = () => {
     if (activeSection === "overview") {
       return (
-        <div className='space-y-8'>
-          <div className='bg-gradient-hero text-white rounded-lg p-8'>
-            <h1 className='text-3xl font-bold mb-2'>
-              Welcome, Dr. {user?.name?.split(" ")[1] || "Mwangi"}! 👨‍💻
-            </h1>
-            <p className='text-white/90 text-lg'>
-              You're making a real difference in young lives!
-            </p>
+        <div className='space-y-6'>
+          {/* Modern Gradient Header */}
+          <div className='bg-gradient-to-r from-primary via-primary/90 to-secondary text-white rounded-xl p-8 shadow-lg relative overflow-hidden'>
+            <div className='absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32' />
+            <div className='absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24' />
+            <div className='relative z-10'>
+              <h1 className='text-3xl md:text-4xl font-bold mb-2 flex items-center gap-2'>
+                Welcome back, {user?.name?.split(" ")[0] || "Mentor"}!
+                <Award className='h-8 w-8 text-yellow-300' />
+              </h1>
+              <p className='text-white/90 text-lg mb-4'>
+                You're making a real difference in young lives!
+              </p>
+              <div className='flex flex-wrap gap-3'>
+                <Badge variant='secondary' className='bg-white/20 hover:bg-white/30 text-white border-0'>
+                  <CheckCircle2 className='h-3 w-3 mr-1' />
+                  8 Active Mentees
+                </Badge>
+                <Badge variant='secondary' className='bg-white/20 hover:bg-white/30 text-white border-0'>
+                  <Clock className='h-3 w-3 mr-1' />
+                  127 Hours This Year
+                </Badge>
+                <Badge variant='secondary' className='bg-white/20 hover:bg-white/30 text-white border-0'>
+                  <Star className='h-3 w-3 mr-1 fill-yellow-300' />
+                  4.9 Rating
+                </Badge>
+              </div>
+            </div>
           </div>
 
-          <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6'>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <Users className='h-8 w-8 text-primary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>8</div>
-                <div className='text-muted-foreground'>Active Mentees</div>
+          {/* Modern Stats Grid */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+            {/* Active Mentees Card */}
+            <Card className='hover:shadow-lg transition-all duration-300 hover:scale-105 border-primary/20'>
+              <CardContent className='p-6'>
+                <div className='flex items-center justify-between mb-4'>
+                  <div className='p-3 bg-primary/10 rounded-xl'>
+                    <Users className='h-6 w-6 text-primary' />
+                  </div>
+                  <Badge variant='secondary' className='bg-green-100 text-green-700 hover:bg-green-100'>
+                    <TrendingUp className='h-3 w-3 mr-1' />
+                    +12%
+                  </Badge>
+                </div>
+                <div className='space-y-1'>
+                  <p className='text-2xl font-bold text-foreground'>8</p>
+                  <p className='text-sm text-muted-foreground'>Active Mentees</p>
+                  <div className='flex items-center gap-1 text-xs text-green-600'>
+                    <ArrowUpRight className='h-3 w-3' />
+                    <span>2 new this month</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <Calendar className='h-8 w-8 text-secondary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  127
+
+            {/* Hours Mentored Card */}
+            <Card className='hover:shadow-lg transition-all duration-300 hover:scale-105 border-secondary/20'>
+              <CardContent className='p-6'>
+                <div className='flex items-center justify-between mb-4'>
+                  <div className='p-3 bg-secondary/10 rounded-xl'>
+                    <Clock className='h-6 w-6 text-secondary' />
+                  </div>
+                  <Badge variant='secondary' className='bg-blue-100 text-blue-700 hover:bg-blue-100'>
+                    <Activity className='h-3 w-3 mr-1' />
+                    24h/mo
+                  </Badge>
                 </div>
-                <div className='text-muted-foreground'>Hours Mentored</div>
+                <div className='space-y-1'>
+                  <p className='text-2xl font-bold text-foreground'>127</p>
+                  <p className='text-sm text-muted-foreground'>Hours This Year</p>
+                  <div className='w-full bg-muted rounded-full h-1.5 mt-2'>
+                    <div className='bg-secondary h-1.5 rounded-full' style={{ width: '78%' }} />
+                  </div>
+                </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <Star className='h-8 w-8 text-primary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  4.9
+
+            {/* Sessions Card */}
+            <Card className='hover:shadow-lg transition-all duration-300 hover:scale-105 border-primary/20'>
+              <CardContent className='p-6'>
+                <div className='flex items-center justify-between mb-4'>
+                  <div className='p-3 bg-purple-100 rounded-xl'>
+                    <Video className='h-6 w-6 text-purple-600' />
+                  </div>
+                  <Badge variant='secondary' className='bg-purple-100 text-purple-700 hover:bg-purple-100'>
+                    3 Today
+                  </Badge>
                 </div>
-                <div className='text-muted-foreground'>Mentor Rating</div>
+                <div className='space-y-1'>
+                  <p className='text-2xl font-bold text-foreground'>35</p>
+                  <p className='text-sm text-muted-foreground'>Sessions This Month</p>
+                  <p className='text-xs text-purple-600'>Next: Today 2:00 PM</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Rating Card */}
+            <Card className='hover:shadow-lg transition-all duration-300 hover:scale-105 border-yellow-200'>
+              <CardContent className='p-6'>
+                <div className='flex items-center justify-between mb-4'>
+                  <div className='p-3 bg-yellow-100 rounded-xl'>
+                    <Star className='h-6 w-6 text-yellow-600 fill-yellow-600' />
+                  </div>
+                  <Badge variant='secondary' className='bg-yellow-100 text-yellow-700 hover:bg-yellow-100'>
+                    Top 5%
+                  </Badge>
+                </div>
+                <div className='space-y-1'>
+                  <p className='text-2xl font-bold text-foreground'>4.9</p>
+                  <p className='text-sm text-muted-foreground'>Mentor Rating</p>
+                  <div className='flex gap-0.5 mt-2'>
+                    {[1,2,3,4,5].map((i) => (
+                      <Star key={i} className='h-3 w-3 text-yellow-500 fill-yellow-500' />
+                    ))}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Mentees</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-4'>
-                {mentees.map((mentee, index) => (
-                  <div
-                    key={index}
-                    className='flex items-center justify-between p-4 bg-gradient-accent rounded-lg'>
-                    <div>
-                      <h4 className='font-medium text-foreground'>
-                        {mentee.name}
-                      </h4>
-                      <p className='text-sm text-muted-foreground'>
-                        {mentee.sessions} sessions completed
-                      </p>
+          {/* Modern Mentees Cards Grid */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            {mentees.map((mentee, index) => (
+              <Card key={index} className='hover:shadow-xl transition-all duration-300 hover:scale-105 border-l-4' style={{
+                borderLeftColor: index === 0 ? '#10b981' : index === 1 ? '#3b82f6' : '#8b5cf6'
+              }}>
+                <CardContent className='p-5'>
+                  <div className='flex items-center gap-3 mb-4'>
+                    <div className='w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-lg' style={{
+                      background: index === 0 ? 'linear-gradient(135deg, #10b981, #059669)' :
+                                  index === 1 ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
+                                  'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+                    }}>
+                      {mentee.name.split(' ').map(n => n[0]).join('')}
                     </div>
-                    <div className='text-right'>
-                      <Badge variant='secondary'>
-                        {mentee.progress}% Progress
-                      </Badge>
-                      <p className='text-xs text-muted-foreground mt-1'>
-                        {mentee.nextSession}
-                      </p>
+                    <div className='flex-1'>
+                      <h4 className='font-semibold text-foreground'>{mentee.name}</h4>
+                      <p className='text-xs text-muted-foreground'>{mentee.sessions} sessions</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+
+                  <div className='space-y-3'>
+                    <div>
+                      <div className='flex justify-between text-xs mb-1'>
+                        <span className='text-muted-foreground'>Progress</span>
+                        <span className='font-semibold text-foreground'>{mentee.progress}%</span>
+                      </div>
+                      <div className='w-full bg-muted rounded-full h-2'>
+                        <div
+                          className='h-2 rounded-full transition-all duration-500'
+                          style={{
+                            width: `${mentee.progress}%`,
+                            background: index === 0 ? 'linear-gradient(90deg, #10b981, #059669)' :
+                                       index === 1 ? 'linear-gradient(90deg, #3b82f6, #2563eb)' :
+                                       'linear-gradient(90deg, #8b5cf6, #7c3aed)'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className='flex items-center gap-2 text-xs'>
+                      <Clock className='h-3 w-3 text-muted-foreground' />
+                      <span className='text-muted-foreground'>{mentee.nextSession}</span>
+                    </div>
+
+                    <Button size='sm' variant='outline' className='w-full'>
+                      <MessageCircle className='h-3 w-3 mr-1' />
+                      Message
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
           {/* Enhanced Mentorship Tools */}
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            <Card>
+            {/* Modern Messages Card */}
+            <Card className='border-primary/20'>
               <CardHeader>
-                <CardTitle className='flex items-center'>
-                  <MessageCircle className='h-5 w-5 mr-2' />
-                  Recent Messages
-                </CardTitle>
+                <div className='flex items-center justify-between'>
+                  <CardTitle className='flex items-center gap-2'>
+                    <div className='p-2 bg-primary/10 rounded-lg'>
+                      <MessageCircle className='h-5 w-5 text-primary' />
+                    </div>
+                    Recent Messages
+                  </CardTitle>
+                  <Badge variant='secondary'>3 New</Badge>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className='space-y-3'>
                   {[
-                    { mentee: "Amina Hassan", message: "Thank you for the career advice on tech roles!", time: "5 min ago" },
-                    { mentee: "John Mbeki", message: "Could we schedule our next session?", time: "1 hour ago" },
-                    { mentee: "Grace Mwangi", message: "I completed the assignment you gave me", time: "3 hours ago" }
+                    { mentee: "Amina Hassan", message: "Thank you for the career advice on tech roles!", time: "5 min ago", color: "bg-green-50 border-green-200" },
+                    { mentee: "John Mbeki", message: "Could we schedule our next session?", time: "1 hour ago", color: "bg-blue-50 border-blue-200" },
+                    { mentee: "Grace Mwangi", message: "I completed the assignment you gave me", time: "3 hours ago", color: "bg-purple-50 border-purple-200" }
                   ].map((msg, index) => (
-                    <div key={index} className='p-3 bg-gradient-accent rounded-lg'>
-                      <div className='flex justify-between items-start mb-1'>
-                        <p className='font-medium text-foreground text-sm'>{msg.mentee}</p>
+                    <div key={index} className={`p-4 rounded-lg border ${msg.color} hover:shadow-md transition-shadow`}>
+                      <div className='flex justify-between items-start mb-2'>
+                        <p className='font-semibold text-foreground text-sm'>{msg.mentee}</p>
                         <span className='text-xs text-muted-foreground'>{msg.time}</span>
                       </div>
-                      <p className='text-sm text-muted-foreground'>{msg.message}</p>
+                      <p className='text-sm text-muted-foreground leading-relaxed'>{msg.message}</p>
                     </div>
                   ))}
                 </div>
+                <Button variant='outline' className='w-full mt-4'>View All Messages</Button>
               </CardContent>
             </Card>
 
-            <Card>
+            {/* Modern Goals Card */}
+            <Card className='border-secondary/20'>
               <CardHeader>
-                <CardTitle className='flex items-center'>
-                  <Target className='h-5 w-5 mr-2' />
-                  Mentorship Goals
-                </CardTitle>
+                <div className='flex items-center justify-between'>
+                  <CardTitle className='flex items-center gap-2'>
+                    <div className='p-2 bg-secondary/10 rounded-lg'>
+                      <Target className='h-5 w-5 text-secondary' />
+                    </div>
+                    Mentorship Goals
+                  </CardTitle>
+                  <Badge variant='secondary' className='bg-green-100 text-green-700'>
+                    On Track
+                  </Badge>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className='space-y-4'>
+                <div className='space-y-5'>
                   {[
-                    { goal: "Monthly Mentoring Hours", current: 24, target: 30 },
-                    { goal: "Mentee Success Rate", current: 89, target: 90 },
-                    { goal: "Response Time (hours)", current: 2.1, target: 2.0 }
+                    { goal: "Monthly Mentoring Hours", current: 24, target: 30, color: "bg-primary", bgColor: "bg-primary/10" },
+                    { goal: "Mentee Success Rate", current: 89, target: 90, color: "bg-green-500", bgColor: "bg-green-50" },
+                    { goal: "Response Time (hours)", current: 2.1, target: 2.0, color: "bg-blue-500", bgColor: "bg-blue-50" }
                   ].map((goal, index) => (
-                    <div key={index} className='space-y-2'>
-                      <div className='flex justify-between text-sm'>
-                        <span className='text-muted-foreground'>{goal.goal}</span>
-                        <span className='font-medium'>{goal.current}/{goal.target}</span>
+                    <div key={index} className={`p-3 rounded-lg ${goal.bgColor}`}>
+                      <div className='flex justify-between text-sm mb-2'>
+                        <span className='font-medium text-foreground'>{goal.goal}</span>
+                        <span className='font-bold text-foreground'>{goal.current}/{goal.target}</span>
                       </div>
-                      <div className='w-full bg-muted rounded-full h-2'>
-                        <div 
-                          className='bg-primary h-2 rounded-full transition-all duration-300'
-                          style={{ width: `${(goal.current / goal.target) * 100}%` }}
-                        />
+                      <div className='w-full bg-muted rounded-full h-2.5'>
+                        <div
+                          className={`${goal.color} h-2.5 rounded-full transition-all duration-500 relative overflow-hidden`}
+                          style={{ width: `${Math.min((goal.current / goal.target) * 100, 100)}%` }}
+                        >
+                          <div className='absolute inset-0 bg-white/20 animate-pulse' />
+                        </div>
                       </div>
+                      <p className='text-xs text-muted-foreground mt-1'>
+                        {goal.current >= goal.target ? '✓ Goal Achieved!' : `${(goal.target - goal.current).toFixed(1)} to go`}
+                      </p>
                     </div>
                   ))}
                 </div>
