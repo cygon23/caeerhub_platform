@@ -829,7 +829,7 @@ export default function SchoolAdminDashboard() {
                 </div>
 
     if (activeSection === "study-materials") {
-      return <StudyMaterialsManagement />;
+      return <StudyMaterialsManagement schoolInfo={schoolInfo} />;
     }
 
     return (
