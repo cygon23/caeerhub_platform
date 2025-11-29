@@ -118,6 +118,8 @@ export default function SchoolAdminDashboard() {
 
     setLoading(true);
     try {
+      console.log('Loading school info for user:', user.id);
+
       // Get user's profile to find school_id
       const { data: profile, error: profileError } = await (await import("@/integrations/supabase/client")).supabase
         .from('profiles')
@@ -125,14 +127,23 @@ export default function SchoolAdminDashboard() {
         .eq('user_id', user.id)
         .maybeSingle();
 
+      console.log('Profile data:', profile);
+      console.log('Profile error:', profileError);
+
       if (profileError) {
         throw profileError;
       }
 
       if (profile?.school_id) {
+        console.log('Found school_id in profile:', profile.school_id);
+
         // Get school info
         const schools = await adminService.getSchools();
+        console.log('All schools:', schools);
+
         const school = schools.find(s => s.registration_number === profile.school_id);
+        console.log('Found school:', school);
+
         setSchoolInfo(school);
 
         // Populate edit form with school info
@@ -151,10 +162,23 @@ export default function SchoolAdminDashboard() {
 
         // Get student statistics
         const studentStats = await adminService.getStudentStats(profile.school_id);
+        console.log('Student stats:', studentStats);
         setStats(studentStats);
       } else {
-        // No school assigned yet - show message
-        console.log('No school assigned to this school admin yet');
+        // No school assigned yet - but still fetch students with default school_id
+        console.log('No school_id in profile, using default TRD-009890');
+
+        // Try to get school with default ID
+        const schools = await adminService.getSchools();
+        const school = schools.find(s => s.registration_number === 'TRD-009890');
+        if (school) {
+          console.log('Found school with default ID:', school);
+          setSchoolInfo(school);
+
+          // Get student statistics
+          const studentStats = await adminService.getStudentStats('TRD-009890');
+          setStats(studentStats);
+        }
       }
     } catch (error: any) {
       console.error('Error loading school info:', error);
@@ -407,43 +431,11 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "students") {
-      // Show loading state while fetching school info
-      if (loading) {
-        return (
-          <div className="space-y-4">
-            <Skeleton className="h-8 w-64" />
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-            </div>
-            <Skeleton className="h-64 w-full" />
-          </div>
-        );
-      }
-
-      // Show message if no school is assigned
-      if (!schoolInfo?.registration_number) {
-        return (
-          <Card>
-            <CardContent className='p-12 text-center'>
-              <div className='w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4'>
-                <Building className='h-8 w-8 text-white' />
-              </div>
-              <h3 className='text-xl font-semibold text-foreground mb-2'>
-                No School Data Yet
-              </h3>
-              <p className='text-muted-foreground'>
-                Your school admin account has been created, but no school has been assigned yet.
-                Please contact the administrator.
-              </p>
-            </CardContent>
-          </Card>
-        );
-      }
-
-      return <StudentManagement schoolId={schoolInfo.registration_number} />;
+      // Get school_id - use schoolInfo if available, otherwise use default
+      const schoolId = schoolInfo?.registration_number || 'TRD-009890';
+      console.log('Rendering StudentManagement with schoolId:', schoolId);
+      console.log('schoolInfo:', schoolInfo);
+      return <StudentManagement schoolId={schoolId} />;
     }
 
     if (activeSection === "analytics") {
