@@ -53,9 +53,13 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
   const loadStudents = async () => {
     setLoading(true);
     try {
+      console.log('Loading students for school_id:', schoolId);
       const data = await adminService.getStudents(schoolId);
+      console.log('Loaded students:', data.length, 'students');
+      console.log('Students data:', data);
       setStudents(data);
     } catch (error: any) {
+      console.error('Error loading students:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to load students",

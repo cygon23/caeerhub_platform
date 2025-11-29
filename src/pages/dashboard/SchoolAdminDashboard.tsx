@@ -407,9 +407,43 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "students") {
-      // Get school_id from profile - use empty string if not available yet
-      const schoolId = schoolInfo?.registration_number || '';
-      return <StudentManagement schoolId={schoolId} />;
+      // Show loading state while fetching school info
+      if (loading) {
+        return (
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64" />
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+          </div>
+        );
+      }
+
+      // Show message if no school is assigned
+      if (!schoolInfo?.registration_number) {
+        return (
+          <Card>
+            <CardContent className='p-12 text-center'>
+              <div className='w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4'>
+                <Building className='h-8 w-8 text-white' />
+              </div>
+              <h3 className='text-xl font-semibold text-foreground mb-2'>
+                No School Data Yet
+              </h3>
+              <p className='text-muted-foreground'>
+                Your school admin account has been created, but no school has been assigned yet.
+                Please contact the administrator.
+              </p>
+            </CardContent>
+          </Card>
+        );
+      }
+
+      return <StudentManagement schoolId={schoolInfo.registration_number} />;
     }
 
     if (activeSection === "analytics") {
