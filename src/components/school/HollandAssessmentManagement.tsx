@@ -8,12 +8,22 @@ import { BookOpen, Languages, Users, TrendingUp, CheckCircle, Globe } from "luci
 import assessmentEN from "@/data/holland_riasec_assessment_en.json";
 import assessmentSW from "@/data/holland_riasec_assessment_sw.json";
 
-export default function HollandAssessmentManagement() {
+interface HollandAssessmentManagementProps {
+  schoolInfo?: {
+    primary_color?: string;
+    secondary_color?: string;
+  };
+}
+
+export default function HollandAssessmentManagement({ schoolInfo }: HollandAssessmentManagementProps) {
   const [selectedLanguage, setSelectedLanguage] = useState<"en" | "sw">("en");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const assessment = selectedLanguage === "en" ? assessmentEN : assessmentSW;
   const categories = Object.keys(assessment);
+
+  const primaryColor = schoolInfo?.primary_color || '#FE047F';
+  const secondaryColor = schoolInfo?.secondary_color || '#006807';
 
   const categoryColors: Record<string, string> = {
     Realistic: "bg-blue-500",
@@ -36,7 +46,12 @@ export default function HollandAssessmentManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-hero text-white rounded-lg p-6 md:p-8">
+      <div
+        className="text-white rounded-lg p-6 md:p-8 shadow-lg"
+        style={{
+          background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`
+        }}
+      >
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Holland RIASEC Assessment</h2>
@@ -47,11 +62,11 @@ export default function HollandAssessmentManagement() {
       </div>
 
       {/* Language Toggle */}
-      <Card>
+      <Card className="shadow-md">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Languages className="h-5 w-5 text-primary" />
+              <Languages className="h-5 w-5" style={{ color: primaryColor }} />
               <div>
                 <h3 className="font-semibold">Assessment Language</h3>
                 <p className="text-sm text-muted-foreground">Select the language for the assessment</p>
@@ -62,6 +77,17 @@ export default function HollandAssessmentManagement() {
                 variant={selectedLanguage === "en" ? "default" : "outline"}
                 onClick={() => setSelectedLanguage("en")}
                 className="gap-2"
+                style={
+                  selectedLanguage === "en"
+                    ? {
+                        background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+                        color: 'white'
+                      }
+                    : {
+                        borderColor: primaryColor,
+                        color: primaryColor
+                      }
+                }
               >
                 <Globe className="h-4 w-4" />
                 English
@@ -70,6 +96,17 @@ export default function HollandAssessmentManagement() {
                 variant={selectedLanguage === "sw" ? "default" : "outline"}
                 onClick={() => setSelectedLanguage("sw")}
                 className="gap-2"
+                style={
+                  selectedLanguage === "sw"
+                    ? {
+                        background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+                        color: 'white'
+                      }
+                    : {
+                        borderColor: primaryColor,
+                        color: primaryColor
+                      }
+                }
               >
                 <Globe className="h-4 w-4" />
                 Kiswahili
@@ -80,31 +117,37 @@ export default function HollandAssessmentManagement() {
       </Card>
 
       {/* Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-primary">{categories.length}</div>
-            <div className="text-sm text-muted-foreground">Categories</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 text-center">
+            <div className="text-2xl md:text-3xl font-bold" style={{ color: primaryColor }}>
+              {categories.length}
+            </div>
+            <div className="text-xs md:text-sm text-muted-foreground">Categories</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-green-600">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 text-center">
+            <div className="text-2xl md:text-3xl font-bold" style={{ color: secondaryColor }}>
               {Object.values(assessment).reduce((acc: number, cat: any) => acc + cat.length, 0)}
             </div>
-            <div className="text-sm text-muted-foreground">Total Questions</div>
+            <div className="text-xs md:text-sm text-muted-foreground">Total Questions</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-orange-600">0</div>
-            <div className="text-sm text-muted-foreground">Students Assessed</div>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 text-center">
+            <div className="text-2xl md:text-3xl font-bold" style={{ color: primaryColor }}>
+              0
+            </div>
+            <div className="text-xs md:text-sm text-muted-foreground">Students Assessed</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-blue-600">2</div>
-            <div className="text-sm text-muted-foreground">Languages</div>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 text-center">
+            <div className="text-2xl md:text-3xl font-bold" style={{ color: secondaryColor }}>
+              2
+            </div>
+            <div className="text-xs md:text-sm text-muted-foreground">Languages</div>
           </CardContent>
         </Card>
       </div>

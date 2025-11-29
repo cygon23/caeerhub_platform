@@ -710,6 +710,10 @@ export default function SchoolAdminDashboard() {
       return <SchoolProfile schoolInfo={schoolInfo} onUpdate={loadSchoolInfo} />;
     }
 
+    if (activeSection === "holland-assessment") {
+      return <HollandAssessmentManagement schoolInfo={schoolInfo} />;
+    }
+
                 {/* School Branding - Color Selection */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-foreground flex items-center">
@@ -829,17 +833,38 @@ export default function SchoolAdminDashboard() {
     }
 
     return (
-      <Card>
+      <Card className="shadow-md">
         <CardContent className='p-12 text-center'>
-          <div className='w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4'>
-            <Settings className='h-8 w-8 text-white' />
+          <div
+            className='w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg'
+            style={{
+              background: schoolInfo?.primary_color && schoolInfo?.secondary_color
+                ? `linear-gradient(135deg, ${schoolInfo.primary_color} 0%, ${schoolInfo.secondary_color} 100%)`
+                : 'linear-gradient(135deg, #FE047F 0%, #006807 100%)'
+            }}
+          >
+            <Settings className='h-10 w-10 text-white' />
           </div>
-          <h3 className='text-xl font-semibold text-foreground mb-2'>
-            {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
+          <h3
+            className='text-2xl font-bold mb-2'
+            style={{ color: schoolInfo?.primary_color || '#FE047F' }}
+          >
+            {activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace(/-/g, ' ')}
           </h3>
-          <p className='text-muted-foreground'>
+          <p className='text-muted-foreground text-lg mb-6'>
             This feature will be available soon.
           </p>
+          <Button
+            variant="outline"
+            className="border-2"
+            style={{
+              borderColor: schoolInfo?.primary_color || '#FE047F',
+              color: schoolInfo?.primary_color || '#FE047F'
+            }}
+            onClick={() => setActiveSection('overview')}
+          >
+            Back to Dashboard
+          </Button>
         </CardContent>
       </Card>
     );
@@ -916,9 +941,23 @@ export default function SchoolAdminDashboard() {
               <DropdownMenuTrigger className='w-full focus:outline-none'>
                 <div className='flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group'>
                   {/* Avatar with Initials */}
-                  <Avatar className='h-10 w-10 border-2 border-primary/20 group-hover:border-primary/40 transition-colors'>
+                  <Avatar
+                    className='h-10 w-10 border-2 transition-colors'
+                    style={{
+                      borderColor: schoolInfo?.primary_color
+                        ? `${schoolInfo.primary_color}33`
+                        : undefined
+                    }}
+                  >
                     <AvatarImage src={user?.avatarUrl} alt={user?.name} />
-                    <AvatarFallback className='bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-semibold text-sm'>
+                    <AvatarFallback
+                      className='text-primary-foreground font-semibold text-sm'
+                      style={{
+                        background: schoolInfo?.primary_color && schoolInfo?.secondary_color
+                          ? `linear-gradient(135deg, ${schoolInfo.primary_color} 0%, ${schoolInfo.secondary_color} 100%)`
+                          : undefined
+                      }}
+                    >
                       {user?.email?.charAt(0)?.toUpperCase() || 'A'}
                     </AvatarFallback>
                   </Avatar>
@@ -931,7 +970,16 @@ export default function SchoolAdminDashboard() {
                     <div className='flex items-center gap-1.5 mt-0.5'>
                       <Badge
                         variant='outline'
-                        className='text-[10px] px-1.5 py-0 h-4 border-primary/30 bg-primary/5 text-primary font-medium'
+                        className='text-[10px] px-1.5 py-0 h-4 font-medium'
+                        style={{
+                          borderColor: schoolInfo?.primary_color
+                            ? `${schoolInfo.primary_color}4D`
+                            : undefined,
+                          backgroundColor: schoolInfo?.primary_color
+                            ? `${schoolInfo.primary_color}0D`
+                            : undefined,
+                          color: schoolInfo?.primary_color || undefined
+                        }}
                       >
                         School Admin
                       </Badge>
