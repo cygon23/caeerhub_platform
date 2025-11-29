@@ -118,8 +118,6 @@ export default function SchoolAdminDashboard() {
 
     setLoading(true);
     try {
-      console.log('Loading school info for user:', user.id);
-
       // Get user's profile to find school_id
       const { data: profile, error: profileError } = await (await import("@/integrations/supabase/client")).supabase
         .from('profiles')
@@ -127,22 +125,15 @@ export default function SchoolAdminDashboard() {
         .eq('user_id', user.id)
         .maybeSingle();
 
-      console.log('Profile data:', profile);
-      console.log('Profile error:', profileError);
-
       if (profileError) {
         throw profileError;
       }
 
       if (profile?.school_id) {
-        console.log('Found school_id in profile:', profile.school_id);
-
         // Get school info
         const schools = await adminService.getSchools();
-        console.log('All schools:', schools);
 
         const school = schools.find(s => s.registration_number === profile.school_id);
-        console.log('Found school:', school);
 
         setSchoolInfo(school);
 
@@ -162,17 +153,13 @@ export default function SchoolAdminDashboard() {
 
         // Get student statistics
         const studentStats = await adminService.getStudentStats(profile.school_id);
-        console.log('Student stats:', studentStats);
         setStats(studentStats);
       } else {
         // No school assigned yet - but still fetch students with default school_id
-        console.log('No school_id in profile, using default TRD-009890');
-
         // Try to get school with default ID
         const schools = await adminService.getSchools();
         const school = schools.find(s => s.registration_number === 'TRD-009890');
         if (school) {
-          console.log('Found school with default ID:', school);
           setSchoolInfo(school);
 
           // Get student statistics
@@ -181,7 +168,6 @@ export default function SchoolAdminDashboard() {
         }
       }
     } catch (error: any) {
-      console.error('Error loading school info:', error);
       toast({
         title: "Error",
         description: "Failed to load school information",
@@ -293,7 +279,14 @@ export default function SchoolAdminDashboard() {
 
       return (
         <div className='space-y-8'>
-          <div className='bg-gradient-hero text-white rounded-lg p-8'>
+          <div
+            className='text-white rounded-lg p-8'
+            style={{
+              background: schoolInfo?.primary_color && schoolInfo?.secondary_color
+                ? `linear-gradient(135deg, ${schoolInfo.primary_color} 0%, ${schoolInfo.secondary_color} 100%)`
+                : 'linear-gradient(135deg, #FE047F 0%, #006807 100%)',
+            }}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <h1 className='text-3xl font-bold mb-2'>
@@ -307,41 +300,77 @@ export default function SchoolAdminDashboard() {
             </div>
           </div>
 
-          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6'>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <Users className='h-8 w-8 text-primary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  {stats?.total || 0}
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6'>
+            <Card className='hover:shadow-primary transition-all duration-300'>
+              <CardContent className='p-4 md:p-6'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-muted-foreground text-xs md:text-sm'>
+                      Total Students
+                    </p>
+                    <p className='text-xl md:text-2xl font-bold text-foreground'>
+                      {stats?.total || 0}
+                    </p>
+                  </div>
+                  <Users
+                    className='h-6 w-6 md:h-8 md:w-8'
+                    style={{ color: schoolInfo?.primary_color || '#FE047F' }}
+                  />
                 </div>
-                <div className='text-muted-foreground'>Total Students</div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <GraduationCap className='h-8 w-8 text-secondary mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  {stats?.byStatus.active || 0}
+            <Card className='hover:shadow-primary transition-all duration-300'>
+              <CardContent className='p-4 md:p-6'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-muted-foreground text-xs md:text-sm'>
+                      Active Students
+                    </p>
+                    <p className='text-xl md:text-2xl font-bold text-foreground'>
+                      {stats?.byStatus.active || 0}
+                    </p>
+                  </div>
+                  <GraduationCap
+                    className='h-6 w-6 md:h-8 md:w-8'
+                    style={{ color: schoolInfo?.secondary_color || '#006807' }}
+                  />
                 </div>
-                <div className='text-muted-foreground'>Active Students</div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <TrendingUp className='h-8 w-8 text-green-500 mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  {stats?.byStatus.graduated || 0}
+            <Card className='hover:shadow-primary transition-all duration-300'>
+              <CardContent className='p-4 md:p-6'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-muted-foreground text-xs md:text-sm'>
+                      Graduated
+                    </p>
+                    <p className='text-xl md:text-2xl font-bold text-foreground'>
+                      {stats?.byStatus.graduated || 0}
+                    </p>
+                  </div>
+                  <TrendingUp
+                    className='h-6 w-6 md:h-8 md:w-8'
+                    style={{ color: schoolInfo?.primary_color || '#FE047F' }}
+                  />
                 </div>
-                <div className='text-muted-foreground'>Graduated</div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className='p-6 text-center'>
-                <Users className='h-8 w-8 text-orange-500 mx-auto mb-2' />
-                <div className='text-2xl font-bold text-foreground'>
-                  {Object.keys(stats?.byFormLevel || {}).length}
+            <Card className='hover:shadow-primary transition-all duration-300'>
+              <CardContent className='p-4 md:p-6'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='text-muted-foreground text-xs md:text-sm'>
+                      Form Levels
+                    </p>
+                    <p className='text-xl md:text-2xl font-bold text-foreground'>
+                      {Object.keys(stats?.byFormLevel || {}).length}
+                    </p>
+                  </div>
+                  <Activity
+                    className='h-6 w-6 md:h-8 md:w-8'
+                    style={{ color: schoolInfo?.secondary_color || '#006807' }}
+                  />
                 </div>
-                <div className='text-muted-foreground'>Form Levels</div>
               </CardContent>
             </Card>
           </div>
@@ -355,7 +384,10 @@ export default function SchoolAdminDashboard() {
               <div className='grid grid-cols-2 md:grid-cols-6 gap-4'>
                 {[1, 2, 3, 4, 5, 6].map(form => (
                   <div key={form} className="text-center p-4 bg-gradient-accent rounded-lg">
-                    <div className="text-2xl font-bold text-primary">
+                    <div
+                      className="text-2xl font-bold"
+                      style={{ color: schoolInfo?.primary_color || '#FE047F' }}
+                    >
                       {stats?.byFormLevel[form] || 0}
                     </div>
                     <div className="text-sm text-muted-foreground">Form {form}</div>
@@ -433,8 +465,6 @@ export default function SchoolAdminDashboard() {
     if (activeSection === "students") {
       // Get school_id - use schoolInfo if available, otherwise use default
       const schoolId = schoolInfo?.registration_number || 'TRD-009890';
-      console.log('Rendering StudentManagement with schoolId:', schoolId);
-      console.log('schoolInfo:', schoolInfo);
       return <StudentManagement schoolId={schoolId} />;
     }
 

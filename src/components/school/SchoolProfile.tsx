@@ -76,18 +76,14 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
       if (!schoolInfo && !loadedSchool) {
         setLoading(true);
         try {
-          console.log('SchoolProfile: schoolInfo not provided, fetching from DB...');
           const schools = await adminService.getSchools();
-          console.log('All schools:', schools);
 
           // Try to find school with registration number TRD-009890
           const school = schools.find(s => s.registration_number === 'TRD-009890');
 
           if (school) {
-            console.log('Found school:', school);
             setLoadedSchool(school);
           } else {
-            console.log('No school found with registration TRD-009890');
             toast({
               title: "Info",
               description: "Please ensure your school is registered first",
@@ -95,7 +91,6 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
             });
           }
         } catch (error: any) {
-          console.error('Error fetching school data:', error);
           toast({
             title: "Error",
             description: "Failed to load school data",
@@ -114,16 +109,7 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
   useEffect(() => {
     const school = schoolInfo || loadedSchool;
 
-    console.log('=== Form Loading Effect ===');
-    console.log('schoolInfo:', schoolInfo);
-    console.log('loadedSchool:', loadedSchool);
-    console.log('Using school:', school);
-
     if (school) {
-      console.log('✅ School data found, loading into form...');
-      console.log('School Name:', school.school_name);
-      console.log('Registration Number:', school.registration_number);
-
       // Find matching theme color
       const themeIndex = THEME_COLORS.findIndex(
         (t) => t.primary === school.primary_color
@@ -165,11 +151,7 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
         secondary_color: school.secondary_color || THEME_COLORS[0].secondary,
       };
 
-      console.log('📝 Setting form data:', newFormData);
       setProfileForm(newFormData);
-      console.log('✅ Form state updated!');
-    } else {
-      console.log('❌ No school data available to load into form');
     }
   }, [schoolInfo, loadedSchool]);
 
@@ -197,9 +179,6 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
 
     setSaving(true);
     try {
-      console.log('Saving school profile:', profileForm);
-      console.log('Using school:', school);
-
       // Prepare update data
       const updateData: Partial<School> = {
         contact_email: profileForm.contact_email,
@@ -266,17 +245,6 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
 
   return (
     <div className="space-y-6">
-      {/* Debug Info - Remove this after testing */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded text-xs">
-          <strong>Debug Info:</strong>
-          <div>schoolInfo: {schoolInfo ? 'Provided' : 'Not provided'}</div>
-          <div>loadedSchool: {loadedSchool ? 'Loaded' : 'Not loaded'}</div>
-          <div>Form school_name: "{profileForm.school_name}"</div>
-          <div>Form registration_number: "{profileForm.registration_number}"</div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
