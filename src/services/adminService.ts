@@ -389,22 +389,23 @@ class AdminService {
   }
 
   /**
-   * Create student
+   * Create student (with auth account if email provided)
    */
   async createStudent(student: Omit<Student, 'id' | 'created_at' | 'updated_at'>): Promise<Student> {
     const { data: user } = await supabase.auth.getUser();
 
-    const { data, error } = await supabase
-      .from('students')
-      .insert({
+    // Call Edge Function to create student with auth account
+    const { data, error } = await supabase.functions.invoke('create-student-with-auth', {
+      body: {
         ...student,
         created_by: user.user?.id,
-      })
-      .select()
-      .single();
+      },
+    });
 
     if (error) throw error;
-    return data;
+    if (data.error) throw new Error(data.error);
+
+    return data.student;
   }
 
   /**
