@@ -130,55 +130,33 @@ export default function PerformanceTracker() {
     <div className="space-y-6">
       {/* Summary Stats Cards - Colorful Dashboard Style */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Goals */}
+        {/* Overall Progress */}
         <Card className="overflow-hidden border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Goals</p>
-                <p className="text-3xl font-bold text-foreground mt-1">{goals.length}</p>
-                <p className="text-xs text-muted-foreground mt-1">Active & Completed</p>
+                <p className="text-sm font-medium text-muted-foreground">Overall Progress</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{calculateOverallProgress()}%</p>
               </div>
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Target className="h-6 w-6 text-primary" />
+                <BarChart3 className="h-6 w-6 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* With Mentors */}
+        {/* Active Goals */}
         <Card className="overflow-hidden border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">With Mentors</p>
+                <p className="text-sm font-medium text-muted-foreground">Active Goals</p>
                 <p className="text-3xl font-bold text-foreground mt-1">
-                  {goals.filter(g => g.category === 'Mentorship').length}
+                  {goals.filter(g => g.progress < 100).length}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">Mentor-assisted</p>
               </div>
               <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Users className="h-6 w-6 text-blue-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Completed Goals */}
-        <Card className="overflow-hidden border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                <p className="text-3xl font-bold text-foreground mt-1">
-                  {goals.filter(g => g.progress === 100).length}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {Math.round((goals.filter(g => g.progress === 100).length / goals.length) * 100)}% completion rate
-                </p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <Award className="h-6 w-6 text-green-500" />
+                <Target className="h-6 w-6 text-blue-500" />
               </div>
             </div>
           </CardContent>
@@ -189,15 +167,31 @@ export default function PerformanceTracker() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Readiness</p>
-                <p className="text-3xl font-bold text-foreground mt-1">72%</p>
-                <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +8% this week
+                <p className="text-sm font-medium text-muted-foreground">Career Readiness</p>
+                <p className="text-3xl font-bold text-foreground mt-1">
+                  {performanceData[performanceData.length - 1].careerReadiness}%
                 </p>
               </div>
               <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-amber-500" />
+                <Award className="h-6 w-6 text-amber-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* This Week Growth */}
+        <Card className="overflow-hidden border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">This Week</p>
+                <p className="text-3xl font-bold text-green-600 mt-1 flex items-center gap-1">
+                  <TrendingUp className="h-6 w-6" />
+                  +{performanceData[performanceData.length - 1].careerReadiness - performanceData[performanceData.length - 2].careerReadiness}%
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-green-500" />
               </div>
             </div>
           </CardContent>
