@@ -33,7 +33,9 @@ const THEME_COLORS = [
 export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfileProps) {
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(0);
+  const [loadedSchool, setLoadedSchool] = useState<School | null>(null);
 
   const [profileForm, setProfileForm] = useState({
     school_name: "",
@@ -68,41 +70,83 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
     secondary_color: THEME_COLORS[0].secondary,
   });
 
-  // Load school data when schoolInfo changes
+  // Fetch school data if not provided
   useEffect(() => {
-    if (schoolInfo) {
-      console.log('Loading school info into form:', schoolInfo);
+    const fetchSchoolData = async () => {
+      if (!schoolInfo && !loadedSchool) {
+        setLoading(true);
+        try {
+          console.log('SchoolProfile: schoolInfo not provided, fetching from DB...');
+          const schools = await adminService.getSchools();
+          console.log('All schools:', schools);
+
+          // Try to find school with registration number TRD-009890
+          const school = schools.find(s => s.registration_number === 'TRD-009890');
+
+          if (school) {
+            console.log('Found school:', school);
+            setLoadedSchool(school);
+          } else {
+            console.log('No school found with registration TRD-009890');
+            toast({
+              title: "Info",
+              description: "Please ensure your school is registered first",
+              variant: "default",
+            });
+          }
+        } catch (error: any) {
+          console.error('Error fetching school data:', error);
+          toast({
+            title: "Error",
+            description: "Failed to load school data",
+            variant: "destructive",
+          });
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchSchoolData();
+  }, [schoolInfo, loadedSchool]);
+
+  // Load school data into form (from either schoolInfo prop or loaded school)
+  useEffect(() => {
+    const school = schoolInfo || loadedSchool;
+
+    if (school) {
+      console.log('Loading school info into form:', school);
 
       // Find matching theme color
       const themeIndex = THEME_COLORS.findIndex(
-        (t) => t.primary === schoolInfo.primary_color
+        (t) => t.primary === school.primary_color
       );
       if (themeIndex !== -1) {
         setSelectedTheme(themeIndex);
       }
 
       setProfileForm({
-        school_name: schoolInfo.school_name || "",
-        registration_number: schoolInfo.registration_number || "",
-        established_year: schoolInfo.established_year?.toString() || "",
-        school_type: schoolInfo.school_type || "",
-        ownership: schoolInfo.ownership || "",
-        motto: schoolInfo.motto || "",
-        mission: schoolInfo.mission || "",
-        vision: schoolInfo.vision || "",
-        contact_email: schoolInfo.contact_email || "",
-        contact_phone: schoolInfo.contact_phone || "",
-        alternative_phone: schoolInfo.alternative_phone || "",
-        website: schoolInfo.website || "",
-        address: schoolInfo.address || "",
-        city: schoolInfo.city || "",
-        region: schoolInfo.region || "",
-        postal_code: schoolInfo.postal_code || "",
-        total_capacity: schoolInfo.total_capacity?.toString() || "",
-        current_enrollment: schoolInfo.current_enrollment?.toString() || "",
-        teaching_staff: schoolInfo.teaching_staff?.toString() || "",
-        non_teaching_staff: schoolInfo.non_teaching_staff?.toString() || "",
-        facilities: schoolInfo.facilities || {
+        school_name: school.school_name || "",
+        registration_number: school.registration_number || "",
+        established_year: school.established_year?.toString() || "",
+        school_type: school.school_type || "",
+        ownership: school.ownership || "",
+        motto: school.motto || "",
+        mission: school.mission || "",
+        vision: school.vision || "",
+        contact_email: school.contact_email || "",
+        contact_phone: school.contact_phone || "",
+        alternative_phone: school.alternative_phone || "",
+        website: school.website || "",
+        address: school.address || "",
+        city: school.city || "",
+        region: school.region || "",
+        postal_code: school.postal_code || "",
+        total_capacity: school.total_capacity?.toString() || "",
+        current_enrollment: school.current_enrollment?.toString() || "",
+        teaching_staff: school.teaching_staff?.toString() || "",
+        non_teaching_staff: school.non_teaching_staff?.toString() || "",
+        facilities: school.facilities || {
           library: false,
           laboratory: false,
           computer_lab: false,
@@ -110,11 +154,11 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
           hostel: false,
           cafeteria: false,
         },
-        primary_color: schoolInfo.primary_color || THEME_COLORS[0].primary,
-        secondary_color: schoolInfo.secondary_color || THEME_COLORS[0].secondary,
+        primary_color: school.primary_color || THEME_COLORS[0].primary,
+        secondary_color: school.secondary_color || THEME_COLORS[0].secondary,
       });
     }
-  }, [schoolInfo]);
+  }, [schoolInfo, loadedSchool]);
 
   const handleThemeSelect = (index: number) => {
     setSelectedTheme(index);
@@ -126,10 +170,13 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
   };
 
   const handleSave = async () => {
-    if (!schoolInfo?.id) {
+    // Use either schoolInfo or loadedSchool
+    const school = schoolInfo || loadedSchool;
+
+    if (!school?.id) {
       toast({
         title: "Error",
-        description: "School information not available",
+        description: "School information not available. Please try refreshing the page.",
         variant: "destructive",
       });
       return;
@@ -138,6 +185,7 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
     setSaving(true);
     try {
       console.log('Saving school profile:', profileForm);
+      console.log('Using school:', school);
 
       // Prepare update data
       const updateData: Partial<School> = {
@@ -164,7 +212,7 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
         facilities: profileForm.facilities,
       };
 
-      await adminService.updateSchool(schoolInfo.id, updateData);
+      await adminService.updateSchool(school.id, updateData);
 
       toast({
         title: "Success",
