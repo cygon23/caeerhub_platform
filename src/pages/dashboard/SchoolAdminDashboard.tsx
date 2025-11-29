@@ -376,21 +376,32 @@ export default function SchoolAdminDashboard() {
           </div>
 
           {/* Students by Form Level */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Students by Form Level</CardTitle>
+          <Card className="shadow-md hover:shadow-xl transition-shadow duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center">
+                <GraduationCap className="h-5 w-5 mr-2" style={{ color: schoolInfo?.primary_color || '#FE047F' }} />
+                Students by Form Level
+              </CardTitle>
+              <CardDescription>Distribution across all form levels</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className='grid grid-cols-2 md:grid-cols-6 gap-4'>
+              <div className='grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4'>
                 {[1, 2, 3, 4, 5, 6].map(form => (
-                  <div key={form} className="text-center p-4 bg-gradient-accent rounded-lg">
+                  <div
+                    key={form}
+                    className="relative text-center p-4 bg-gradient-accent rounded-lg hover:scale-105 transition-transform duration-200 cursor-pointer border border-border/50"
+                    style={{
+                      boxShadow: `0 4px 6px -1px ${schoolInfo?.primary_color || '#FE047F'}20`
+                    }}
+                  >
+                    <div className="absolute top-1 right-1 w-2 h-2 rounded-full" style={{ backgroundColor: schoolInfo?.primary_color || '#FE047F' }}></div>
                     <div
-                      className="text-2xl font-bold"
+                      className="text-3xl font-bold mb-1"
                       style={{ color: schoolInfo?.primary_color || '#FE047F' }}
                     >
                       {stats?.byFormLevel[form] || 0}
                     </div>
-                    <div className="text-sm text-muted-foreground">Form {form}</div>
+                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Form {form}</div>
                   </div>
                 ))}
               </div>
@@ -398,61 +409,130 @@ export default function SchoolAdminDashboard() {
           </Card>
 
           {/* Quick Actions */}
-          <Card>
+          <Card className="bg-gradient-card border-0 shadow-lg">
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle className="flex items-center">
+                <Activity className="h-5 w-5 mr-2" style={{ color: schoolInfo?.primary_color || '#FE047F' }} />
+                Quick Actions
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button
                 onClick={() => setActiveSection('students')}
-                className="h-20 flex flex-col items-center justify-center space-y-2">
-                <Users className="h-6 w-6" />
-                <span>Manage Students</span>
+                className="h-24 flex flex-col items-center justify-center space-y-2 text-white hover:opacity-90 transition-opacity"
+                style={{
+                  background: schoolInfo?.primary_color
+                    ? `linear-gradient(135deg, ${schoolInfo.primary_color} 0%, ${schoolInfo.secondary_color} 100%)`
+                    : undefined
+                }}>
+                <Users className="h-7 w-7" />
+                <span className="font-semibold">Manage Students</span>
               </Button>
               <Button
                 onClick={() => setActiveSection('analytics')}
                 variant="outline"
-                className="h-20 flex flex-col items-center justify-center space-y-2">
-                <BarChart3 className="h-6 w-6" />
-                <span>View Reports</span>
+                className="h-24 flex flex-col items-center justify-center space-y-2 hover:shadow-lg transition-all border-2"
+                style={{
+                  borderColor: schoolInfo?.primary_color || '#FE047F',
+                  color: schoolInfo?.primary_color || '#FE047F'
+                }}>
+                <BarChart3 className="h-7 w-7" />
+                <span className="font-semibold">View Reports</span>
               </Button>
               <Button
                 onClick={() => setActiveSection('profile')}
                 variant="outline"
-                className="h-20 flex flex-col items-center justify-center space-y-2">
-                <Settings className="h-6 w-6" />
-                <span>School Settings</span>
+                className="h-24 flex flex-col items-center justify-center space-y-2 hover:shadow-lg transition-all border-2"
+                style={{
+                  borderColor: schoolInfo?.secondary_color || '#006807',
+                  color: schoolInfo?.secondary_color || '#006807'
+                }}>
+                <Settings className="h-7 w-7" />
+                <span className="font-semibold">School Settings</span>
               </Button>
             </CardContent>
           </Card>
 
           {/* School Info */}
           {schoolInfo && (
-            <Card>
-              <CardHeader>
-                <CardTitle>School Information</CardTitle>
+            <Card className="shadow-md border-l-4" style={{ borderLeftColor: schoolInfo?.primary_color || '#FE047F' }}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center">
+                  <Building className="h-5 w-5 mr-2" style={{ color: schoolInfo?.primary_color || '#FE047F' }} />
+                  School Information
+                </CardTitle>
+                <CardDescription>Your school's registered details</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">School Name</p>
-                    <p className="font-medium">{schoolInfo.school_name}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Building className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">School Name</p>
+                    </div>
+                    <p className="text-lg font-semibold pl-6">{schoolInfo.school_name}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Registration Number</p>
-                    <p className="font-medium"><code className="bg-muted px-2 py-1 rounded">{schoolInfo.registration_number}</code></p>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="h-4 w-4 rounded-full p-0" />
+                      <p className="text-sm font-medium text-muted-foreground">Registration Number</p>
+                    </div>
+                    <p className="pl-6">
+                      <code className="bg-muted px-3 py-1.5 rounded font-mono text-sm font-semibold" style={{ color: schoolInfo?.primary_color || '#FE047F' }}>
+                        {schoolInfo.registration_number}
+                      </code>
+                    </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Contact Email</p>
-                    <p className="font-medium">{schoolInfo.contact_email}</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">Contact Email</p>
+                    </div>
+                    <p className="font-medium pl-6">{schoolInfo.contact_email}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Contact Phone</p>
-                    <p className="font-medium">{schoolInfo.contact_phone}</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">Contact Phone</p>
+                    </div>
+                    <p className="font-medium pl-6">{schoolInfo.contact_phone}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Status</p>
-                    <Badge variant="default" className="capitalize">{schoolInfo.status}</Badge>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">Status</p>
+                    </div>
+                    <div className="pl-6">
+                      <Badge
+                        variant="default"
+                        className="capitalize font-semibold"
+                        style={{
+                          backgroundColor: schoolInfo.status === 'approved' ? (schoolInfo?.primary_color || '#10B981') : undefined
+                        }}
+                      >
+                        {schoolInfo.status}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Palette className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">School Colors</p>
+                    </div>
+                    <div className="pl-6 flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div
+                          className="w-8 h-8 rounded-md shadow-sm border border-border"
+                          style={{ backgroundColor: schoolInfo?.primary_color || '#FE047F' }}
+                          title="Primary Color"
+                        />
+                        <div
+                          className="w-8 h-8 rounded-md shadow-sm border border-border"
+                          style={{ backgroundColor: schoolInfo?.secondary_color || '#006807' }}
+                          title="Secondary Color"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -789,6 +869,11 @@ export default function SchoolAdminDashboard() {
               <Button
                 variant={activeSection === "overview" ? "default" : "ghost"}
                 className='w-full justify-start mb-4'
+                style={
+                  activeSection === "overview" && schoolInfo?.primary_color
+                    ? { backgroundColor: schoolInfo.primary_color, color: 'white' }
+                    : undefined
+                }
                 onClick={() => setActiveSection("overview")}>
                 <BarChart3 className='h-4 w-4 mr-2' />
                 Dashboard Overview
@@ -806,8 +891,13 @@ export default function SchoolAdminDashboard() {
                           onClick={() => setActiveSection(item.id)}
                           className={
                             activeSection === item.id
-                              ? "bg-primary text-primary-foreground"
+                              ? "text-primary-foreground"
                               : ""
+                          }
+                          style={
+                            activeSection === item.id && schoolInfo?.primary_color
+                              ? { backgroundColor: schoolInfo.primary_color, color: 'white' }
+                              : undefined
                           }>
                           <item.icon className='h-4 w-4' />
                           <span>{item.title}</span>
