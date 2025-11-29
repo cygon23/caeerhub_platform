@@ -400,6 +400,7 @@ class AdminService {
     };
 
     console.log('Creating student with data:', requestBody);
+    console.log('User ID (created_by):', user.user?.id);
 
     // Call Edge Function to create student with auth account
     const { data, error } = await supabase.functions.invoke('create-student-with-auth', {
@@ -410,11 +411,12 @@ class AdminService {
 
     if (error) {
       console.error('Edge Function error:', error);
-      throw error;
+      console.error('Error details:', error.message, error.context);
+      throw new Error(`Failed to create student: ${error.message}`);
     }
     if (data?.error) {
       console.error('Data error:', data);
-      throw new Error(JSON.stringify(data));
+      throw new Error(data.error + (data.missingFields ? ` (Missing: ${data.missingFields.join(', ')})` : ''));
     }
 
     return data.student;
