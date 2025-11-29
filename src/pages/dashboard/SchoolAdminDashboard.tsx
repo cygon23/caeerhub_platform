@@ -11,6 +11,15 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +40,8 @@ import {
   Phone,
   MapPin,
   Palette,
+  ChevronDown,
+  LogOut,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import StudentManagement from "@/components/school/StudentManagement";
@@ -753,25 +764,89 @@ export default function SchoolAdminDashboard() {
             ))}
           </SidebarContent>
 
-          <div className='p-4 border-t border-border'>
-            <div className='text-xs text-muted-foreground mb-2'>
-              Logged in as:
-            </div>
-            <div className='text-sm font-medium text-foreground'>
-              {user?.email}
-            </div>
-            {schoolInfo && (
-              <div className='text-xs text-muted-foreground mt-1'>
-                {schoolInfo.school_name}
-              </div>
-            )}
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={logout}
-              className='w-full mt-2 text-muted-foreground hover:text-foreground'>
-              Sign Out
-            </Button>
+          {/* Professional User Profile Section */}
+          <div className='p-3 border-t border-border bg-muted/30'>
+            <DropdownMenu>
+              <DropdownMenuTrigger className='w-full focus:outline-none'>
+                <div className='flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group'>
+                  {/* Avatar with Initials */}
+                  <Avatar className='h-10 w-10 border-2 border-primary/20 group-hover:border-primary/40 transition-colors'>
+                    <AvatarImage src={user?.avatarUrl} alt={user?.name} />
+                    <AvatarFallback className='bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-semibold text-sm'>
+                      {user?.email?.charAt(0)?.toUpperCase() || 'A'}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  {/* User Info */}
+                  <div className='flex-1 text-left min-w-0'>
+                    <div className='text-sm font-medium text-foreground truncate'>
+                      {schoolInfo?.school_name || user?.email?.split('@')[0] || 'Admin'}
+                    </div>
+                    <div className='flex items-center gap-1.5 mt-0.5'>
+                      <Badge
+                        variant='outline'
+                        className='text-[10px] px-1.5 py-0 h-4 border-primary/30 bg-primary/5 text-primary font-medium'
+                      >
+                        School Admin
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Dropdown Icon */}
+                  <ChevronDown className='h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0' />
+                </div>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align='end'
+                className='w-56 mb-2'
+                sideOffset={8}
+              >
+                <DropdownMenuLabel className='font-normal'>
+                  <div className='flex flex-col space-y-1'>
+                    <p className='text-sm font-medium leading-none'>
+                      {schoolInfo?.school_name || 'School Admin'}
+                    </p>
+                    <p className='text-xs leading-none text-muted-foreground'>
+                      {user?.email}
+                    </p>
+                    {schoolInfo?.registration_number && (
+                      <p className='text-xs leading-none text-muted-foreground'>
+                        Reg: {schoolInfo.registration_number}
+                      </p>
+                    )}
+                  </div>
+                </DropdownMenuLabel>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={() => setActiveSection('profile')}
+                  className='cursor-pointer'
+                >
+                  <Settings className='mr-2 h-4 w-4' />
+                  <span>School Profile</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => setActiveSection('students')}
+                  className='cursor-pointer'
+                >
+                  <Users className='mr-2 h-4 w-4' />
+                  <span>Manage Students</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  onClick={logout}
+                  className='cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/30'
+                >
+                  <LogOut className='mr-2 h-4 w-4' />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </Sidebar>
 
