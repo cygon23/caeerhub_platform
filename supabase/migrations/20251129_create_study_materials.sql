@@ -2,8 +2,8 @@
 -- Study Materials Table & Storage Setup
 -- =====================================================
 
--- Create study_materials table
-CREATE TABLE IF NOT EXISTS public.study_materials (
+-- Create school_study_materials table
+CREATE TABLE IF NOT EXISTS public.school_study_materials (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   school_id TEXT NOT NULL REFERENCES public.school_registrations(registration_number) ON DELETE CASCADE,
 
@@ -45,20 +45,20 @@ CREATE TABLE IF NOT EXISTS public.study_materials (
 );
 
 -- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_study_materials_school_id ON public.study_materials(school_id);
-CREATE INDEX IF NOT EXISTS idx_study_materials_type ON public.study_materials(type);
-CREATE INDEX IF NOT EXISTS idx_study_materials_subject ON public.study_materials(subject);
-CREATE INDEX IF NOT EXISTS idx_study_materials_form_level ON public.study_materials(form_level);
-CREATE INDEX IF NOT EXISTS idx_study_materials_created_at ON public.study_materials(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_school_study_materials_school_id ON public.school_study_materials(school_id);
+CREATE INDEX IF NOT EXISTS idx_school_study_materials_type ON public.school_study_materials(type);
+CREATE INDEX IF NOT EXISTS idx_school_study_materials_subject ON public.school_study_materials(subject);
+CREATE INDEX IF NOT EXISTS idx_school_study_materials_form_level ON public.school_study_materials(form_level);
+CREATE INDEX IF NOT EXISTS idx_school_study_materials_created_at ON public.school_study_materials(created_at DESC);
 
 -- Enable Row Level Security
-ALTER TABLE public.study_materials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.school_study_materials ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 
 -- Policy: School admins can view their own school's materials
 CREATE POLICY "School admins can view own materials"
-  ON public.study_materials
+  ON public.school_study_materials
   FOR SELECT
   TO authenticated
   USING (
@@ -71,7 +71,7 @@ CREATE POLICY "School admins can view own materials"
 
 -- Policy: School admins can insert materials for their school
 CREATE POLICY "School admins can insert materials"
-  ON public.study_materials
+  ON public.school_study_materials
   FOR INSERT
   TO authenticated
   WITH CHECK (
@@ -84,7 +84,7 @@ CREATE POLICY "School admins can insert materials"
 
 -- Policy: School admins can update their own school's materials
 CREATE POLICY "School admins can update own materials"
-  ON public.study_materials
+  ON public.school_study_materials
   FOR UPDATE
   TO authenticated
   USING (
@@ -104,7 +104,7 @@ CREATE POLICY "School admins can update own materials"
 
 -- Policy: School admins can delete their own school's materials
 CREATE POLICY "School admins can delete own materials"
-  ON public.study_materials
+  ON public.school_study_materials
   FOR DELETE
   TO authenticated
   USING (
@@ -145,7 +145,7 @@ CREATE POLICY "School admins can delete own materials"
 -- =====================================================
 
 -- Function to update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_study_materials_updated_at()
+CREATE OR REPLACE FUNCTION update_school_study_materials_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();
@@ -154,16 +154,16 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to auto-update updated_at
-CREATE TRIGGER update_study_materials_timestamp
-  BEFORE UPDATE ON public.study_materials
+CREATE TRIGGER update_school_study_materials_timestamp
+  BEFORE UPDATE ON public.school_study_materials
   FOR EACH ROW
-  EXECUTE FUNCTION update_study_materials_updated_at();
+  EXECUTE FUNCTION update_school_study_materials_updated_at();
 
 -- =====================================================
 -- Sample Data (optional - remove in production)
 -- =====================================================
 
-COMMENT ON TABLE public.study_materials IS 'Stores educational materials (videos, documents, links) for schools';
-COMMENT ON COLUMN public.study_materials.type IS 'Type of material: video, document, or link';
-COMMENT ON COLUMN public.study_materials.video_source IS 'Source of video: upload, youtube, vimeo, or external';
-COMMENT ON COLUMN public.study_materials.file_size IS 'File size in bytes (max 50MB for documents)';
+COMMENT ON TABLE public.school_study_materials IS 'Stores educational materials (videos, documents, links) for schools';
+COMMENT ON COLUMN public.school_study_materials.type IS 'Type of material: video, document, or link';
+COMMENT ON COLUMN public.school_study_materials.video_source IS 'Source of video: upload, youtube, vimeo, or external';
+COMMENT ON COLUMN public.school_study_materials.file_size IS 'File size in bytes (max 50MB for documents)';

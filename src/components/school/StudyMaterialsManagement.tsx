@@ -98,7 +98,7 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('study_materials')
+        .from('school_study_materials')
         .select('*')
         .eq('school_id', schoolId)
         .order('created_at', { ascending: false });
@@ -232,7 +232,7 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
         }
       }
 
-      const { error } = await supabase.from('study_materials').insert({
+      const { error } = await supabase.from('school_study_materials').insert({
         school_id: schoolId,
         title: materialForm.title,
         description: materialForm.description,
@@ -279,7 +279,7 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
       }
 
       const { error } = await supabase
-        .from('study_materials')
+        .from('school_study_materials')
         .delete()
         .eq('id', deleteDialog.id);
 
@@ -306,7 +306,7 @@ export default function StudyMaterialsManagement({ schoolInfo }: StudyMaterialsM
 
     try {
       const { error } = await supabase
-        .from('study_materials')
+        .from('school_study_materials')
         .update({
           title: materialForm.title,
           description: materialForm.description,
