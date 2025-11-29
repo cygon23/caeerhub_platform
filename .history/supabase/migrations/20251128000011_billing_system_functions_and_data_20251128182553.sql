@@ -576,9 +576,9 @@ COMMENT ON FUNCTION initialize_user_billing IS 'Automatically creates billing se
 
 DO $$
 BEGIN
-  RAISE NOTICE ' Billing system setup complete!';
-  RAISE NOTICE ' Functions created: can_use_feature, deduct_credits, add_credits, reset_monthly_credits';
-  RAISE NOTICE ' RLS policies enabled on all billing tables';
-  RAISE NOTICE ' Default subscription plans seeded';
-  RAISE NOTICE ' Sample promo codes created';
+  RAISE NOTICE '✅ Billing system setup complete!';
+  RAISE NOTICE '📊 Functions created: can_use_feature, deduct_credits, add_credits, reset_monthly_credits';
+  RAISE NOTICE '🔒 RLS policies enabled on all billing tables';
+  RAISE NOTICE '💳 Default subscription plans seeded';
+  RAISE NOTICE '🎁 Sample promo codes created';
 END $$;
