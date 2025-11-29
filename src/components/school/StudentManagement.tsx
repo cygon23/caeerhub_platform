@@ -37,6 +37,13 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
   const [excelData, setExcelData] = useState<any[]>([]);
   const [excelFile, setExcelFile] = useState<File | null>(null);
   const [uploadFormLevel, setUploadFormLevel] = useState<number>(1);
+  const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false);
+  const [studentCredentials, setStudentCredentials] = useState<{
+    studentName: string;
+    email: string;
+    registrationNumber: string;
+    password: string;
+  } | null>(null);
   const { toast} = useToast();
 
   useEffect(() => {
@@ -120,24 +127,39 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
 
   const handleCreateStudent = async () => {
     try {
-      // Generate registration number if not provided
-      const regNumber = studentForm.registration_number ||
-        `${schoolId}-${new Date().getFullYear()}-${String(students.length + 1).padStart(4, '0')}`;
-
-      await adminService.createStudent({
-        ...studentForm,
-        school_id: schoolId,
-        registration_number: regNumber,
+      // Don't send school_id or registration_number - they'll be auto-generated
+      const result = await adminService.createStudent({
         student_name: studentForm.student_name!,
         form_level: studentForm.form_level!,
-        status: studentForm.status as any,
+        email: studentForm.email,
+        phone: studentForm.phone,
+        gender: studentForm.gender,
+        date_of_birth: studentForm.date_of_birth,
+        guardian_name: studentForm.guardian_name,
+        guardian_phone: studentForm.guardian_phone,
+        guardian_email: studentForm.guardian_email,
+        status: studentForm.status as any || 'active',
       } as any);
 
-      toast({
-        title: "Success",
-        description: "Student created successfully",
-      });
+      // Close create dialog
       setCreateDialogOpen(false);
+
+      // If auth was created, show credentials
+      if (result.defaultPassword && result.registrationNumber) {
+        setStudentCredentials({
+          studentName: studentForm.student_name!,
+          email: studentForm.email || '',
+          registrationNumber: result.registrationNumber,
+          password: result.defaultPassword,
+        });
+        setCredentialsDialogOpen(true);
+      } else {
+        toast({
+          title: "Success",
+          description: "Student created successfully (no email provided, no login credentials)",
+        });
+      }
+
       loadStudents();
     } catch (error: any) {
       toast({
@@ -267,13 +289,10 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
     try {
       for (const row of excelData) {
         try {
-          const regNumber = `${schoolId}-${new Date().getFullYear()}-${String(students.length + successCount + 1).padStart(4, '0')}`;
-
+          // Don't send school_id or registration_number - they'll be auto-generated
           await adminService.createStudent({
-            school_id: schoolId,
             student_name: row['Student Name'] || row['student_name'],
             form_level: uploadFormLevel, // Use selected form level from dialog
-            registration_number: regNumber,
             email: row['Email'] || row['email'],
             phone: row['Phone'] || row['phone'],
             gender: row['Gender'] || row['gender'],
@@ -1047,6 +1066,98 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
                   Upload {excelData.length} Students
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Student Credentials Dialog */}
+      <Dialog open={credentialsDialogOpen} onOpenChange={setCredentialsDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <CheckCircle className="h-5 w-5" />
+              Student Created Successfully!
+            </DialogTitle>
+            <DialogDescription>
+              Save these login credentials for the student
+            </DialogDescription>
+          </DialogHeader>
+
+          {studentCredentials && (
+            <div className="space-y-4">
+              <div className="bg-muted p-4 rounded-lg space-y-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Student Name</Label>
+                  <p className="text-sm font-semibold">{studentCredentials.studentName}</p>
+                </div>
+
+                <div>
+                  <Label className="text-xs text-muted-foreground">Registration Number</Label>
+                  <div className="flex items-center gap-2">
+                    <code className="text-sm font-mono bg-background px-2 py-1 rounded flex-1">
+                      {studentCredentials.registrationNumber}
+                    </code>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(studentCredentials.registrationNumber);
+                        toast({ title: "Copied!", description: "Registration number copied to clipboard" });
+                      }}
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-xs text-muted-foreground">Email</Label>
+                  <p className="text-sm">{studentCredentials.email}</p>
+                </div>
+
+                <div className="border-t pt-3">
+                  <Label className="text-xs text-muted-foreground">Default Password</Label>
+                  <div className="flex items-center gap-2">
+                    <code className="text-lg font-mono bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 px-3 py-2 rounded font-bold flex-1">
+                      {studentCredentials.password}
+                    </code>
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => {
+                        navigator.clipboard.writeText(studentCredentials.password);
+                        toast({ title: "Copied!", description: "Password copied to clipboard" });
+                      }}
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                    ⚠️ Student should change this password after first login
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  <strong>Login Instructions:</strong><br />
+                  The student can login using their email and the password shown above.
+                  They should change their password immediately after first login.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setCredentialsDialogOpen(false);
+                setStudentCredentials(null);
+              }}
+              className="w-full"
+            >
+              Done
             </Button>
           </DialogFooter>
         </DialogContent>
