@@ -597,6 +597,38 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "profile") {
+      // Show loading state
+      if (loading) {
+        return (
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-96 w-full" />
+          </div>
+        );
+      }
+
+      // Show error if no school info
+      if (!schoolInfo) {
+        return (
+          <Card>
+            <CardContent className='p-12 text-center'>
+              <div className='w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4'>
+                <Building className='h-8 w-8 text-white' />
+              </div>
+              <h3 className='text-xl font-semibold text-foreground mb-2'>
+                Unable to Load School Profile
+              </h3>
+              <p className='text-muted-foreground mb-4'>
+                Please check the browser console for details and contact support if the issue persists.
+              </p>
+              <Button onClick={loadSchoolInfo} variant="outline">
+                Retry Loading
+              </Button>
+            </CardContent>
+          </Card>
+        );
+      }
+
       return <SchoolProfile schoolInfo={schoolInfo} onUpdate={loadSchoolInfo} />;
     }
 
