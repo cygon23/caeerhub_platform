@@ -597,7 +597,7 @@ export default function SchoolAdminDashboard() {
     }
 
     if (activeSection === "profile") {
-      return <SchoolProfile schoolInfo={schoolInfo} />;
+      return <SchoolProfile schoolInfo={schoolInfo} onUpdate={loadSchoolInfo} />;
     }
 
                 {/* School Branding - Color Selection */}

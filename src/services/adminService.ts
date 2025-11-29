@@ -37,6 +37,28 @@ export interface School {
   updated_at: string;
   reviewed_at?: string;
   reviewed_by?: string;
+  // Extended profile fields
+  established_year?: number;
+  school_type?: 'secondary' | 'primary' | 'combined';
+  ownership?: 'government' | 'private' | 'religious' | 'community';
+  motto?: string;
+  mission?: string;
+  vision?: string;
+  alternative_phone?: string;
+  website?: string;
+  postal_code?: string;
+  total_capacity?: number;
+  current_enrollment?: number;
+  teaching_staff?: number;
+  non_teaching_staff?: number;
+  facilities?: {
+    library: boolean;
+    laboratory: boolean;
+    computer_lab: boolean;
+    sports_ground: boolean;
+    hostel: boolean;
+    cafeteria: boolean;
+  };
 }
 
 export interface Student {

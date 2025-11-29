@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,28 +6,46 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building, Mail, Phone, MapPin, Globe, Users, Calendar, Award, Save } from "lucide-react";
+import { Building, Mail, Phone, MapPin, Globe, Users, Calendar, Award, Save, Palette, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { adminService, School } from "@/services/adminService";
+import { Badge } from "@/components/ui/badge";
 
 interface SchoolProfileProps {
-  schoolInfo?: any;
+  schoolInfo?: School;
+  onUpdate?: () => void;
 }
 
-export default function SchoolProfile({ schoolInfo }: SchoolProfileProps) {
+// 10 predefined theme colors for schools
+const THEME_COLORS = [
+  { name: 'Royal Blue', primary: '#2563EB', secondary: '#1E40AF' },
+  { name: 'Emerald Green', primary: '#10B981', secondary: '#059669' },
+  { name: 'Crimson Red', primary: '#DC2626', secondary: '#B91C1C' },
+  { name: 'Purple', primary: '#9333EA', secondary: '#7E22CE' },
+  { name: 'Orange', primary: '#F97316', secondary: '#EA580C' },
+  { name: 'Teal', primary: '#14B8A6', secondary: '#0D9488' },
+  { name: 'Pink', primary: '#EC4899', secondary: '#DB2777' },
+  { name: 'Amber', primary: '#F59E0B', secondary: '#D97706' },
+  { name: 'Indigo', primary: '#6366F1', secondary: '#4F46E5' },
+  { name: 'Slate', primary: '#64748B', secondary: '#475569' },
+];
+
+export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfileProps) {
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState(0);
 
   const [profileForm, setProfileForm] = useState({
-    school_name: schoolInfo?.school_name || "",
-    registration_number: schoolInfo?.registration_number || "",
+    school_name: "",
+    registration_number: "",
     established_year: "",
     school_type: "",
     ownership: "",
     motto: "",
     mission: "",
     vision: "",
-    contact_email: schoolInfo?.contact_email || "",
-    contact_phone: schoolInfo?.contact_phone || "",
+    contact_email: "",
+    contact_phone: "",
     alternative_phone: "",
     website: "",
     address: "",
@@ -46,18 +64,127 @@ export default function SchoolProfile({ schoolInfo }: SchoolProfileProps) {
       hostel: false,
       cafeteria: false,
     },
+    primary_color: THEME_COLORS[0].primary,
+    secondary_color: THEME_COLORS[0].secondary,
   });
 
-  const handleSave = () => {
-    setSaving(true);
-    // TODO: Implement save logic
-    setTimeout(() => {
-      setSaving(false);
+  // Load school data when schoolInfo changes
+  useEffect(() => {
+    if (schoolInfo) {
+      console.log('Loading school info into form:', schoolInfo);
+
+      // Find matching theme color
+      const themeIndex = THEME_COLORS.findIndex(
+        (t) => t.primary === schoolInfo.primary_color
+      );
+      if (themeIndex !== -1) {
+        setSelectedTheme(themeIndex);
+      }
+
+      setProfileForm({
+        school_name: schoolInfo.school_name || "",
+        registration_number: schoolInfo.registration_number || "",
+        established_year: schoolInfo.established_year?.toString() || "",
+        school_type: schoolInfo.school_type || "",
+        ownership: schoolInfo.ownership || "",
+        motto: schoolInfo.motto || "",
+        mission: schoolInfo.mission || "",
+        vision: schoolInfo.vision || "",
+        contact_email: schoolInfo.contact_email || "",
+        contact_phone: schoolInfo.contact_phone || "",
+        alternative_phone: schoolInfo.alternative_phone || "",
+        website: schoolInfo.website || "",
+        address: schoolInfo.address || "",
+        city: schoolInfo.city || "",
+        region: schoolInfo.region || "",
+        postal_code: schoolInfo.postal_code || "",
+        total_capacity: schoolInfo.total_capacity?.toString() || "",
+        current_enrollment: schoolInfo.current_enrollment?.toString() || "",
+        teaching_staff: schoolInfo.teaching_staff?.toString() || "",
+        non_teaching_staff: schoolInfo.non_teaching_staff?.toString() || "",
+        facilities: schoolInfo.facilities || {
+          library: false,
+          laboratory: false,
+          computer_lab: false,
+          sports_ground: false,
+          hostel: false,
+          cafeteria: false,
+        },
+        primary_color: schoolInfo.primary_color || THEME_COLORS[0].primary,
+        secondary_color: schoolInfo.secondary_color || THEME_COLORS[0].secondary,
+      });
+    }
+  }, [schoolInfo]);
+
+  const handleThemeSelect = (index: number) => {
+    setSelectedTheme(index);
+    setProfileForm({
+      ...profileForm,
+      primary_color: THEME_COLORS[index].primary,
+      secondary_color: THEME_COLORS[index].secondary,
+    });
+  };
+
+  const handleSave = async () => {
+    if (!schoolInfo?.id) {
       toast({
-        title: "Profile Updated",
+        title: "Error",
+        description: "School information not available",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      console.log('Saving school profile:', profileForm);
+
+      // Prepare update data
+      const updateData: Partial<School> = {
+        contact_email: profileForm.contact_email,
+        contact_phone: profileForm.contact_phone,
+        address: profileForm.address,
+        city: profileForm.city,
+        region: profileForm.region,
+        primary_color: profileForm.primary_color,
+        secondary_color: profileForm.secondary_color,
+        established_year: profileForm.established_year ? parseInt(profileForm.established_year) : undefined,
+        school_type: profileForm.school_type as any,
+        ownership: profileForm.ownership as any,
+        motto: profileForm.motto,
+        mission: profileForm.mission,
+        vision: profileForm.vision,
+        alternative_phone: profileForm.alternative_phone,
+        website: profileForm.website,
+        postal_code: profileForm.postal_code,
+        total_capacity: profileForm.total_capacity ? parseInt(profileForm.total_capacity) : undefined,
+        current_enrollment: profileForm.current_enrollment ? parseInt(profileForm.current_enrollment) : undefined,
+        teaching_staff: profileForm.teaching_staff ? parseInt(profileForm.teaching_staff) : undefined,
+        non_teaching_staff: profileForm.non_teaching_staff ? parseInt(profileForm.non_teaching_staff) : undefined,
+        facilities: profileForm.facilities,
+      };
+
+      await adminService.updateSchool(schoolInfo.id, updateData);
+
+      toast({
+        title: "Success",
         description: "School profile has been successfully updated.",
       });
-    }, 1000);
+
+      // Call onUpdate callback if provided
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error: any) {
+      console.error('Error saving school profile:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update school profile",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -75,11 +202,12 @@ export default function SchoolProfile({ schoolInfo }: SchoolProfileProps) {
       </div>
 
       <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="basic">Basic Info</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="infrastructure">Infrastructure</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="theme">Theme</TabsTrigger>
         </TabsList>
 
         {/* Basic Information */}
@@ -90,7 +218,7 @@ export default function SchoolProfile({ schoolInfo }: SchoolProfileProps) {
                 <Building className="h-5 w-5" />
                 Basic Information
               </CardTitle>
-              <CardDescription>Core details about your school</CardDescription>
+              <CardDescription>Core details about your school (Name and Registration Number cannot be changed)</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -98,18 +226,19 @@ export default function SchoolProfile({ schoolInfo }: SchoolProfileProps) {
                   <Label>School Name *</Label>
                   <Input
                     value={profileForm.school_name}
-                    onChange={(e) => setProfileForm({ ...profileForm, school_name: e.target.value })}
-                    placeholder="Enter school name"
+                    disabled
+                    className="bg-muted cursor-not-allowed"
                   />
+                  <p className="text-xs text-muted-foreground mt-1">This field cannot be changed</p>
                 </div>
                 <div>
                   <Label>Registration Number *</Label>
                   <Input
                     value={profileForm.registration_number}
-                    onChange={(e) => setProfileForm({ ...profileForm, registration_number: e.target.value })}
-                    placeholder="REG-2024-001"
                     disabled
+                    className="bg-muted cursor-not-allowed"
                   />
+                  <p className="text-xs text-muted-foreground mt-1">This field cannot be changed</p>
                 </div>
                 <div>
                   <Label>Established Year</Label>
@@ -372,6 +501,73 @@ export default function SchoolProfile({ schoolInfo }: SchoolProfileProps) {
                 placeholder="Enter your school's vision statement"
                 rows={4}
               />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Theme Colors */}
+        <TabsContent value="theme" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5" />
+                School Theme Colors
+              </CardTitle>
+              <CardDescription>Choose your school's brand colors from our curated palette</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {THEME_COLORS.map((theme, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleThemeSelect(index)}
+                    className={`relative p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${
+                      selectedTheme === index ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-border'
+                    }`}
+                  >
+                    {selectedTheme === index && (
+                      <div className="absolute top-2 right-2">
+                        <Badge className="bg-primary">
+                          <Check className="h-3 w-3 mr-1" />
+                          Selected
+                        </Badge>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-2">
+                        <div
+                          className="w-12 h-12 rounded-lg shadow-sm"
+                          style={{ backgroundColor: theme.primary }}
+                        />
+                        <div
+                          className="w-12 h-12 rounded-lg shadow-sm"
+                          style={{ backgroundColor: theme.secondary }}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-foreground">{theme.name}</p>
+                        <div className="text-xs text-muted-foreground space-y-0.5">
+                          <div>Primary: {theme.primary}</div>
+                          <div>Secondary: {theme.secondary}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 p-4 bg-muted rounded-lg">
+                <h4 className="font-semibold mb-2">Preview</h4>
+                <p className="text-sm text-muted-foreground mb-3">This is how your selected colors will appear:</p>
+                <div className="flex gap-2">
+                  <Button style={{ backgroundColor: profileForm.primary_color }}>
+                    Primary Button
+                  </Button>
+                  <Button variant="outline" style={{ borderColor: profileForm.secondary_color, color: profileForm.secondary_color }}>
+                    Secondary Button
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
