@@ -114,8 +114,15 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
   useEffect(() => {
     const school = schoolInfo || loadedSchool;
 
+    console.log('=== Form Loading Effect ===');
+    console.log('schoolInfo:', schoolInfo);
+    console.log('loadedSchool:', loadedSchool);
+    console.log('Using school:', school);
+
     if (school) {
-      console.log('Loading school info into form:', school);
+      console.log('✅ School data found, loading into form...');
+      console.log('School Name:', school.school_name);
+      console.log('Registration Number:', school.registration_number);
 
       // Find matching theme color
       const themeIndex = THEME_COLORS.findIndex(
@@ -125,7 +132,7 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
         setSelectedTheme(themeIndex);
       }
 
-      setProfileForm({
+      const newFormData = {
         school_name: school.school_name || "",
         registration_number: school.registration_number || "",
         established_year: school.established_year?.toString() || "",
@@ -156,7 +163,13 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
         },
         primary_color: school.primary_color || THEME_COLORS[0].primary,
         secondary_color: school.secondary_color || THEME_COLORS[0].secondary,
-      });
+      };
+
+      console.log('📝 Setting form data:', newFormData);
+      setProfileForm(newFormData);
+      console.log('✅ Form state updated!');
+    } else {
+      console.log('❌ No school data available to load into form');
     }
   }, [schoolInfo, loadedSchool]);
 
@@ -235,8 +248,35 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
     }
   };
 
+  // Show loading state while fetching
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">School Profile</h2>
+          <p className="text-muted-foreground">Loading school information...</p>
+        </div>
+        <div className="space-y-4">
+          <div className="h-32 bg-muted animate-pulse rounded-lg" />
+          <div className="h-96 bg-muted animate-pulse rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {/* Debug Info - Remove this after testing */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded text-xs">
+          <strong>Debug Info:</strong>
+          <div>schoolInfo: {schoolInfo ? 'Provided' : 'Not provided'}</div>
+          <div>loadedSchool: {loadedSchool ? 'Loaded' : 'Not loaded'}</div>
+          <div>Form school_name: "{profileForm.school_name}"</div>
+          <div>Form registration_number: "{profileForm.registration_number}"</div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
