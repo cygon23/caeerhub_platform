@@ -251,7 +251,16 @@ export default function SchoolProfile({ schoolInfo, onUpdate }: SchoolProfilePro
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">School Profile</h2>
           <p className="text-muted-foreground">Manage your school's information and settings</p>
         </div>
-        <Button onClick={handleSave} disabled={saving} className="gap-2">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="gap-2 text-white hover:opacity-90"
+          style={{
+            background: (schoolInfo || loadedSchool)?.primary_color && (schoolInfo || loadedSchool)?.secondary_color
+              ? `linear-gradient(135deg, ${(schoolInfo || loadedSchool)?.primary_color} 0%, ${(schoolInfo || loadedSchool)?.secondary_color} 100%)`
+              : undefined
+          }}
+        >
           <Save className="h-4 w-4" />
           {saving ? "Saving..." : "Save Changes"}
         </Button>
