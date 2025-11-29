@@ -36,7 +36,8 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
   const [uploading, setUploading] = useState(false);
   const [excelData, setExcelData] = useState<any[]>([]);
   const [excelFile, setExcelFile] = useState<File | null>(null);
-  const { toast } = useToast();
+  const [uploadFormLevel, setUploadFormLevel] = useState<number>(1);
+  const { toast} = useToast();
 
   useEffect(() => {
     loadStudents();
@@ -228,7 +229,6 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
     const template = [
       {
         'Student Name': 'John Doe',
-        'Form Level': 1,
         'Email': 'john@example.com',
         'Phone': '+255712345678',
         'Gender': 'male',
@@ -236,18 +236,17 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
         'Guardian Name': 'Jane Doe',
         'Guardian Phone': '+255712345679',
         'Guardian Email': 'jane@example.com',
-        'Status': 'active'
       }
     ];
 
     const worksheet = XLSX.utils.json_to_sheet(template);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
-    XLSX.writeFile(workbook, 'student_upload_template.xlsx');
+    XLSX.writeFile(workbook, `student_upload_template_form_${uploadFormLevel}.xlsx`);
 
     toast({
       title: "Template Downloaded",
-      description: "Use this template to upload students in bulk",
+      description: `Template for Form ${uploadFormLevel} students downloaded successfully`,
     });
   };
 
@@ -273,7 +272,7 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
           await adminService.createStudent({
             school_id: schoolId,
             student_name: row['Student Name'] || row['student_name'],
-            form_level: parseInt(row['Form Level'] || row['form_level']) || 1,
+            form_level: uploadFormLevel, // Use selected form level from dialog
             registration_number: regNumber,
             email: row['Email'] || row['email'],
             phone: row['Phone'] || row['phone'],
@@ -399,6 +398,84 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
 
   return (
     <div className="space-y-6">
+      {/* Colorful Stats Cards at Top - Form Levels */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+        {/* Total Students */}
+        <Card className="overflow-hidden border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Students</p>
+                <p className="text-3xl font-bold text-foreground mt-1">{stats.total}</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form 1 */}
+        <Card className="overflow-hidden border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">Form 1</p>
+              <p className="text-3xl font-bold text-foreground mt-1">{stats.byFormLevel[1] || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form 2 */}
+        <Card className="overflow-hidden border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">Form 2</p>
+              <p className="text-3xl font-bold text-foreground mt-1">{stats.byFormLevel[2] || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form 3 */}
+        <Card className="overflow-hidden border-l-4 border-l-purple-500 bg-gradient-to-br from-purple-500/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">Form 3</p>
+              <p className="text-3xl font-bold text-foreground mt-1">{stats.byFormLevel[3] || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form 4 */}
+        <Card className="overflow-hidden border-l-4 border-l-amber-500 bg-gradient-to-br from-amber-500/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">Form 4</p>
+              <p className="text-3xl font-bold text-foreground mt-1">{stats.byFormLevel[4] || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form 5 */}
+        <Card className="overflow-hidden border-l-4 border-l-orange-500 bg-gradient-to-br from-orange-500/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">Form 5</p>
+              <p className="text-3xl font-bold text-foreground mt-1">{stats.byFormLevel[5] || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Form 6 */}
+        <Card className="overflow-hidden border-l-4 border-l-pink-500 bg-gradient-to-br from-pink-500/5 to-transparent">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">Form 6</p>
+              <p className="text-3xl font-bold text-foreground mt-1">{stats.byFormLevel[6] || 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
@@ -538,51 +615,6 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
           )}
         </CardContent>
       </Card>
-
-      {/* Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-primary">{stats.total}</div>
-            <div className="text-xs text-muted-foreground">Total Students</div>
-          </CardContent>
-        </Card>
-        {[1, 2, 3, 4, 5, 6].map(form => (
-          <Card key={form}>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-secondary">{stats.byFormLevel[form] || 0}</div>
-              <div className="text-xs text-muted-foreground">Form {form}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-primary">{stats.byStatus.active}</div>
-            <div className="text-xs text-muted-foreground">Active</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-secondary">{stats.byStatus.inactive}</div>
-            <div className="text-xs text-muted-foreground">Inactive</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.byStatus.graduated}</div>
-            <div className="text-xs text-muted-foreground">Graduated</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-orange-600">{stats.byStatus.transferred}</div>
-            <div className="text-xs text-muted-foreground">Transferred</div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* View Dialog */}
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
@@ -900,11 +932,35 @@ export default function StudentManagement({ schoolId }: StudentManagementProps) 
             <div className="bg-muted p-4 rounded-lg space-y-2">
               <h4 className="font-semibold text-sm">Instructions:</h4>
               <ol className="list-decimal list-inside text-sm space-y-1 text-muted-foreground">
+                <li>Select the form level for all students in the upload</li>
                 <li>Download the Excel template using the button below</li>
                 <li>Fill in the student information in the template</li>
                 <li>Upload the completed Excel file</li>
                 <li>Review the data and click "Upload Students"</li>
               </ol>
+            </div>
+
+            {/* Form Level Selector */}
+            <div className="space-y-2">
+              <Label>Select Form Level for All Students *</Label>
+              <Select
+                value={uploadFormLevel.toString()}
+                onValueChange={(value) => setUploadFormLevel(parseInt(value))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Form 1</SelectItem>
+                  <SelectItem value="2">Form 2</SelectItem>
+                  <SelectItem value="3">Form 3</SelectItem>
+                  <SelectItem value="4">Form 4</SelectItem>
+                  <SelectItem value="5">Form 5</SelectItem>
+                  <SelectItem value="6">Form 6</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                All students in the uploaded file will be assigned to Form {uploadFormLevel}
+              </p>
             </div>
 
             {/* Download Template Button */}
