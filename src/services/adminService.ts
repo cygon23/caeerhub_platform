@@ -394,16 +394,28 @@ class AdminService {
   async createStudent(student: Omit<Student, 'id' | 'created_at' | 'updated_at'>): Promise<Student> {
     const { data: user } = await supabase.auth.getUser();
 
+    const requestBody = {
+      ...student,
+      created_by: user.user?.id,
+    };
+
+    console.log('Creating student with data:', requestBody);
+
     // Call Edge Function to create student with auth account
     const { data, error } = await supabase.functions.invoke('create-student-with-auth', {
-      body: {
-        ...student,
-        created_by: user.user?.id,
-      },
+      body: requestBody,
     });
 
-    if (error) throw error;
-    if (data.error) throw new Error(data.error);
+    console.log('Edge Function response:', { data, error });
+
+    if (error) {
+      console.error('Edge Function error:', error);
+      throw error;
+    }
+    if (data?.error) {
+      console.error('Data error:', data);
+      throw new Error(JSON.stringify(data));
+    }
 
     return data.student;
   }

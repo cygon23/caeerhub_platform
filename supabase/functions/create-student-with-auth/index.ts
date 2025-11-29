@@ -18,6 +18,8 @@ serve(async (req) => {
   }
 
   try {
+    const requestBody = await req.json();
+
     const {
       school_id,
       student_name,
@@ -32,12 +34,25 @@ serve(async (req) => {
       guardian_email,
       status,
       created_by,
-    } = await req.json();
+    } = requestBody;
 
-    // Validate required fields
-    if (!school_id || !student_name || !form_level || !registration_number) {
+    console.log("Received request body:", JSON.stringify(requestBody, null, 2));
+
+    // Validate required fields with detailed error messages
+    const missingFields = [];
+    if (!school_id) missingFields.push('school_id');
+    if (!student_name) missingFields.push('student_name');
+    if (!form_level) missingFields.push('form_level');
+    if (!registration_number) missingFields.push('registration_number');
+
+    if (missingFields.length > 0) {
+      console.error("Missing required fields:", missingFields);
       return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
+        JSON.stringify({
+          error: "Missing required fields",
+          missingFields,
+          received: requestBody
+        }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
