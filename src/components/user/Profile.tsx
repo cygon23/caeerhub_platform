@@ -158,6 +158,83 @@ export default function GoalsDashboard() {
   return (
     <div className='min-h-screen bg-background'>
       <div className='max-w-7xl mx-auto px-6 py-8'>
+        {/* Summary Stats Cards - Colorful Dashboard Style */}
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
+          {/* Total Goals */}
+          <Card className='overflow-hidden border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-transparent'>
+            <CardContent className='p-6'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-medium text-muted-foreground'>Total Goals</p>
+                  <p className='text-3xl font-bold text-foreground mt-1'>{goals.length}</p>
+                  <p className='text-xs text-muted-foreground mt-1'>Active & Completed</p>
+                </div>
+                <div className='h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center'>
+                  <Target className='h-6 w-6 text-primary' />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* With Mentors */}
+          <Card className='overflow-hidden border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-500/5 to-transparent'>
+            <CardContent className='p-6'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-medium text-muted-foreground'>With Mentors</p>
+                  <p className='text-3xl font-bold text-foreground mt-1'>
+                    {goals.filter((g) => g.mentorAssisted).length}
+                  </p>
+                  <p className='text-xs text-muted-foreground mt-1'>Mentor-assisted</p>
+                </div>
+                <div className='h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center'>
+                  <Users className='h-6 w-6 text-blue-500' />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Shared Goals */}
+          <Card className='overflow-hidden border-l-4 border-l-purple-500 bg-gradient-to-br from-purple-500/5 to-transparent'>
+            <CardContent className='p-6'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-medium text-muted-foreground'>Shared Goals</p>
+                  <p className='text-3xl font-bold text-foreground mt-1'>
+                    {goals.filter((g) => g.shared).length}
+                  </p>
+                  <p className='text-xs text-muted-foreground mt-1'>Public visibility</p>
+                </div>
+                <div className='h-12 w-12 rounded-full bg-purple-500/10 flex items-center justify-center'>
+                  <Share2 className='h-6 w-6 text-purple-500' />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Completed Goals */}
+          <Card className='overflow-hidden border-l-4 border-l-green-500 bg-gradient-to-br from-green-500/5 to-transparent'>
+            <CardContent className='p-6'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <p className='text-sm font-medium text-muted-foreground'>Completed</p>
+                  <p className='text-3xl font-bold text-foreground mt-1'>
+                    {goals.filter((g) => g.progress >= 100).length}
+                  </p>
+                  <p className='text-xs text-muted-foreground mt-1'>
+                    {goals.length > 0
+                      ? Math.round((goals.filter((g) => g.progress >= 100).length / goals.length) * 100)
+                      : 0}% completion rate
+                  </p>
+                </div>
+                <div className='h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center'>
+                  <Award className='h-6 w-6 text-green-500' />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Main Navigation Tabs - Only Goals and Roadmaps */}
         <Tabs value={mainTab} onValueChange={setMainTab} className='mb-8'>
           <TabsList className='grid w-full grid-cols-2 lg:w-auto lg:grid-cols-2 mb-8'>
@@ -321,48 +398,6 @@ export default function GoalsDashboard() {
                   </CardContent>
                 </Card>
               ))}
-            </div>
-
-            {/* Summary Stats */}
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-              <Card className='text-center shadow-card'>
-                <CardContent className='pt-6'>
-                  <div className='text-2xl font-bold text-primary'>
-                    {goals.length}
-                  </div>
-                  <div className='text-sm text-muted-foreground'>
-                    Total Goals
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className='text-center shadow-card'>
-                <CardContent className='pt-6'>
-                  <div className='text-2xl font-bold text-secondary'>
-                    {goals.filter((g) => g.mentorAssisted).length}
-                  </div>
-                  <div className='text-sm text-muted-foreground'>
-                    With Mentors
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className='text-center shadow-card'>
-                <CardContent className='pt-6'>
-                  <div className='text-2xl font-bold text-accent'>
-                    {goals.filter((g) => g.shared).length}
-                  </div>
-                  <div className='text-sm text-muted-foreground'>
-                    Shared Goals
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className='text-center shadow-card'>
-                <CardContent className='pt-6'>
-                  <div className='text-2xl font-bold text-primary'>
-                    {goals.filter((g) => g.progress >= 100).length}
-                  </div>
-                  <div className='text-sm text-muted-foreground'>Completed</div>
-                </CardContent>
-              </Card>
             </div>
           </TabsContent>
 
