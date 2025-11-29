@@ -3,13 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { UserCheck, Search, Eye, Edit, Trash2, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { UserCheck, Search, Eye, Edit, Trash2, Loader2, AlertCircle, CheckCircle, UserPlus, RefreshCw } from "lucide-react";
 import { adminService, Mentor } from "@/services/adminService";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function MentorManagement() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -20,7 +22,18 @@ export default function MentorManagement() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Mentor>>({});
+  const [createForm, setCreateForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    location: "",
+    bio: "",
+    expertise: "",
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -126,6 +139,118 @@ export default function MentorManagement() {
     }
   };
 
+  const handleCreateMentor = async () => {
+    // Validate form
+    if (!createForm.name || !createForm.email || !createForm.password) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields (Name, Email, Password)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(createForm.email)) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate password length
+    if (createForm.password.length < 6) {
+      toast({
+        title: "Validation Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setCreating(true);
+
+    try {
+      // Create auth user
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: createForm.email,
+        password: createForm.password,
+        email_confirm: true,
+        user_metadata: {
+          name: createForm.name,
+        },
+      });
+
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error("Failed to create user");
+      }
+
+      // Create profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: authData.user.id,
+          display_name: createForm.name,
+          phone: createForm.phone || null,
+          location: createForm.location || null,
+          bio: createForm.bio || null,
+          status: 'active',
+        });
+
+      if (profileError) throw profileError;
+
+      // Assign mentor role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: authData.user.id,
+          role: 'mentor',
+        });
+
+      if (roleError) throw roleError;
+
+      toast({
+        title: "Success",
+        description: `Mentor created successfully! Login credentials:\nEmail: ${createForm.email}\nPassword: ${createForm.password}`,
+        duration: 10000,
+      });
+
+      setCreateDialogOpen(false);
+      setCreateForm({
+        name: "",
+        email: "",
+        password: "",
+        phone: "",
+        location: "",
+        bio: "",
+        expertise: "",
+      });
+      loadMentors();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create mentor",
+        variant: "destructive",
+      });
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const generateRandomPassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+    let password = '';
+    for (let i = 0; i < 12; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCreateForm({ ...createForm, password });
+  };
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Never';
     return new Date(dateString).toLocaleDateString();
@@ -148,10 +273,16 @@ export default function MentorManagement() {
               <UserCheck className="h-5 w-5 mr-2" />
               Mentor Management
             </div>
-            <Button onClick={loadMentors} variant="outline" size="sm">
-              <Loader2 className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={loadMentors} variant="outline" size="sm">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button onClick={() => setCreateDialogOpen(true)} size="sm" className="bg-gradient-hero text-white">
+                <UserPlus className="h-4 w-4 mr-2" />
+                Create Mentor
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -394,6 +525,121 @@ export default function MentorManagement() {
             </Button>
             <Button variant="destructive" onClick={handleConfirmDelete}>
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Mentor Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-primary" />
+              Create New Mentor
+            </DialogTitle>
+            <DialogDescription>
+              Create a new mentor account with login credentials. The mentor will be able to log in immediately after creation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label>Full Name *</Label>
+                <Input
+                  placeholder="John Doe"
+                  value={createForm.name}
+                  onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Email *</Label>
+                <Input
+                  type="email"
+                  placeholder="mentor@example.com"
+                  value={createForm.email}
+                  onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label>Password *</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Enter password (min 6 characters)"
+                  value={createForm.password}
+                  onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={generateRandomPassword}
+                  className="flex-shrink-0"
+                >
+                  Generate
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Password will be shown once after creation. Make sure to save it!
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label>Phone</Label>
+                <Input
+                  placeholder="+1 234 567 8900"
+                  value={createForm.phone}
+                  onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Location</Label>
+                <Input
+                  placeholder="City, Country"
+                  value={createForm.location}
+                  onChange={(e) => setCreateForm({ ...createForm, location: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label>Bio / About</Label>
+              <Textarea
+                placeholder="Brief bio about the mentor..."
+                value={createForm.bio}
+                onChange={(e) => setCreateForm({ ...createForm, bio: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label>Expertise / Specialization</Label>
+              <Input
+                placeholder="e.g., Career Counseling, Tech Industry, Healthcare"
+                value={createForm.expertise}
+                onChange={(e) => setCreateForm({ ...createForm, expertise: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateDialogOpen(false)} disabled={creating}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateMentor} disabled={creating} className="bg-gradient-hero text-white">
+              {creating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Create Mentor
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
