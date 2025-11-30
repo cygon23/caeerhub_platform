@@ -44,6 +44,12 @@ import {
   Activity,
   PieChart,
   TrendingDown,
+  Eye,
+  Edit,
+  Trash2,
+  Plus,
+  Download,
+  Share2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -583,70 +589,358 @@ export default function MentorDashboard() {
 
     if (activeSection === "mentees") {
       return (
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center'>
-              <Users className='h-5 w-5 mr-2' />
-              My Mentees
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {mentees.map((mentee, index) => (
-                <Card key={index} className='hover:shadow-primary transition-all duration-300'>
-                  <CardContent className='p-6'>
-                    <div className='flex items-center space-x-3 mb-4'>
-                      <div className='w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center'>
-                        <Users className='h-6 w-6 text-primary' />
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-primary to-secondary text-white rounded-xl p-6 shadow-lg relative overflow-hidden'>
+            <div className='absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24' />
+            <div className='relative z-10 flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>My Mentees</h2>
+                <p className='text-white/90'>Manage and track your mentee progress</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <Users className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Mentees Grid with Beautiful Cards */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {mentees.map((mentee, index) => (
+              <Card key={index} className='hover:shadow-xl transition-all duration-300 hover:scale-105 border-l-4' style={{
+                borderLeftColor: index === 0 ? '#10b981' : index === 1 ? '#3b82f6' : '#8b5cf6'
+              }}>
+                <CardContent className='p-6'>
+                  <div className='flex items-center gap-3 mb-4'>
+                    <div className='w-14 h-14 rounded-full flex items-center justify-center font-bold text-white text-lg shadow-lg' style={{
+                      background: index === 0 ? 'linear-gradient(135deg, #10b981, #059669)' :
+                                  index === 1 ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
+                                  'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+                    }}>
+                      {mentee.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className='flex-1'>
+                      <h3 className='font-bold text-foreground'>{mentee.name}</h3>
+                      <p className='text-xs text-muted-foreground'>{mentee.sessions} sessions completed</p>
+                    </div>
+                  </div>
+
+                  <div className='space-y-4'>
+                    {/* Progress */}
+                    <div>
+                      <div className='flex justify-between text-xs mb-2'>
+                        <span className='font-medium text-muted-foreground'>Overall Progress</span>
+                        <span className='font-bold text-foreground'>{mentee.progress}%</span>
                       </div>
-                      <div>
-                        <h3 className='font-semibold text-foreground'>{mentee.name}</h3>
-                        <p className='text-sm text-muted-foreground'>{mentee.sessions} sessions</p>
+                      <div className='w-full bg-muted rounded-full h-2.5'>
+                        <div
+                          className='h-2.5 rounded-full transition-all duration-500 relative overflow-hidden'
+                          style={{
+                            width: `${mentee.progress}%`,
+                            background: index === 0 ? 'linear-gradient(90deg, #10b981, #059669)' :
+                                       index === 1 ? 'linear-gradient(90deg, #3b82f6, #2563eb)' :
+                                       'linear-gradient(90deg, #8b5cf6, #7c3aed)'
+                          }}
+                        >
+                          <div className='absolute inset-0 bg-white/20 animate-pulse' />
+                        </div>
                       </div>
                     </div>
-                    <div className='space-y-3'>
+
+                    {/* Next Session */}
+                    <div className='flex items-center gap-2 p-3 bg-muted/50 rounded-lg'>
+                      <Clock className='h-4 w-4 text-muted-foreground' />
                       <div>
-                        <div className='flex justify-between text-sm mb-1'>
-                          <span>Progress</span>
-                          <span>{mentee.progress}%</span>
-                        </div>
-                        <div className='w-full bg-muted rounded-full h-2'>
-                          <div 
-                            className='bg-primary h-2 rounded-full'
-                            style={{ width: `${mentee.progress}%` }}
-                          />
-                        </div>
+                        <p className='text-xs text-muted-foreground'>Next Session</p>
+                        <p className='text-sm font-semibold text-foreground'>{mentee.nextSession}</p>
                       </div>
-                      <div className='text-sm'>
-                        <p className='text-muted-foreground'>Next Session:</p>
-                        <p className='font-medium'>{mentee.nextSession}</p>
-                      </div>
-                      <Button size="sm" className='w-full'>
-                        <MessageCircle className='h-4 w-4 mr-2' />
-                        Send Message
+                    </div>
+
+                    {/* Actions */}
+                    <div className='grid grid-cols-2 gap-2'>
+                      <Button size='sm' variant='outline' className='hover:bg-primary hover:text-white transition-colors'>
+                        <MessageCircle className='h-3 w-3 mr-1' />
+                        Message
                       </Button>
+                      <Button size='sm' variant='outline' className='hover:bg-secondary hover:text-white transition-colors'>
+                        <Calendar className='h-3 w-3 mr-1' />
+                        Schedule
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Sessions Section
+    if (activeSection === "sessions") {
+      return (
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl p-6 shadow-lg relative overflow-hidden'>
+            <div className='absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24' />
+            <div className='relative z-10 flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>Mentoring Sessions</h2>
+                <p className='text-white/90'>Schedule and manage your mentoring sessions</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <Calendar className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Schedule Session Button */}
+          <Button className='w-full md:w-auto bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg'>
+            <Plus className='h-4 w-4 mr-2' />
+            Schedule New Session
+          </Button>
+
+          {/* Upcoming Sessions */}
+          <div>
+            <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
+              <Clock className='h-5 w-5 text-primary' />
+              Upcoming Sessions
+            </h3>
+            <div className='space-y-3'>
+              {[
+                { mentee: "Amina Hassan", time: "Today, 2:00 PM", duration: "1 hour", topic: "Career Planning Review", type: "Video Call", color: "bg-green-100 border-green-200" },
+                { mentee: "John Mbeki", time: "Tomorrow, 10:00 AM", duration: "45 min", topic: "Resume Review", type: "In-Person", color: "bg-blue-100 border-blue-200" },
+                { mentee: "Grace Mwangi", time: "Friday, 3:00 PM", duration: "1.5 hours", topic: "Mock Interview", type: "Video Call", color: "bg-purple-100 border-purple-200" }
+              ].map((session, index) => (
+                <Card key={index} className={`border-l-4 ${session.color} hover:shadow-lg transition-all duration-300`}>
+                  <CardContent className='p-5'>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-4'>
+                        <div className='w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold'>
+                          {session.mentee.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div>
+                          <h4 className='font-semibold text-foreground'>{session.mentee}</h4>
+                          <p className='text-sm text-muted-foreground'>{session.topic}</p>
+                          <div className='flex items-center gap-3 mt-1 flex-wrap'>
+                            <Badge variant='outline' className='text-xs'>
+                              <Clock className='h-3 w-3 mr-1' />
+                              {session.time}
+                            </Badge>
+                            <Badge variant='outline' className='text-xs'>
+                              {session.duration}
+                            </Badge>
+                            <Badge variant='outline' className='text-xs'>
+                              <Video className='h-3 w-3 mr-1' />
+                              {session.type}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='flex gap-2'>
+                        <Button size='sm' className='bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700'>
+                          Join
+                        </Button>
+                        <Button size='sm' variant='outline'>
+                          Reschedule
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Past Sessions */}
+          <div>
+            <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
+              <CheckCircle2 className='h-5 w-5 text-green-600' />
+              Past Sessions
+            </h3>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              {[
+                { mentee: "Amina Hassan", date: "Jan 15, 2025", topic: "Initial Consultation", rating: 5 },
+                { mentee: "John Mbeki", date: "Jan 14, 2025", topic: "Career Goals Discussion", rating: 5 },
+                { mentee: "Grace Mwangi", date: "Jan 13, 2025", topic: "Skill Assessment", rating: 4 },
+                { mentee: "Amina Hassan", date: "Jan 10, 2025", topic: "LinkedIn Profile Review", rating: 5 }
+              ].map((session, index) => (
+                <Card key={index} className='hover:shadow-lg transition-all duration-300'>
+                  <CardContent className='p-4'>
+                    <div className='flex items-center justify-between mb-2'>
+                      <h4 className='font-semibold text-foreground'>{session.mentee}</h4>
+                      <div className='flex gap-0.5'>
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`h-3 w-3 ${i < session.rating ? 'text-yellow-500 fill-yellow-500' : 'text-muted'}`} />
+                        ))}
+                      </div>
+                    </div>
+                    <p className='text-sm text-muted-foreground mb-1'>{session.topic}</p>
+                    <p className='text-xs text-muted-foreground'>{session.date}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
       );
     }
 
-    // Other sections
+    // Notes Section
+    if (activeSection === "notes") {
+      return (
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl p-6 shadow-lg relative overflow-hidden'>
+            <div className='absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24' />
+            <div className='relative z-10 flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>Mentoring Notes</h2>
+                <p className='text-white/90'>Track observations and progress notes for each mentee</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <FileText className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Add Note Button */}
+          <Button className='w-full md:w-auto bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg'>
+            <Plus className='h-4 w-4 mr-2' />
+            Add New Note
+          </Button>
+
+          {/* Notes List */}
+          <div className='space-y-4'>
+            {[
+              { mentee: "Amina Hassan", note: "Excellent progress in career planning. Showed great interest in tech careers. Scheduled follow-up for next week to discuss internship opportunities.", date: "2 hours ago", tag: "Progress Update", color: "border-green-200 bg-green-50" },
+              { mentee: "John Mbeki", note: "Discussed challenges with time management. Provided resources on productivity techniques. Will monitor progress over next two weeks.", date: "1 day ago", tag: "Challenge", color: "border-yellow-200 bg-yellow-50" },
+              { mentee: "Grace Mwangi", note: "Completed mock interview session. Strong communication skills. Needs to work on answering technical questions with more structure.", date: "3 days ago", tag: "Assessment", color: "border-blue-200 bg-blue-50" },
+              { mentee: "Amina Hassan", note: "Shared career resources and LinkedIn optimization tips. Mentee is very motivated and taking initiative in networking.", date: "1 week ago", tag: "Resources Shared", color: "border-purple-200 bg-purple-50" }
+            ].map((note, index) => (
+              <Card key={index} className={`border-l-4 ${note.color} hover:shadow-lg transition-all duration-300`}>
+                <CardContent className='p-5'>
+                  <div className='flex items-start justify-between mb-3'>
+                    <div className='flex items-center gap-3'>
+                      <div className='w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-sm'>
+                        {note.mentee.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <h3 className='font-semibold text-foreground'>{note.mentee}</h3>
+                        <p className='text-xs text-muted-foreground'>{note.date}</p>
+                      </div>
+                    </div>
+                    <Badge variant='outline' className='text-xs'>{note.tag}</Badge>
+                  </div>
+                  <p className='text-sm text-muted-foreground leading-relaxed mb-3'>{note.note}</p>
+                  <div className='flex gap-2'>
+                    <Button size='sm' variant='ghost' className='hover:bg-orange-100'>
+                      <Edit className='h-3 w-3 mr-1' />
+                      Edit
+                    </Button>
+                    <Button size='sm' variant='ghost' className='hover:bg-red-100'>
+                      <Trash2 className='h-3 w-3 mr-1' />
+                      Delete
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Resources Section
+    if (activeSection === "resources") {
+      return (
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl p-6 shadow-lg relative overflow-hidden'>
+            <div className='absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24' />
+            <div className='relative z-10 flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>Resources Library</h2>
+                <p className='text-white/90'>Share materials and resources with your mentees</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <BookOpen className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <Button className='h-20 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg'>
+              <FileText className='h-5 w-5 mr-2' />
+              Upload Document
+            </Button>
+            <Button className='h-20 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'>
+              <BookOpen className='h-5 w-5 mr-2' />
+              Add Link
+            </Button>
+            <Button className='h-20 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg'>
+              <Video className='h-5 w-5 mr-2' />
+              Add Video
+            </Button>
+          </div>
+
+          {/* Resources Grid */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {[
+              { title: "Career Planning Guide", type: "PDF", size: "2.4 MB", shared: 5, color: "bg-red-100 text-red-700", icon: FileText },
+              { title: "Interview Tips Video", type: "Video", size: "45 MB", shared: 8, color: "bg-blue-100 text-blue-700", icon: Video },
+              { title: "Resume Templates", type: "ZIP", size: "1.8 MB", shared: 12, color: "bg-green-100 text-green-700", icon: Download },
+              { title: "Networking Strategies", type: "Link", size: "External", shared: 6, color: "bg-purple-100 text-purple-700", icon: BookOpen },
+              { title: "LinkedIn Optimization", type: "PDF", size: "3.1 MB", shared: 9, color: "bg-yellow-100 text-yellow-700", icon: FileText },
+              { title: "Salary Negotiation Tips", type: "Video", size: "38 MB", shared: 7, color: "bg-pink-100 text-pink-700", icon: Video }
+            ].map((resource, index) => (
+              <Card key={index} className='hover:shadow-lg transition-all duration-300 hover:scale-105'>
+                <CardContent className='p-5'>
+                  <div className='flex items-start justify-between mb-3'>
+                    <div className={`p-2 rounded-lg ${resource.color}`}>
+                      <resource.icon className='h-5 w-5' />
+                    </div>
+                    <Badge variant='outline' className='text-xs'>{resource.type}</Badge>
+                  </div>
+                  <h3 className='font-semibold text-foreground mb-2'>{resource.title}</h3>
+                  <div className='flex items-center justify-between text-xs text-muted-foreground mb-4'>
+                    <span>{resource.size}</span>
+                    <span className='flex items-center gap-1'>
+                      <Users className='h-3 w-3' />
+                      {resource.shared}
+                    </span>
+                  </div>
+                  <div className='grid grid-cols-2 gap-2'>
+                    <Button size='sm' variant='outline' className='hover:bg-primary hover:text-white transition-colors'>
+                      <Eye className='h-3 w-3 mr-1' />
+                      View
+                    </Button>
+                    <Button size='sm' variant='outline' className='hover:bg-secondary hover:text-white transition-colors'>
+                      <Share2 className='h-3 w-3 mr-1' />
+                      Share
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Fallback for any other sections
     return (
       <Card>
         <CardContent className='p-12 text-center'>
-          <div className='w-16 h-16 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4'>
+          <div className='w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4'>
             <Clock className='h-8 w-8 text-white' />
           </div>
           <h3 className='text-xl font-semibold text-foreground mb-2'>
             {activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}
           </h3>
           <p className='text-muted-foreground'>
-            This mentorship feature will be available soon with comprehensive tools.
+            This section is coming soon with comprehensive tools.
           </p>
         </CardContent>
       </Card>
