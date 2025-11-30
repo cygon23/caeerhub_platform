@@ -42,6 +42,11 @@ import {
   CheckCircle2,
   ArrowUpRight,
   Activity,
+  Eye,
+  Edit,
+  Trash2,
+  TrendingDown,
+  PieChart,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -324,65 +329,591 @@ export default function MentorDashboard() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Activity Graph - Visual Data Presentation */}
+          <Card className='border-primary/20'>
+            <CardHeader>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='flex items-center gap-2'>
+                  <div className='p-2 bg-primary/10 rounded-lg'>
+                    <Activity className='h-5 w-5 text-primary' />
+                  </div>
+                  Mentoring Activity
+                </CardTitle>
+                <Badge variant='outline'>Last 7 Days</Badge>
+              </div>
+              <CardDescription>Your mentoring sessions and hours over time</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='space-y-4'>
+                {/* Simple Bar Chart Visualization */}
+                <div className='grid grid-cols-7 gap-2 items-end h-48'>
+                  {[
+                    { day: 'Mon', hours: 3.5, sessions: 2 },
+                    { day: 'Tue', hours: 4.2, sessions: 3 },
+                    { day: 'Wed', hours: 2.8, sessions: 2 },
+                    { day: 'Thu', hours: 5.1, sessions: 4 },
+                    { day: 'Fri', hours: 3.9, sessions: 3 },
+                    { day: 'Sat', hours: 1.5, sessions: 1 },
+                    { day: 'Sun', hours: 2.0, sessions: 1 }
+                  ].map((data, index) => {
+                    const maxHours = 6;
+                    const heightPercent = (data.hours / maxHours) * 100;
+                    return (
+                      <div key={index} className='flex flex-col items-center gap-2'>
+                        <div
+                          className='w-full rounded-t-lg transition-all duration-300 hover:opacity-80 cursor-pointer relative group'
+                          style={{
+                            height: `${heightPercent}%`,
+                            background: `linear-gradient(180deg, ${index === 3 ? '#10b981' : '#3b82f6'} 0%, ${index === 3 ? '#059669' : '#2563eb'} 100%)`,
+                            minHeight: '20px'
+                          }}
+                        >
+                          <div className='absolute -top-8 left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap'>
+                            {data.hours}h • {data.sessions} sessions
+                          </div>
+                        </div>
+                        <span className='text-xs text-muted-foreground font-medium'>{data.day}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Legend */}
+                <div className='flex items-center justify-center gap-6 pt-4 border-t'>
+                  <div className='flex items-center gap-2'>
+                    <div className='w-3 h-3 rounded-full bg-blue-500' />
+                    <span className='text-sm text-muted-foreground'>Regular Days</span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='w-3 h-3 rounded-full bg-green-500' />
+                    <span className='text-sm text-muted-foreground'>Peak Days</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Analytics Graphs */}
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+            {/* Mentee Progress Distribution */}
+            <Card className='border-secondary/20'>
+              <CardHeader>
+                <div className='flex items-center justify-between'>
+                  <CardTitle className='flex items-center gap-2'>
+                    <div className='p-2 bg-secondary/10 rounded-lg'>
+                      <PieChart className='h-5 w-5 text-secondary' />
+                    </div>
+                    Mentee Progress Distribution
+                  </CardTitle>
+                  <Badge variant='outline'>Current Status</Badge>
+                </div>
+                <CardDescription>Overall progress breakdown of all mentees</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-4'>
+                  {/* Progress Categories */}
+                  {[
+                    { category: 'Excellent (90-100%)', count: 3, color: 'bg-green-500', percentage: 37.5 },
+                    { category: 'Good (70-89%)', count: 2, color: 'bg-blue-500', percentage: 25 },
+                    { category: 'Satisfactory (50-69%)', count: 2, color: 'bg-yellow-500', percentage: 25 },
+                    { category: 'Needs Improvement (<50%)', count: 1, color: 'bg-red-500', percentage: 12.5 }
+                  ].map((item, index) => (
+                    <div key={index} className='space-y-2'>
+                      <div className='flex items-center justify-between text-sm'>
+                        <span className='text-muted-foreground'>{item.category}</span>
+                        <span className='font-semibold text-foreground'>{item.count} mentees</span>
+                      </div>
+                      <div className='flex items-center gap-3'>
+                        <div className='flex-1 bg-muted rounded-full h-3 overflow-hidden'>
+                          <div
+                            className={`${item.color} h-3 rounded-full transition-all duration-500 relative`}
+                            style={{ width: `${item.percentage}%` }}
+                          >
+                            <div className='absolute inset-0 bg-white/20 animate-pulse' />
+                          </div>
+                        </div>
+                        <span className='text-xs font-medium text-foreground w-12 text-right'>{item.percentage}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Session Types Breakdown */}
+            <Card className='border-primary/20'>
+              <CardHeader>
+                <div className='flex items-center justify-between'>
+                  <CardTitle className='flex items-center gap-2'>
+                    <div className='p-2 bg-primary/10 rounded-lg'>
+                      <BarChart3 className='h-5 w-5 text-primary' />
+                    </div>
+                    Session Types
+                  </CardTitle>
+                  <Badge variant='outline'>This Month</Badge>
+                </div>
+                <CardDescription>Breakdown of mentoring session types</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-6'>
+                  {/* Horizontal Bar Chart */}
+                  {[
+                    { type: 'Career Planning', count: 12, color: 'from-purple-500 to-purple-600', percentage: 34 },
+                    { type: 'Resume Review', count: 8, color: 'from-blue-500 to-blue-600', percentage: 23 },
+                    { type: 'Mock Interviews', count: 7, color: 'from-green-500 to-green-600', percentage: 20 },
+                    { type: 'Skill Development', count: 5, color: 'from-orange-500 to-orange-600', percentage: 14 },
+                    { type: 'General Advice', count: 3, color: 'from-pink-500 to-pink-600', percentage: 9 }
+                  ].map((session, index) => (
+                    <div key={index} className='space-y-2'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm font-medium text-foreground'>{session.type}</span>
+                        <span className='text-sm font-bold text-foreground'>{session.count} sessions</span>
+                      </div>
+                      <div className='relative w-full bg-muted rounded-full h-4 overflow-hidden'>
+                        <div
+                          className={`bg-gradient-to-r ${session.color} h-4 rounded-full transition-all duration-700 flex items-center justify-end pr-2`}
+                          style={{ width: `${session.percentage}%` }}
+                        >
+                          <span className='text-xs font-medium text-white'>{session.percentage}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Monthly Trends Comparison */}
+          <Card className='border-primary/20'>
+            <CardHeader>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='flex items-center gap-2'>
+                  <div className='p-2 bg-primary/10 rounded-lg'>
+                    <TrendingUp className='h-5 w-5 text-primary' />
+                  </div>
+                  Monthly Trends
+                </CardTitle>
+                <Badge variant='outline'>Last 6 Months</Badge>
+              </div>
+              <CardDescription>Track your mentoring growth over time</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='space-y-4'>
+                {/* Line Graph Simulation with Dots and Lines */}
+                <div className='relative h-64 flex items-end gap-8 px-4'>
+                  {[
+                    { month: 'Aug', hours: 18, sessions: 22, growth: 0 },
+                    { month: 'Sep', hours: 21, sessions: 25, growth: 16.7 },
+                    { month: 'Oct', hours: 19, sessions: 24, growth: -9.5 },
+                    { month: 'Nov', hours: 24, sessions: 30, growth: 26.3 },
+                    { month: 'Dec', hours: 26, sessions: 33, growth: 8.3 },
+                    { month: 'Jan', hours: 24, sessions: 35, growth: -7.7 }
+                  ].map((data, index, array) => {
+                    const maxHours = 30;
+                    const heightPercent = (data.hours / maxHours) * 100;
+                    const nextData = array[index + 1];
+                    const hasNext = !!nextData;
+
+                    return (
+                      <div key={index} className='flex-1 flex flex-col items-center relative group'>
+                        {/* Connection Line to Next Point */}
+                        {hasNext && (
+                          <div
+                            className='absolute bg-primary/30 h-0.5'
+                            style={{
+                              bottom: `${heightPercent}%`,
+                              left: '50%',
+                              width: '100%',
+                              transform: `rotate(${Math.atan2(
+                                ((nextData.hours / maxHours) * 100 - heightPercent),
+                                100
+                              )}rad)`,
+                              transformOrigin: 'left center'
+                            }}
+                          />
+                        )}
+
+                        {/* Data Point */}
+                        <div
+                          className='absolute flex flex-col items-center'
+                          style={{ bottom: `${heightPercent}%` }}
+                        >
+                          <div className='absolute -top-16 bg-foreground text-background text-xs py-1.5 px-2.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg z-10'>
+                            <div className='font-semibold'>{data.month}</div>
+                            <div>{data.hours}h • {data.sessions} sessions</div>
+                            {data.growth !== 0 && (
+                              <div className={`flex items-center gap-1 ${data.growth > 0 ? 'text-green-300' : 'text-red-300'}`}>
+                                {data.growth > 0 ? <TrendingUp className='h-3 w-3' /> : <TrendingDown className='h-3 w-3' />}
+                                {Math.abs(data.growth).toFixed(1)}%
+                              </div>
+                            )}
+                          </div>
+                          <div className='w-4 h-4 rounded-full bg-primary border-4 border-background shadow-lg cursor-pointer transition-transform hover:scale-150' />
+                        </div>
+
+                        {/* Month Label */}
+                        <span className='text-xs text-muted-foreground font-medium mt-2'>{data.month}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Summary Stats */}
+                <div className='grid grid-cols-3 gap-4 pt-4 border-t'>
+                  <div className='text-center'>
+                    <div className='flex items-center justify-center gap-1 text-green-600 mb-1'>
+                      <TrendingUp className='h-4 w-4' />
+                      <span className='text-lg font-bold'>+33%</span>
+                    </div>
+                    <p className='text-xs text-muted-foreground'>Growth Rate</p>
+                  </div>
+                  <div className='text-center'>
+                    <div className='text-lg font-bold text-foreground mb-1'>132h</div>
+                    <p className='text-xs text-muted-foreground'>Total Hours</p>
+                  </div>
+                  <div className='text-center'>
+                    <div className='text-lg font-bold text-foreground mb-1'>169</div>
+                    <p className='text-xs text-muted-foreground'>Total Sessions</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       );
     }
 
     if (activeSection === "mentees") {
       return (
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center'>
-              <Users className='h-5 w-5 mr-2' />
-              My Mentees
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {mentees.map((mentee, index) => (
-                <Card key={index} className='hover:shadow-primary transition-all duration-300'>
-                  <CardContent className='p-6'>
-                    <div className='flex items-center space-x-3 mb-4'>
-                      <div className='w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center'>
-                        <Users className='h-6 w-6 text-primary' />
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-primary to-secondary text-white rounded-xl p-6 shadow-lg'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>My Mentees</h2>
+                <p className='text-white/90'>Manage and track your mentee progress</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <Users className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Mentees Grid with Modern Cards */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {mentees.map((mentee, index) => (
+              <Card key={index} className='hover:shadow-xl transition-all duration-300 hover:scale-105 border-l-4' style={{
+                borderLeftColor: index === 0 ? '#10b981' : index === 1 ? '#3b82f6' : '#8b5cf6'
+              }}>
+                <CardContent className='p-6'>
+                  <div className='flex items-center gap-3 mb-4'>
+                    <div className='w-14 h-14 rounded-full flex items-center justify-center font-bold text-white text-lg shadow-lg' style={{
+                      background: index === 0 ? 'linear-gradient(135deg, #10b981, #059669)' :
+                                  index === 1 ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
+                                  'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+                    }}>
+                      {mentee.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div className='flex-1'>
+                      <h3 className='font-bold text-foreground'>{mentee.name}</h3>
+                      <p className='text-xs text-muted-foreground'>{mentee.sessions} sessions completed</p>
+                    </div>
+                  </div>
+
+                  <div className='space-y-4'>
+                    {/* Progress */}
+                    <div>
+                      <div className='flex justify-between text-xs mb-2'>
+                        <span className='font-medium text-muted-foreground'>Progress</span>
+                        <span className='font-bold text-foreground'>{mentee.progress}%</span>
                       </div>
-                      <div>
-                        <h3 className='font-semibold text-foreground'>{mentee.name}</h3>
-                        <p className='text-sm text-muted-foreground'>{mentee.sessions} sessions</p>
+                      <div className='w-full bg-muted rounded-full h-2.5'>
+                        <div
+                          className='h-2.5 rounded-full transition-all duration-500 relative overflow-hidden'
+                          style={{
+                            width: `${mentee.progress}%`,
+                            background: index === 0 ? 'linear-gradient(90deg, #10b981, #059669)' :
+                                       index === 1 ? 'linear-gradient(90deg, #3b82f6, #2563eb)' :
+                                       'linear-gradient(90deg, #8b5cf6, #7c3aed)'
+                          }}
+                        >
+                          <div className='absolute inset-0 bg-white/20 animate-pulse' />
+                        </div>
                       </div>
                     </div>
-                    <div className='space-y-3'>
+
+                    {/* Next Session */}
+                    <div className='flex items-center gap-2 p-3 bg-muted/50 rounded-lg'>
+                      <Clock className='h-4 w-4 text-muted-foreground' />
                       <div>
-                        <div className='flex justify-between text-sm mb-1'>
-                          <span>Progress</span>
-                          <span>{mentee.progress}%</span>
-                        </div>
-                        <div className='w-full bg-muted rounded-full h-2'>
-                          <div 
-                            className='bg-primary h-2 rounded-full'
-                            style={{ width: `${mentee.progress}%` }}
-                          />
-                        </div>
+                        <p className='text-xs text-muted-foreground'>Next Session</p>
+                        <p className='text-sm font-semibold text-foreground'>{mentee.nextSession}</p>
                       </div>
-                      <div className='text-sm'>
-                        <p className='text-muted-foreground'>Next Session:</p>
-                        <p className='font-medium'>{mentee.nextSession}</p>
-                      </div>
-                      <Button size="sm" className='w-full'>
-                        <MessageCircle className='h-4 w-4 mr-2' />
-                        Send Message
+                    </div>
+
+                    {/* Actions */}
+                    <div className='grid grid-cols-2 gap-2'>
+                      <Button size='sm' variant='outline'>
+                        <MessageCircle className='h-3 w-3 mr-1' />
+                        Message
                       </Button>
+                      <Button size='sm' variant='outline'>
+                        <Calendar className='h-3 w-3 mr-1' />
+                        Schedule
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Resources Section
+    if (activeSection === "resources") {
+      return (
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl p-6 shadow-lg'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>Resources Library</h2>
+                <p className='text-white/90'>Share materials and resources with your mentees</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <BookOpen className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <Button className='h-20 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'>
+              <FileText className='h-5 w-5 mr-2' />
+              Upload Document
+            </Button>
+            <Button className='h-20 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'>
+              <BookOpen className='h-5 w-5 mr-2' />
+              Add Link
+            </Button>
+            <Button className='h-20 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white'>
+              <Video className='h-5 w-5 mr-2' />
+              Add Video
+            </Button>
+          </div>
+
+          {/* Resources Grid */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            {[
+              { title: "Career Planning Guide", type: "PDF", size: "2.4 MB", shared: 5, color: "bg-red-100 text-red-700" },
+              { title: "Interview Tips Video", type: "Video", size: "45 MB", shared: 8, color: "bg-blue-100 text-blue-700" },
+              { title: "Resume Templates", type: "ZIP", size: "1.8 MB", shared: 12, color: "bg-green-100 text-green-700" },
+              { title: "Networking Strategies", type: "Link", size: "External", shared: 6, color: "bg-purple-100 text-purple-700" },
+              { title: "LinkedIn Optimization", type: "PDF", size: "3.1 MB", shared: 9, color: "bg-yellow-100 text-yellow-700" },
+              { title: "Salary Negotiation Tips", type: "Video", size: "38 MB", shared: 7, color: "bg-pink-100 text-pink-700" }
+            ].map((resource, index) => (
+              <Card key={index} className='hover:shadow-lg transition-all duration-300 hover:scale-105'>
+                <CardContent className='p-5'>
+                  <div className='flex items-start justify-between mb-3'>
+                    <div className={`p-2 rounded-lg ${resource.color}`}>
+                      <FileText className='h-5 w-5' />
+                    </div>
+                    <Badge variant='outline'>{resource.type}</Badge>
+                  </div>
+                  <h3 className='font-semibold text-foreground mb-2'>{resource.title}</h3>
+                  <div className='flex items-center justify-between text-xs text-muted-foreground mb-4'>
+                    <span>{resource.size}</span>
+                    <span>Shared with {resource.shared} mentees</span>
+                  </div>
+                  <div className='grid grid-cols-2 gap-2'>
+                    <Button size='sm' variant='outline'>
+                      <Eye className='h-3 w-3 mr-1' />
+                      View
+                    </Button>
+                    <Button size='sm' variant='outline'>
+                      <Users className='h-3 w-3 mr-1' />
+                      Share
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Notes Section
+    if (activeSection === "notes") {
+      return (
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl p-6 shadow-lg'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>Mentoring Notes</h2>
+                <p className='text-white/90'>Track observations and progress notes for each mentee</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <FileText className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Add Note Button */}
+          <Button className='w-full md:w-auto bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white'>
+            <FileText className='h-4 w-4 mr-2' />
+            Add New Note
+          </Button>
+
+          {/* Notes List */}
+          <div className='space-y-4'>
+            {[
+              { mentee: "Amina Hassan", note: "Excellent progress in career planning. Showed great interest in tech careers. Scheduled follow-up for next week to discuss internship opportunities.", date: "2 hours ago", tag: "Progress Update", color: "border-green-200 bg-green-50" },
+              { mentee: "John Mbeki", note: "Discussed challenges with time management. Provided resources on productivity techniques. Will monitor progress over next two weeks.", date: "1 day ago", tag: "Challenge", color: "border-yellow-200 bg-yellow-50" },
+              { mentee: "Grace Mwangi", note: "Completed mock interview session. Strong communication skills. Needs to work on answering technical questions with more structure.", date: "3 days ago", tag: "Assessment", color: "border-blue-200 bg-blue-50" },
+              { mentee: "Amina Hassan", note: "Shared career resources and LinkedIn optimization tips. Mentee is very motivated and taking initiative in networking.", date: "1 week ago", tag: "Resources Shared", color: "border-purple-200 bg-purple-50" }
+            ].map((note, index) => (
+              <Card key={index} className={`border-l-4 ${note.color} hover:shadow-lg transition-all duration-300`}>
+                <CardContent className='p-5'>
+                  <div className='flex items-start justify-between mb-3'>
+                    <div className='flex items-center gap-3'>
+                      <div className='w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-sm'>
+                        {note.mentee.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <h3 className='font-semibold text-foreground'>{note.mentee}</h3>
+                        <p className='text-xs text-muted-foreground'>{note.date}</p>
+                      </div>
+                    </div>
+                    <Badge variant='outline'>{note.tag}</Badge>
+                  </div>
+                  <p className='text-sm text-muted-foreground leading-relaxed mb-3'>{note.note}</p>
+                  <div className='flex gap-2'>
+                    <Button size='sm' variant='ghost'>
+                      <Edit className='h-3 w-3 mr-1' />
+                      Edit
+                    </Button>
+                    <Button size='sm' variant='ghost'>
+                      <Trash2 className='h-3 w-3 mr-1' />
+                      Delete
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Sessions Section
+    if (activeSection === "sessions") {
+      return (
+        <div className='space-y-6'>
+          {/* Modern Header */}
+          <div className='bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl p-6 shadow-lg'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <h2 className='text-2xl font-bold mb-1'>Mentoring Sessions</h2>
+                <p className='text-white/90'>Schedule and manage your mentoring sessions</p>
+              </div>
+              <div className='bg-white/20 rounded-full p-3'>
+                <Calendar className='h-8 w-8' />
+              </div>
+            </div>
+          </div>
+
+          {/* Schedule Session Button */}
+          <Button className='w-full md:w-auto bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white'>
+            <Calendar className='h-4 w-4 mr-2' />
+            Schedule New Session
+          </Button>
+
+          {/* Upcoming Sessions */}
+          <div>
+            <h3 className='text-lg font-semibold mb-4'>Upcoming Sessions</h3>
+            <div className='space-y-3'>
+              {[
+                { mentee: "Amina Hassan", time: "Today, 2:00 PM", duration: "1 hour", topic: "Career Planning Review", type: "Video Call", color: "bg-green-100 border-green-200" },
+                { mentee: "John Mbeki", time: "Tomorrow, 10:00 AM", duration: "45 min", topic: "Resume Review", type: "In-Person", color: "bg-blue-100 border-blue-200" },
+                { mentee: "Grace Mwangi", time: "Friday, 3:00 PM", duration: "1.5 hours", topic: "Mock Interview", type: "Video Call", color: "bg-purple-100 border-purple-200" }
+              ].map((session, index) => (
+                <Card key={index} className={`border-l-4 ${session.color} hover:shadow-lg transition-all duration-300`}>
+                  <CardContent className='p-5'>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-4'>
+                        <div className='w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold'>
+                          {session.mentee.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div>
+                          <h4 className='font-semibold text-foreground'>{session.mentee}</h4>
+                          <p className='text-sm text-muted-foreground'>{session.topic}</p>
+                          <div className='flex items-center gap-3 mt-1'>
+                            <Badge variant='outline' className='text-xs'>
+                              <Clock className='h-3 w-3 mr-1' />
+                              {session.time}
+                            </Badge>
+                            <Badge variant='outline' className='text-xs'>
+                              {session.duration}
+                            </Badge>
+                            <Badge variant='outline' className='text-xs'>
+                              {session.type}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='flex gap-2'>
+                        <Button size='sm' className='bg-gradient-to-r from-green-500 to-green-600 text-white'>
+                          Join
+                        </Button>
+                        <Button size='sm' variant='outline'>
+                          Reschedule
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Past Sessions */}
+          <div>
+            <h3 className='text-lg font-semibold mb-4'>Past Sessions</h3>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              {[
+                { mentee: "Amina Hassan", date: "Jan 15, 2025", topic: "Initial Consultation", rating: 5 },
+                { mentee: "John Mbeki", date: "Jan 14, 2025", topic: "Career Goals Discussion", rating: 5 },
+                { mentee: "Grace Mwangi", date: "Jan 13, 2025", topic: "Skill Assessment", rating: 4 },
+                { mentee: "Amina Hassan", date: "Jan 10, 2025", topic: "LinkedIn Profile Review", rating: 5 }
+              ].map((session, index) => (
+                <Card key={index} className='hover:shadow-lg transition-all duration-300'>
+                  <CardContent className='p-4'>
+                    <div className='flex items-center justify-between mb-2'>
+                      <h4 className='font-semibold text-foreground'>{session.mentee}</h4>
+                      <div className='flex gap-0.5'>
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`h-3 w-3 ${i < session.rating ? 'text-yellow-500 fill-yellow-500' : 'text-muted'}`} />
+                        ))}
+                      </div>
+                    </div>
+                    <p className='text-sm text-muted-foreground mb-1'>{session.topic}</p>
+                    <p className='text-xs text-muted-foreground'>{session.date}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
       );
     }
 
-    // Other sections
+    // Other sections placeholder
     return (
       <Card>
         <CardContent className='p-12 text-center'>
