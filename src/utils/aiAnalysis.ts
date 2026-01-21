@@ -76,7 +76,7 @@ const pathMapping: Record<string, Record<string, string>> = {
     "Business & Finance":
       "Business Diploma → Bachelor in Business → Entry-level → Management",
   },
-  "self-employment": {
+  self_employment: {
     "Technology & ICT": "Coding Bootcamp → Freelance Projects → Tech Startup",
     "Healthcare & Medicine": "Medical Training → Private Practice Setup",
     "Business & Finance": "Business Skills → Small Business → Scale Up",
