@@ -145,7 +145,7 @@ export default function DreamPlanner() {
           focusLevel: onboardingData.habits?.focus_level || 5,
           timeManagement: onboardingData.habits?.time_management || 5,
           studySupport: onboardingData.support_preferences,
-        });
+        }, user.id);
       } catch (aiError) {
         console.error("AI generation failed, using fallback:", aiError);
         aiResponse = generateFallbackRoadmap({
