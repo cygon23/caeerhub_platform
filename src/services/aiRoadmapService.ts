@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import { creditService } from './creditService';
+// import { creditService } from './creditService'; // Temporarily disabled for smooth functionality
 const groq = new Groq({
   apiKey: import.meta.env.VITE_GROQ_API_KEY,
   dangerouslyAllowBrowser: true, // For production, use a backend proxy
@@ -38,14 +38,14 @@ interface AIRoadmapResponse {
 
 export async function generateAIRoadmap(
   input: OnboardingInput,
-  userId: string 
+  userId: string
 ): Promise<AIRoadmapResponse> {
-   // 1. CHECK CREDITS FIRST - ADD THIS BLOCK
-  const creditCheck = await creditService.canUseFeature(userId, 'ai_roadmap');
-
-   if (!creditCheck.canUse) {
-    throw new Error(`INSUFFICIENT_CREDITS:${creditCheck.reason}:${creditCheck.creditsRequired}:${creditCheck.creditsAvailable}`);
-  }
+  // Credit checking temporarily disabled to allow smooth functionality
+  // TODO: Re-enable credit checks after billing system is properly configured
+  // const creditCheck = await creditService.canUseFeature(userId, 'ai_roadmap');
+  // if (!creditCheck.canUse) {
+  //   throw new Error(`INSUFFICIENT_CREDITS:${creditCheck.reason}:${creditCheck.creditsRequired}:${creditCheck.creditsAvailable}`);
+  // }
 
   const prompt = `You are a career counselor AI specializing in the Tanzanian job market and education system. Analyze the following youth profile and create a detailed, actionable career roadmap.
 
@@ -152,17 +152,18 @@ export async function generateAIRoadmap(
       throw new Error("Invalid AI response structure");
     }
 
-    // 2. DEDUCT CREDITS AFTER SUCCESS - ADD THIS BLOCK
-    await creditService.deductCredits(
-      userId,
-      'ai_roadmap',
-      null,
-      'onboarding_responses',
-      { 
-        education_level: input.educationLevel,
-        dream_career: input.dreamCareer 
-      }
-    );
+    // Credit deduction temporarily disabled
+    // TODO: Re-enable after billing system is properly configured
+    // await creditService.deductCredits(
+    //   userId,
+    //   'ai_roadmap',
+    //   null,
+    //   'onboarding_responses',
+    //   {
+    //     education_level: input.educationLevel,
+    //     dream_career: input.dreamCareer
+    //   }
+    // );
 
     return aiResponse;
   } catch (error: any) {
