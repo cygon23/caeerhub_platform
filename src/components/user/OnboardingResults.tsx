@@ -148,7 +148,7 @@ export default function OnboardingResults() {
           focusLevel: onboardingData.habits.focus_level,
           timeManagement: onboardingData.habits.time_management,
           studySupport: onboardingData.support_preferences,
-        });
+        }, user.id);
       } catch (aiError) {
         console.error("AI regeneration failed, using fallback:", aiError);
         aiResponse = generateFallbackRoadmap({
