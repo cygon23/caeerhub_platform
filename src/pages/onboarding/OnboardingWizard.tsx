@@ -107,7 +107,7 @@ export default function OnboardingWizard() {
       desc: "Work for established companies and organizations",
     },
     {
-      value: "self-employment",
+      value: "self_employment",
       label: "Self-Employment Path",
       desc: "Start your own business or freelance",
     },
@@ -193,7 +193,7 @@ export default function OnboardingWizard() {
           focusLevel: data.focusLevel,
           timeManagement: data.timeManagement,
           studySupport: data.studySupport,
-        });
+        }, user.id);
         console.log("AI Roadmap generated successfully:", aiResponse);
       } catch (aiError) {
         console.error("AI generation failed, using fallback:", aiError);
