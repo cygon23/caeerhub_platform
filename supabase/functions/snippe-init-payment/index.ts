@@ -106,50 +106,23 @@ serve(async (req) => {
       end_date.setFullYear(end_date.getFullYear() + 1);
     }
 
-    // Create subscription record (using existing subscriptions table)
-    const { data: subscription, error: subError } = await supabase
-      .from('subscriptions')
-      .insert({
-        user_id: user.id,
-        plan_name: plan.plan_name,
-        billing_period: billingPeriod,
-        status: 'trialing',
-        amount: amount,
-        currency: 'TZS',
-        start_date: start_date.toISOString(),
-        end_date: end_date.toISOString(),
-        next_billing_date: end_date.toISOString(),
-        payment_method: 'mobile_money',
-        phone_number: phoneNumber,
-      })
-      .select()
-      .single();
+    // Generate unique payment reference
+    const payment_reference = `SNIPE-${Date.now()}-${user.id.substring(0, 8)}`;
 
-    if (subError) {
-      console.error('Subscription creation error:', subError);
-      return new Response(
-        JSON.stringify({ error: 'Failed to create subscription', details: subError.message }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Create payment record (using existing subscription_payments table)
+    // Create payment record first
     const { data: payment, error: payError } = await supabase
-      .from('subscription_payments')
+      .from('snippe_payments')
       .insert({
-        subscription_id: subscription.id,
         user_id: user.id,
+        payment_reference: payment_reference,
+        phone_number: phoneNumber,
         amount: amount,
         currency: 'TZS',
         status: 'pending',
-        payment_method: 'mobile_money',
-        phone_number: phoneNumber,
-        billing_period_start: start_date.toISOString(),
-        billing_period_end: end_date.toISOString(),
+        plan_key: planKey,
+        billing_period: billingPeriod,
         metadata: {
           plan_name: plan.plan_name,
-          plan_key: planKey,
-          billing_period: billingPeriod,
         },
       })
       .select()
@@ -159,6 +132,33 @@ serve(async (req) => {
       console.error('Payment record creation error:', payError);
       return new Response(
         JSON.stringify({ error: 'Failed to create payment record', details: payError.message }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create subscription record
+    const { data: subscription, error: subError } = await supabase
+      .from('snippe_subscriptions')
+      .insert({
+        user_id: user.id,
+        plan_key: planKey,
+        plan_name: plan.plan_name,
+        billing_period: billingPeriod,
+        status: 'pending',
+        amount: amount,
+        currency: 'TZS',
+        start_date: start_date.toISOString(),
+        end_date: end_date.toISOString(),
+        next_billing_date: end_date.toISOString(),
+        payment_id: payment.id,
+      })
+      .select()
+      .single();
+
+    if (subError) {
+      console.error('Subscription creation error:', subError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to create subscription', details: subError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -216,7 +216,7 @@ serve(async (req) => {
     if (!snippeResponse.ok || snippeData.status !== 'success') {
       // Mark payment as failed
       await supabase
-        .from('subscription_payments')
+        .from('snippe_payments')
         .update({ status: 'failed' })
         .eq('id', payment.id);
 
@@ -232,15 +232,12 @@ serve(async (req) => {
 
     const paymentData = snippeData.data;
 
-    // Update payment with Snippe order ID
+    // Update payment with Snippe transaction ID
     await supabase
-      .from('subscription_payments')
+      .from('snippe_payments')
       .update({
-        snippe_order_id: paymentData.reference,
-        metadata: {
-          ...payment.metadata,
-          snippe_response: paymentData,
-        },
+        snippe_transaction_id: paymentData.reference,
+        snippe_response: paymentData,
       })
       .eq('id', payment.id);
 
