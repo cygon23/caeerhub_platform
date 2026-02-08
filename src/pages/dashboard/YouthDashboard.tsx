@@ -70,6 +70,7 @@ import PracticeQuestions from "@/components/dashboard/PracticeQuestions";
 import StudyGuides from "@/components/dashboard/StudyGuides";
 import YouthDashboardOverview from "@/components/dashboard/YouthDashboardOverview";
 import SelfLearningHub from "@/components/dashboard/SelfLearningHub";
+import AIKnowledgeChat from "@/components/dashboard/AIKnowledgeChat";
 import { supabase } from "@/integrations/supabase/client";
 
 // Lazy load dashboard components with proper named exports
@@ -611,7 +612,7 @@ export default function YouthDashboard() {
     if (activeSection === "behavioral") return <BehavioralInsight />;
     if (activeSection === "badges") return <Badges />;
     if (activeSection === "academic") return <AcademicSupport />;
-    if (activeSection === "challenges") return <SelfLearningHub />;
+    if (activeSection === "challenges") return <AIKnowledgeChat />;
     if (activeSection === "planner") return <DreamPlanner />;
     if (activeSection === "suggestions") return <CareerSuggestion />;
     if (activeSection === "insights") return <UbongInsight />;
