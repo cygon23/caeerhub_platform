@@ -306,7 +306,7 @@ export default function DreamPlanner() {
                   </CardHeader>
                   <CardContent>
                     <p className='text-sm text-muted-foreground'>
-                      {onboardingData.ai_personality_summary}
+                      {onboardingData.ai_personality_summary || "No personality summary available yet."}
                     </p>
                   </CardContent>
                 </Card>
@@ -320,7 +320,7 @@ export default function DreamPlanner() {
                   </CardHeader>
                   <CardContent>
                     <Badge variant='secondary' className='capitalize mb-2'>
-                      {onboardingData.ai_recommended_path.replace("_", " ")}{" "}
+                      {onboardingData.ai_recommended_path?.replace("_", " ") || onboardingData.preferred_path?.replace("_", " ") || "Not Set"}{" "}
                       Path
                     </Badge>
                     <p className='text-xs text-muted-foreground'>
@@ -342,11 +342,14 @@ export default function DreamPlanner() {
                       Industries:
                     </p>
                     <div className='flex flex-wrap gap-2'>
-                      {onboardingData.interests.map((interest, index) => (
+                      {(onboardingData.interests || []).map((interest, index) => (
                         <Badge key={index} variant='outline'>
                           {interest}
                         </Badge>
                       ))}
+                      {(!onboardingData.interests || onboardingData.interests.length === 0) && (
+                        <span className='text-xs text-muted-foreground'>No interests set</span>
+                      )}
                     </div>
                   </div>
                   <div>
@@ -354,12 +357,15 @@ export default function DreamPlanner() {
                       Strongest Subjects:
                     </p>
                     <div className='flex flex-wrap gap-2'>
-                      {onboardingData.strongest_subjects.map(
+                      {(onboardingData.strongest_subjects || []).map(
                         (subject, index) => (
                           <Badge key={index} variant='default'>
                             {subject}
                           </Badge>
                         )
+                      )}
+                      {(!onboardingData.strongest_subjects || onboardingData.strongest_subjects.length === 0) && (
+                        <span className='text-xs text-muted-foreground'>No subjects set</span>
                       )}
                     </div>
                   </div>
