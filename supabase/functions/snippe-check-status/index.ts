@@ -1,0 +1,130 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SNIPPE_API_KEY = Deno.env.get("SNIPPE_API_KEY");
+const SNIPPE_API_URL = "https://api.snippe.sh/v1"; // Update with actual Snipe.sh API URL
+
+// CORS headers
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  try {
+    const { paymentId } = await req.json();
+
+    if (!paymentId) {
+      throw new Error("Missing required field: paymentId");
+    }
+
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Get payment details from database
+    const { data: payment, error: paymentError } = await supabaseClient
+      .from("snippe_payments")
+      .select("*")
+      .eq("id", paymentId)
+      .single();
+
+    if (paymentError || !payment) {
+      throw new Error("Payment not found");
+    }
+
+    // Check status with Snipe.sh API
+    const snippeResponse = await fetch(
+      `${SNIPPE_API_URL}/payments/${payment.payment_reference}`,
+      {
+        method: "GET",
+        headers: {
+          "X-API-Key": SNIPPE_API_KEY!,
+        },
+      }
+    );
+
+    if (!snippeResponse.ok) {
+      const errorData = await snippeResponse.json();
+      console.error("Snipe.sh API error:", errorData);
+      throw new Error("Failed to check payment status");
+    }
+
+    const snippeData = await snippeResponse.json();
+
+    // Update payment status in database
+    const updatedStatus = snippeData.status.toLowerCase();
+
+    const updateData: any = {
+      status: updatedStatus,
+      snippe_response: snippeData,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (snippeData.provider) {
+      updateData.mobile_provider = snippeData.provider.toLowerCase();
+    }
+
+    if (updatedStatus === 'completed') {
+      updateData.completed_at = new Date().toISOString();
+    }
+
+    await supabaseClient
+      .from("snippe_payments")
+      .update(updateData)
+      .eq("id", payment.id);
+
+    // If payment completed, activate subscription
+    if (updatedStatus === 'completed' && payment.status !== 'completed') {
+      const { error: activateError } = await supabaseClient
+        .rpc('activate_snippe_subscription', {
+          p_payment_id: payment.id
+        });
+
+      if (activateError) {
+        console.error("Error activating subscription:", activateError);
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        status: updatedStatus,
+        payment: {
+          id: payment.id,
+          reference: payment.payment_reference,
+          amount: payment.amount,
+          currency: payment.currency,
+          status: updatedStatus,
+          phone_number: payment.phone_number,
+          mobile_provider: snippeData.provider || payment.mobile_provider,
+          created_at: payment.created_at,
+          completed_at: updateData.completed_at || payment.completed_at,
+        }
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+
+  } catch (error) {
+    console.error("Error:", error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message
+      }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
+});
