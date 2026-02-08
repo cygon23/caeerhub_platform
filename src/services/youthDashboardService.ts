@@ -164,7 +164,7 @@ class YouthDashboardService {
     const weeklyActivityData = this.generateWeeklyActivity(auditData.data || []);
 
     // Skills progress (from strengths)
-    const skillsProgress = (strengthsData.data || []).slice(0, 5).map(strength => ({
+    const skillsProgress = (strengthsData.data?.strengths || []).slice(0, 5).map(strength => ({
       skill: strength.name || 'Unknown',
       level: Math.floor(Math.random() * 5) + 1, // Can be enhanced with real level tracking
       progress: Math.floor(Math.random() * 100),
