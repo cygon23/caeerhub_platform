@@ -611,7 +611,7 @@ export default function YouthDashboard() {
     // New dashboard components
     if (activeSection === "behavioral") return <BehavioralInsight />;
     if (activeSection === "badges") return <Badges />;
-    if (activeSection === "academic") return <AcademicSupport />;
+    if (activeSection === "academic") return <AcademicSupport onNavigateToModules={() => setActiveSection("modules")} />;
     if (activeSection === "challenges") return <AIKnowledgeChat />;
     if (activeSection === "planner") return <DreamPlanner />;
     if (activeSection === "suggestions") return <CareerSuggestion />;
