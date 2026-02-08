@@ -2,23 +2,28 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
 
-const SNIPPE_API_KEY = Deno.env.get("SNIPPE_API_KEY");
+const SNIPPE_WEBHOOK_SECRET = Deno.env.get("SNIPPE_WEBHOOK_SECRET");
 
 // CORS headers
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-snippe-signature",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-webhook-signature, x-webhook-timestamp, x-webhook-event",
 };
 
 /**
  * Verify webhook signature from Snipe.sh
+ * Format: HMAC-SHA256 of "{timestamp}.{raw_body}" using webhook secret
  */
-async function verifySignature(
+async function verifyWebhookSignature(
   rawBody: string,
+  timestamp: string,
   signature: string,
   secret: string
 ): Promise<boolean> {
   try {
+    // Create the signed message: "{timestamp}.{raw_body}"
+    const message = `${timestamp}.${rawBody}`;
+
     const encoder = new TextEncoder();
     const key = await crypto.subtle.importKey(
       "raw",
@@ -31,12 +36,13 @@ async function verifySignature(
     const signatureBuffer = await crypto.subtle.sign(
       "HMAC",
       key,
-      encoder.encode(rawBody)
+      encoder.encode(message)
     );
 
     const hashArray = Array.from(new Uint8Array(signatureBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
+    // Use constant-time comparison
     return hashHex === signature;
   } catch (error) {
     console.error("Signature verification error:", error);
@@ -55,15 +61,21 @@ serve(async (req) => {
     const rawBody = await req.text();
     const body = JSON.parse(rawBody);
 
-    // Verify signature
-    const signature = req.headers.get("x-snippe-signature");
-    if (!signature) {
-      throw new Error("Missing signature header");
+    // Get webhook headers
+    const signature = req.headers.get("x-webhook-signature");
+    const timestamp = req.headers.get("x-webhook-timestamp");
+    const event = req.headers.get("x-webhook-event");
+
+    if (!signature || !timestamp) {
+      throw new Error("Missing webhook signature or timestamp headers");
     }
 
-    const isValid = await verifySignature(rawBody, signature, SNIPPE_API_KEY!);
+    console.log("Webhook received:", { event, timestamp });
+
+    // Verify signature
+    const isValid = await verifyWebhookSignature(rawBody, timestamp, signature, SNIPPE_WEBHOOK_SECRET!);
     if (!isValid) {
-      console.error("Invalid signature");
+      console.error("Invalid webhook signature");
       return new Response(
         JSON.stringify({ error: "Invalid signature" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
