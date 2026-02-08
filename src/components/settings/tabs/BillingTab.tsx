@@ -188,7 +188,7 @@ export const BillingTab = () => {
 
     // Check if payment methods are available
     const hasStripe = !!plan.stripe_price_id;
-    const hasSnip pe = plan.snippe_enabled && (period === 'monthly' ? plan.price_monthly_snippe : plan.price_yearly_snippe);
+    const hasSnipe = plan.snippe_enabled && (period === 'monthly' ? plan.price_monthly_snippe : plan.price_yearly_snippe);
 
     if (!hasStripe && !hasSnipe) {
       toast({
