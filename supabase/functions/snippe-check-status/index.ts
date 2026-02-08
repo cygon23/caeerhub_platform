@@ -16,28 +16,61 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  if (req.method !== 'POST') {
+    return new Response(
+      JSON.stringify({ success: false, error: 'Method not allowed' }),
+      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
-    const { paymentId } = await req.json();
-
-    if (!paymentId) {
-      throw new Error("Missing required field: paymentId");
-    }
-
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    // Verify authentication
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Missing authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { paymentId } = await req.json();
+
+    if (!paymentId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Missing required field: paymentId' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Get payment details from database
     const { data: payment, error: paymentError } = await supabaseClient
       .from("snippe_payments")
       .select("*")
       .eq("id", paymentId)
+      .eq("user_id", user.id) // Ensure user owns this payment
       .single();
 
     if (paymentError || !payment) {
-      throw new Error("Payment not found");
+      return new Response(
+        JSON.stringify({ success: false, error: 'Payment not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Check status with Snipe.sh API

@@ -71,14 +71,27 @@ export const snippePaymentService = {
    * Check payment status
    */
   async checkPaymentStatus(paymentId: string): Promise<SnippePaymentStatus> {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      throw new Error('Not authenticated');
+    }
+
     const { data, error } = await supabase.functions.invoke('snippe-check-status', {
       body: {
         paymentId,
+      },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
       },
     });
 
     if (error) {
       throw new Error(error.message || 'Failed to check payment status');
+    }
+
+    if (!data?.success) {
+      throw new Error(data?.error || 'Failed to check payment status');
     }
 
     return data;
