@@ -33,6 +33,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'react-router-dom';
+import { PaymentMethodSelector } from '@/components/payment/PaymentMethodSelector';
+import { MobileMoneyCheckout } from '@/components/payment/MobileMoneyCheckout';
 
 interface Plan {
   id: string;
@@ -45,6 +47,9 @@ interface Plan {
   features_included: Record<string, boolean>;
   is_popular: boolean;
   stripe_price_id: string | null;
+  price_monthly_snippe?: number;
+  price_yearly_snippe?: number;
+  snippe_enabled?: boolean;
 }
 
 export const BillingTab = () => {
@@ -62,6 +67,12 @@ export const BillingTab = () => {
   const [lastPaymentAmount, setLastPaymentAmount] = useState<number | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
+
+  // Payment method selection state
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [showPaymentSelector, setShowPaymentSelector] = useState(false);
+  const [showMobileCheckout, setShowMobileCheckout] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -168,19 +179,43 @@ export const BillingTab = () => {
     }
   };
 
-  const handleUpgrade = async (plan: Plan) => {
+  const handleUpgrade = async (plan: Plan, period: 'monthly' | 'yearly' = 'monthly') => {
     if (!user) return;
 
-    if (!plan.stripe_price_id) {
+    // Store selected plan and billing period
+    setSelectedPlan(plan);
+    setBillingPeriod(period);
+
+    // Check if payment methods are available
+    const hasStripe = !!plan.stripe_price_id;
+    const hasSnip pe = plan.snippe_enabled && (period === 'monthly' ? plan.price_monthly_snippe : plan.price_yearly_snippe);
+
+    if (!hasStripe && !hasSnipe) {
       toast({
         title: 'Setup Required',
-        description: `The ${plan.plan_name} needs to be configured in Stripe.`,
+        description: `The ${plan.plan_name} needs to be configured.`,
         variant: 'destructive',
       });
       return;
     }
 
+    // If only one payment method is available, go directly to it
+    if (hasStripe && !hasSnipe) {
+      handleStripePayment(plan);
+    } else if (hasSnipe && !hasStripe) {
+      setShowMobileCheckout(true);
+    } else {
+      // Both available - show payment method selector
+      setShowPaymentSelector(true);
+    }
+  };
+
+  const handleStripePayment = async (plan: Plan) => {
+    if (!user) return;
+
     setUpgrading(plan.plan_key);
+    setShowPaymentSelector(false);
+
     try {
       const { url } = await creditService.createCheckoutSession(user.id, plan.plan_key);
       if (url) {
@@ -197,6 +232,11 @@ export const BillingTab = () => {
       });
       setUpgrading(null);
     }
+  };
+
+  const handleMobilePayment = () => {
+    setShowPaymentSelector(false);
+    setShowMobileCheckout(true);
   };
 
   const handleManageSubscription = async () => {
@@ -594,6 +634,49 @@ export const BillingTab = () => {
           <span>Powered by Stripe</span>
         </div>
       </div>
+
+      {/* Payment Method Selector Modal */}
+      {selectedPlan && (
+        <>
+          <PaymentMethodSelector
+            open={showPaymentSelector}
+            onClose={() => {
+              setShowPaymentSelector(false);
+              setSelectedPlan(null);
+            }}
+            planName={selectedPlan.plan_name}
+            price={
+              billingPeriod === 'monthly'
+                ? (selectedPlan.price_monthly_snippe || selectedPlan.price_monthly)
+                : (selectedPlan.price_yearly_snippe || selectedPlan.price_yearly)
+            }
+            billingPeriod={billingPeriod}
+            onSelectStripe={() => handleStripePayment(selectedPlan)}
+            onSelectMobileMoney={handleMobilePayment}
+          />
+
+          <MobileMoneyCheckout
+            open={showMobileCheckout}
+            onClose={() => {
+              setShowMobileCheckout(false);
+              setSelectedPlan(null);
+            }}
+            onBack={() => {
+              setShowMobileCheckout(false);
+              setShowPaymentSelector(true);
+            }}
+            userId={user!.id}
+            planKey={selectedPlan.plan_key}
+            planName={selectedPlan.plan_name}
+            price={
+              billingPeriod === 'monthly'
+                ? (selectedPlan.price_monthly_snippe || 0)
+                : (selectedPlan.price_yearly_snippe || 0)
+            }
+            billingPeriod={billingPeriod}
+          />
+        </>
+      )}
     </div>
   );
 };
