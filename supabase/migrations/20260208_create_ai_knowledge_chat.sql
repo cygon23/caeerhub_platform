@@ -88,7 +88,6 @@ CREATE TABLE IF NOT EXISTS public.ai_knowledge_uploads (
 
 CREATE INDEX IF NOT EXISTS idx_ai_knowledge_uploads_user_id ON public.ai_knowledge_uploads(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_ai_knowledge_uploads_session_id ON public.ai_knowledge_uploads(session_id);
-CREATE INDEX IF NOT EXISTS idx_ai_knowledge_uploads_created_date ON public.ai_knowledge_uploads(user_id, DATE(created_at));
 
 COMMENT ON TABLE public.ai_knowledge_uploads IS 'Tracks file uploads for AI knowledge chat with daily limits';
 
