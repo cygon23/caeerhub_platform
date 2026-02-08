@@ -37,6 +37,13 @@ export const snippePaymentService = {
     billingPeriod: 'monthly' | 'yearly',
     phoneNumber: string
   ): Promise<SnippePaymentInit> {
+    // Get current session for auth token
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error('Not authenticated');
+    }
+
     const { data, error } = await supabase.functions.invoke('snippe-init-payment', {
       body: {
         userId,
@@ -44,10 +51,17 @@ export const snippePaymentService = {
         billingPeriod,
         phoneNumber,
       },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
     });
 
     if (error) {
       throw new Error(error.message || 'Failed to initialize payment');
+    }
+
+    if (!data.success) {
+      throw new Error(data.error || 'Payment initialization failed');
     }
 
     return data;
