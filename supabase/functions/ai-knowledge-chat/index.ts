@@ -25,6 +25,36 @@ Your role is to help students and young professionals with:
 - Business and entrepreneurship advice
 - ICT skills and technology career paths
 
+RESPONSE FORMATTING RULES (CRITICAL - follow these exactly):
+1. Structure every response clearly with headings, numbered lists, or bullet points where appropriate.
+2. Always provide concrete examples when explaining concepts. For instance, if discussing programming languages, mention specific use cases.
+3. Include references to real resources when relevant (websites, books, courses, organizations, tools). For example: "You can learn Python for free at freeCodeCamp (freecodecamp.org) or Codecademy (codecademy.com)."
+4. Use plain text formatting. Do NOT use asterisks (*) for emphasis or bold. Instead, use clear section headings with line breaks, numbered steps, and descriptive language.
+5. When listing steps or recommendations, use numbered lists (1. 2. 3.) for sequential items and dashes (-) for unordered items.
+6. End responses with a follow-up question or next step suggestion to keep the conversation productive.
+7. Keep paragraphs short (2-3 sentences max) for readability.
+8. When discussing career paths or skills, include salary ranges or market demand where possible for Tanzanian context.
+
+EXAMPLE RESPONSE FORMAT:
+"Web development is one of the most in-demand skills in Tanzania's growing tech sector.
+
+Here's a recommended learning path:
+
+1. Start with HTML and CSS - These are the building blocks of every website. Try the free course at freecodecamp.org to get hands-on practice.
+
+2. Learn JavaScript - This makes websites interactive. Resources like javascript.info provide excellent free tutorials.
+
+3. Pick a framework - React or Vue.js are popular choices. React has more job postings in East Africa currently.
+
+Useful resources:
+- freeCodeCamp (freecodecamp.org) - Free, project-based learning
+- The Odin Project (theodinproject.com) - Full-stack curriculum
+- Dar es Salaam tech meetups on meetup.com
+
+In Tanzania, junior web developers typically earn between 800,000 - 1,500,000 TZS monthly, with senior roles reaching 3,000,000+ TZS.
+
+Would you like me to create a detailed 3-month study plan, or would you prefer to focus on a specific area like frontend or backend development?"
+
 IMPORTANT RESTRICTIONS:
 - ONLY provide assistance related to education, careers, and professional development
 - Stay calm, gentle, and encouraging in all responses
@@ -86,6 +116,43 @@ serve(async (req) => {
         JSON.stringify({ error: 'Invalid request data' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Check daily token limit before processing
+    const { data: tokenUsage } = await supabase
+      .rpc('get_daily_token_usage', { p_user_id: userId })
+      .single();
+
+    if (tokenUsage?.limit_reached) {
+      const cooldownMsg = tokenUsage.cooldown_ends_at
+        ? `Please wait until ${new Date(tokenUsage.cooldown_ends_at).toLocaleTimeString()} or upgrade to Pro for unlimited access.`
+        : 'Please wait 2 hours or upgrade to Pro for unlimited access.';
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: `Daily token limit reached (${tokenUsage.tokens_used?.toLocaleString()} / 100,000 tokens used). ${cooldownMsg}`,
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check session message limit (500 messages per session)
+    if (sessionId) {
+      const { data: sessionData } = await supabase
+        .from('ai_chat_sessions')
+        .select('message_count')
+        .eq('id', sessionId)
+        .single();
+
+      if (sessionData && sessionData.message_count >= 500) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'This session has reached the 500 message limit. Please start a new chat.',
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     let currentSessionId = sessionId;
@@ -207,6 +274,20 @@ serve(async (req) => {
 
     if (assistantMsgError) {
       console.error('Assistant message save error:', assistantMsgError);
+    }
+
+    // Record token usage for daily tracking
+    const totalTokens = groqData.usage?.total_tokens || 0;
+    if (totalTokens > 0) {
+      const { error: tokenError } = await supabase
+        .rpc('record_token_usage', {
+          p_user_id: userId,
+          p_tokens: totalTokens,
+        });
+
+      if (tokenError) {
+        console.error('Token usage recording error:', tokenError);
+      }
     }
 
     // Return response
