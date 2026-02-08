@@ -56,6 +56,11 @@ class AIKnowledgeChatService {
     sessionId: string;
     message: string;
     error?: string;
+    usage?: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    };
   }> {
     const { data: { session } } = await supabase.auth.getSession();
 
@@ -252,6 +257,44 @@ class AIKnowledgeChatService {
 
     if (error) throw error;
     return data || [];
+  }
+
+  /**
+   * Get daily token usage for the current user
+   */
+  async getDailyTokenUsage(): Promise<{
+    tokensUsed: number;
+    dailyLimit: number;
+    limitReached: boolean;
+    cooldownEndsAt: string | null;
+  }> {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase
+      .rpc('get_daily_token_usage', {
+        p_user_id: user.id
+      })
+      .single();
+
+    if (error) {
+      // If function doesn't exist yet, return defaults
+      console.error('Failed to get daily token usage:', error);
+      return {
+        tokensUsed: 0,
+        dailyLimit: 100000,
+        limitReached: false,
+        cooldownEndsAt: null,
+      };
+    }
+
+    return {
+      tokensUsed: data?.tokens_used || 0,
+      dailyLimit: data?.daily_limit || 100000,
+      limitReached: data?.limit_reached || false,
+      cooldownEndsAt: data?.cooldown_ends_at || null,
+    };
   }
 
   /**
