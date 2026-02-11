@@ -1,35 +1,25 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
   ClipboardList,
-  Plus,
   Clock,
   CheckCircle2,
   Circle,
   Loader2,
-  Trash2,
   FileQuestion,
   Play,
   Trophy,
+  Sparkles,
+  RefreshCw,
 } from 'lucide-react';
 import {
   academicSupportService,
   AcademicAssignment,
   AcademicQuiz,
-  QuizQuestion,
   AcademicProfile,
 } from '@/services/academicSupportService';
 import { useToast } from '@/hooks/use-toast';
@@ -43,28 +33,12 @@ export default function AssignmentsQuizzesTab({ profile }: Props) {
   const [assignments, setAssignments] = useState<AcademicAssignment[]>([]);
   const [quizzes, setQuizzes] = useState<AcademicQuiz[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateAssignment, setShowCreateAssignment] = useState(false);
-  const [showCreateQuiz, setShowCreateQuiz] = useState(false);
+  const [generatingAssignments, setGeneratingAssignments] = useState(false);
+  const [generatingQuizzes, setGeneratingQuizzes] = useState(false);
   const [activeQuiz, setActiveQuiz] = useState<AcademicQuiz | null>(null);
   const [quizAnswers, setQuizAnswers] = useState<Record<number, string>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizScore, setQuizScore] = useState({ score: 0, total: 0 });
-
-  // Assignment form
-  const [newAssignment, setNewAssignment] = useState({
-    title: '', subject: '', description: '', due_date: '', priority: 'medium',
-  });
-
-  // Quiz form
-  const [newQuiz, setNewQuiz] = useState({
-    title: '', subject: '', description: '', time_limit_minutes: 0,
-    questions: [] as QuizQuestion[], is_public: false,
-  });
-  const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion>({
-    question: '', type: 'multiple_choice', options: ['', '', '', ''], correct_answer: '', explanation: '',
-  });
-
-  const subjects = profile.subjects_need_help.map(s => s.name);
 
   useEffect(() => {
     loadData();
@@ -85,20 +59,37 @@ export default function AssignmentsQuizzesTab({ profile }: Props) {
     }
   };
 
-  // --- Assignments ---
-  const handleCreateAssignment = async () => {
-    if (!newAssignment.title || !newAssignment.subject || !newAssignment.due_date) {
-      toast({ title: 'Error', description: 'Title, subject and due date are required', variant: 'destructive' });
-      return;
-    }
+  const generateAssignments = async () => {
+    setGeneratingAssignments(true);
     try {
-      await academicSupportService.createAssignment(newAssignment);
-      toast({ title: 'Created', description: 'Assignment added!' });
-      setShowCreateAssignment(false);
-      setNewAssignment({ title: '', subject: '', description: '', due_date: '', priority: 'medium' });
-      await loadData();
+      const result = await academicSupportService.generateAcademicPlan(profile, 'assignments');
+      if (result.success) {
+        toast({ title: 'Assignments Generated', description: 'New AI-generated assignments are ready!' });
+        await loadData();
+      } else {
+        toast({ title: 'Error', description: result.error || 'Failed to generate', variant: 'destructive' });
+      }
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } finally {
+      setGeneratingAssignments(false);
+    }
+  };
+
+  const generateQuizzes = async () => {
+    setGeneratingQuizzes(true);
+    try {
+      const result = await academicSupportService.generateAcademicPlan(profile, 'quizzes');
+      if (result.success) {
+        toast({ title: 'Quizzes Generated', description: 'New AI-generated quizzes are ready!' });
+        await loadData();
+      } else {
+        toast({ title: 'Error', description: result.error || 'Failed to generate', variant: 'destructive' });
+      }
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } finally {
+      setGeneratingQuizzes(false);
     }
   };
 
@@ -109,41 +100,6 @@ export default function AssignmentsQuizzesTab({ profile }: Props) {
         status: newStatus,
         completed_at: newStatus === 'completed' ? new Date().toISOString() : undefined,
       });
-      await loadData();
-    } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    }
-  };
-
-  const deleteAssignment = async (id: string) => {
-    try {
-      await academicSupportService.deleteAssignment(id);
-      await loadData();
-    } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    }
-  };
-
-  // --- Quizzes ---
-  const addQuestionToQuiz = () => {
-    if (!currentQuestion.question || !currentQuestion.correct_answer) {
-      toast({ title: 'Error', description: 'Question and correct answer are required', variant: 'destructive' });
-      return;
-    }
-    setNewQuiz(p => ({ ...p, questions: [...p.questions, { ...currentQuestion }] }));
-    setCurrentQuestion({ question: '', type: 'multiple_choice', options: ['', '', '', ''], correct_answer: '', explanation: '' });
-  };
-
-  const handleCreateQuiz = async () => {
-    if (!newQuiz.title || !newQuiz.subject || newQuiz.questions.length === 0) {
-      toast({ title: 'Error', description: 'Title, subject and at least 1 question are required', variant: 'destructive' });
-      return;
-    }
-    try {
-      await academicSupportService.createQuiz(newQuiz);
-      toast({ title: 'Quiz created', description: `${newQuiz.questions.length} questions ready!` });
-      setShowCreateQuiz(false);
-      setNewQuiz({ title: '', subject: '', description: '', time_limit_minutes: 0, questions: [], is_public: false });
       await loadData();
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
@@ -190,6 +146,9 @@ export default function AssignmentsQuizzesTab({ profile }: Props) {
       default: return <Circle className="h-4 w-4 text-muted-foreground" />;
     }
   };
+
+  const pendingCount = assignments.filter(a => a.status !== 'completed').length;
+  const completedCount = assignments.filter(a => a.status === 'completed').length;
 
   // Quiz taking view
   if (activeQuiz) {
@@ -301,57 +260,43 @@ export default function AssignmentsQuizzesTab({ profile }: Props) {
         {/* Assignments Tab */}
         <TabsContent value="assignments" className="space-y-4 mt-4">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">{assignments.length} assignments</p>
-            <Dialog open={showCreateAssignment} onOpenChange={setShowCreateAssignment}>
-              <DialogTrigger asChild>
-                <Button size="sm"><Plus className="h-4 w-4 mr-1" />New Assignment</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create Assignment</DialogTitle>
-                  <DialogDescription>Add a new assignment to track</DialogDescription>
-                </DialogHeader>
-                <div className="space-y-3 mt-2">
-                  <div>
-                    <label className="text-sm font-medium">Title</label>
-                    <Input value={newAssignment.title} onChange={e => setNewAssignment(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Math Homework Chapter 5" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Subject</label>
-                    <select value={newAssignment.subject} onChange={e => setNewAssignment(p => ({ ...p, subject: e.target.value }))} className="w-full px-3 py-2 border rounded-md bg-background text-sm">
-                      <option value="">Select subject</option>
-                      {subjects.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Description (optional)</label>
-                    <Textarea value={newAssignment.description} onChange={e => setNewAssignment(p => ({ ...p, description: e.target.value }))} rows={2} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-sm font-medium">Due Date</label>
-                      <Input type="datetime-local" value={newAssignment.due_date} onChange={e => setNewAssignment(p => ({ ...p, due_date: e.target.value }))} />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Priority</label>
-                      <select value={newAssignment.priority} onChange={e => setNewAssignment(p => ({ ...p, priority: e.target.value }))} className="w-full px-3 py-2 border rounded-md bg-background text-sm">
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </select>
-                    </div>
-                  </div>
-                  <Button onClick={handleCreateAssignment} className="w-full">Create Assignment</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-muted-foreground">
+                {pendingCount} pending, {completedCount} completed
+              </p>
+              <Badge variant="secondary" className="text-[10px]">
+                <Sparkles className="h-3 w-3 mr-1" />AI Generated
+              </Badge>
+            </div>
+            <Button
+              size="sm"
+              onClick={generateAssignments}
+              disabled={generatingAssignments}>
+              {generatingAssignments ? (
+                <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating...</>
+              ) : (
+                <><RefreshCw className="h-4 w-4 mr-1" />Generate More</>
+              )}
+            </Button>
           </div>
 
-          {assignments.length === 0 ? (
+          {generatingAssignments && assignments.length === 0 && (
+            <Card>
+              <CardContent className="text-center py-8">
+                <Loader2 className="h-8 w-8 mx-auto mb-3 text-primary animate-spin" />
+                <p className="text-sm text-muted-foreground">AI is generating personalized assignments based on your profile...</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {assignments.length === 0 && !generatingAssignments ? (
             <Card>
               <CardContent className="text-center py-8">
                 <ClipboardList className="h-10 w-10 mx-auto mb-3 text-muted-foreground opacity-50" />
-                <p className="text-muted-foreground">No assignments yet. Create your first one!</p>
+                <p className="text-muted-foreground mb-3">No assignments yet.</p>
+                <Button size="sm" onClick={generateAssignments}>
+                  <Sparkles className="h-4 w-4 mr-1" />Generate AI Assignments
+                </Button>
               </CardContent>
             </Card>
           ) : (
@@ -370,11 +315,11 @@ export default function AssignmentsQuizzesTab({ profile }: Props) {
                         {new Date(a.due_date).toLocaleDateString()}
                       </span>
                     </div>
+                    {a.description && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{a.description}</p>
+                    )}
                   </div>
                   <Badge variant={priorityColor(a.priority) as any} className="text-xs">{a.priority}</Badge>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive" onClick={() => deleteAssignment(a.id)}>
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
                 </div>
               ))}
             </div>
@@ -384,105 +329,41 @@ export default function AssignmentsQuizzesTab({ profile }: Props) {
         {/* Quizzes Tab */}
         <TabsContent value="quizzes" className="space-y-4 mt-4">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">{quizzes.length} quizzes</p>
-            <Dialog open={showCreateQuiz} onOpenChange={setShowCreateQuiz}>
-              <DialogTrigger asChild>
-                <Button size="sm"><Plus className="h-4 w-4 mr-1" />Create Quiz</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Create Quiz</DialogTitle>
-                  <DialogDescription>Build a quiz with custom questions</DialogDescription>
-                </DialogHeader>
-                <div className="space-y-3 mt-2">
-                  <div>
-                    <label className="text-sm font-medium">Quiz Title</label>
-                    <Input value={newQuiz.title} onChange={e => setNewQuiz(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Algebra Basics" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-sm font-medium">Subject</label>
-                      <select value={newQuiz.subject} onChange={e => setNewQuiz(p => ({ ...p, subject: e.target.value }))} className="w-full px-3 py-2 border rounded-md bg-background text-sm">
-                        <option value="">Select</option>
-                        {subjects.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Time Limit (min)</label>
-                      <Input type="number" value={newQuiz.time_limit_minutes || ''} onChange={e => setNewQuiz(p => ({ ...p, time_limit_minutes: parseInt(e.target.value) || 0 }))} placeholder="0 = no limit" />
-                    </div>
-                  </div>
-
-                  {/* Added questions */}
-                  {newQuiz.questions.length > 0 && (
-                    <div className="space-y-2 p-3 rounded-lg bg-muted/50">
-                      <p className="text-sm font-medium">{newQuiz.questions.length} question{newQuiz.questions.length > 1 ? 's' : ''} added</p>
-                      {newQuiz.questions.map((q, i) => (
-                        <div key={i} className="text-xs p-2 rounded bg-background border flex justify-between items-center">
-                          <span className="truncate">{i + 1}. {q.question}</span>
-                          <Button variant="ghost" size="sm" className="h-5 w-5 p-0" onClick={() => setNewQuiz(p => ({ ...p, questions: p.questions.filter((_, j) => j !== i) }))}>
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Add question form */}
-                  <div className="space-y-2 p-3 rounded-lg border">
-                    <p className="text-sm font-medium">Add Question</p>
-                    <div>
-                      <label className="text-xs font-medium">Question Type</label>
-                      <select value={currentQuestion.type} onChange={e => setCurrentQuestion(p => ({ ...p, type: e.target.value as any }))} className="w-full px-3 py-1.5 border rounded-md bg-background text-sm">
-                        <option value="multiple_choice">Multiple Choice</option>
-                        <option value="true_false">True / False</option>
-                        <option value="short_answer">Short Answer</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium">Question</label>
-                      <Input value={currentQuestion.question} onChange={e => setCurrentQuestion(p => ({ ...p, question: e.target.value }))} placeholder="Enter your question" />
-                    </div>
-                    {currentQuestion.type === 'multiple_choice' && (
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium">Options</label>
-                        {currentQuestion.options.map((opt, i) => (
-                          <Input key={i} value={opt} onChange={e => {
-                            const opts = [...currentQuestion.options];
-                            opts[i] = e.target.value;
-                            setCurrentQuestion(p => ({ ...p, options: opts }));
-                          }} placeholder={`Option ${i + 1}`} />
-                        ))}
-                      </div>
-                    )}
-                    <div>
-                      <label className="text-xs font-medium">Correct Answer</label>
-                      <Input value={currentQuestion.correct_answer} onChange={e => setCurrentQuestion(p => ({ ...p, correct_answer: e.target.value }))} placeholder="Enter correct answer" />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium">Explanation (optional)</label>
-                      <Input value={currentQuestion.explanation} onChange={e => setCurrentQuestion(p => ({ ...p, explanation: e.target.value }))} placeholder="Why is this correct?" />
-                    </div>
-                    <Button variant="outline" size="sm" onClick={addQuestionToQuiz} className="w-full">Add Question</Button>
-                  </div>
-
-                  <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" checked={newQuiz.is_public} onChange={e => setNewQuiz(p => ({ ...p, is_public: e.target.checked }))} />
-                    Make quiz public (others can take it)
-                  </label>
-                  <Button onClick={handleCreateQuiz} className="w-full" disabled={newQuiz.questions.length === 0}>
-                    Create Quiz ({newQuiz.questions.length} questions)
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-muted-foreground">{quizzes.length} quizzes</p>
+              <Badge variant="secondary" className="text-[10px]">
+                <Sparkles className="h-3 w-3 mr-1" />AI Generated
+              </Badge>
+            </div>
+            <Button
+              size="sm"
+              onClick={generateQuizzes}
+              disabled={generatingQuizzes}>
+              {generatingQuizzes ? (
+                <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Generating...</>
+              ) : (
+                <><RefreshCw className="h-4 w-4 mr-1" />Generate More</>
+              )}
+            </Button>
           </div>
 
-          {quizzes.length === 0 ? (
+          {generatingQuizzes && quizzes.length === 0 && (
+            <Card>
+              <CardContent className="text-center py-8">
+                <Loader2 className="h-8 w-8 mx-auto mb-3 text-primary animate-spin" />
+                <p className="text-sm text-muted-foreground">AI is generating quizzes for your subjects...</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {quizzes.length === 0 && !generatingQuizzes ? (
             <Card>
               <CardContent className="text-center py-8">
                 <FileQuestion className="h-10 w-10 mx-auto mb-3 text-muted-foreground opacity-50" />
-                <p className="text-muted-foreground">No quizzes yet. Create your first one!</p>
+                <p className="text-muted-foreground mb-3">No quizzes yet.</p>
+                <Button size="sm" onClick={generateQuizzes}>
+                  <Sparkles className="h-4 w-4 mr-1" />Generate AI Quizzes
+                </Button>
               </CardContent>
             </Card>
           ) : (
