@@ -555,6 +555,67 @@ class AcademicSupportService {
 
     if (error) throw error;
   }
+  // --- AI Plan Generation ---
+
+  async generateAcademicPlan(profile: AcademicProfile, type: 'full' | 'assignments' | 'quizzes' | 'schedule' = 'full'): Promise<{
+    success: boolean;
+    plan?: any;
+    assignments?: AcademicAssignment[];
+    quizzes?: AcademicQuiz[];
+    schedules?: StudySchedule[];
+    error?: string;
+  }> {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.functions.invoke('generate-academic-plan', {
+      body: {
+        userId: session.user.id,
+        profile: {
+          education_level: profile.education_level,
+          subjects_need_help: profile.subjects_need_help,
+          help_types: profile.help_types,
+          specific_struggles: profile.specific_struggles,
+        },
+        type,
+      },
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async getStudyFocus(profile: AcademicProfile): Promise<{ summary: string; weekly_tips: string[]; priority_subject: string } | null> {
+    if (!profile.ai_profile_summary) return null;
+    try {
+      return JSON.parse(profile.ai_profile_summary);
+    } catch {
+      return null;
+    }
+  }
+
+  async hasAIContent(): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    const { count } = await supabase
+      .from('academic_assignments')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+
+    return (count || 0) > 0;
+  }
+
+  async clearAllContent(): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    await Promise.all([
+      supabase.from('academic_assignments').delete().eq('user_id', user.id),
+      supabase.from('academic_quizzes').delete().eq('created_by', user.id),
+      supabase.from('study_schedules').delete().eq('user_id', user.id),
+    ]);
+  }
 }
 
 export const academicSupportService = new AcademicSupportService();
