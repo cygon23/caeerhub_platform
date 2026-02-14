@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS discussion_reactions (
     (discussion_id IS NOT NULL AND comment_id IS NULL) OR
     (discussion_id IS NULL AND comment_id IS NOT NULL)
   ),
-  CONSTRAINT unique_discussion_reaction UNIQUE (user_id, discussion_id) DEFERRABLE INITIALLY DEFERRED,
-  CONSTRAINT unique_comment_reaction UNIQUE (user_id, comment_id) DEFERRABLE INITIALLY DEFERRED
+  CONSTRAINT unique_discussion_reaction UNIQUE (user_id, discussion_id),
+  CONSTRAINT unique_comment_reaction UNIQUE (user_id, comment_id)
 );
 
 -- 4. Group Polls

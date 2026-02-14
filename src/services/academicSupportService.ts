@@ -764,30 +764,35 @@ class AcademicSupportService {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Check for existing reaction
-    let existingQuery = supabase
+    // Build the filter for this specific target
+    const targetColumn = target.discussionId ? 'discussion_id' : 'comment_id';
+    const targetValue = target.discussionId || target.commentId;
+    if (!targetValue) throw new Error('No reaction target specified');
+
+    // Check for existing reaction on this target
+    const { data: existing } = await supabase
       .from('discussion_reactions')
       .select('*')
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .eq(targetColumn, targetValue);
 
-    if (target.discussionId) {
-      existingQuery = existingQuery.eq('discussion_id', target.discussionId);
-    } else if (target.commentId) {
-      existingQuery = existingQuery.eq('comment_id', target.commentId);
-    }
-
-    const { data: existing } = await existingQuery;
     const currentReaction = existing?.[0];
 
+    // Always clean up all existing reactions on this target first
     if (currentReaction) {
-      // Remove existing reaction
-      await supabase.from('discussion_reactions').delete().eq('id', currentReaction.id);
+      const { error: deleteError } = await supabase
+        .from('discussion_reactions')
+        .delete()
+        .eq('user_id', user.id)
+        .eq(targetColumn, targetValue);
 
-      // If same type, just remove (toggle off). If different type, add new one.
+      if (deleteError) throw deleteError;
+
+      // If same type, just toggle off - don't insert
       if (currentReaction.reaction_type === type) return;
     }
 
-    // Add new reaction
+    // Insert new reaction
     const { error } = await supabase.from('discussion_reactions').insert({
       user_id: user.id,
       discussion_id: target.discussionId || null,
