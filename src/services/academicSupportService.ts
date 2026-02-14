@@ -903,12 +903,12 @@ class AcademicSupportService {
 
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, full_name')
-      .in('id', uniqueIds);
+      .select('user_id, display_name')
+      .in('user_id', uniqueIds);
 
     if (error) return {};
     const map: Record<string, string> = {};
-    (data || []).forEach(p => { map[p.id] = p.full_name || 'Anonymous'; });
+    (data || []).forEach(p => { map[p.user_id] = p.display_name || 'Anonymous'; });
     return map;
   }
 
